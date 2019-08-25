@@ -1,4 +1,4 @@
-defmodule Pelable.WorkProjects.WorkProject do
+defmodule Pelable.WorkProject.WorkProject do
   use Ecto.Schema
   import Ecto.Changeset
 
