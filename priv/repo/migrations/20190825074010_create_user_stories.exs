@@ -3,7 +3,7 @@ defmodule Pelable.Repo.Migrations.CreateUserStories do
 
   def change do
     create table(:user_stories) do
-      add :body, :string
+      add :body, :text
 
       timestamps()
     end
