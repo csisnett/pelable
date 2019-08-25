@@ -2,6 +2,8 @@ defmodule Pelable.WorkProject.WorkProject do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Pelable.Users.User
+
   schema "work_projects" do
     field :description, :string
     field :end_date, :utc_datetime
@@ -10,6 +12,7 @@ defmodule Pelable.WorkProject.WorkProject do
     field :start_date, :utc_datetime
     field :work_status, :string
 
+    belongs_to :creator, User
     belongs_to :project_version, ProjectVersion
     timestamps()
   end
