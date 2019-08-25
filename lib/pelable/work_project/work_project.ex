@@ -10,6 +10,7 @@ defmodule Pelable.WorkProject.WorkProject do
     field :start_date, :utc_datetime
     field :work_status, :string
 
+    belongs_to :project_version, ProjectVersion
     timestamps()
   end
 
