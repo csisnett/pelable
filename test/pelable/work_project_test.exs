@@ -65,4 +65,63 @@ defmodule Pelable.WorkProjectTest do
       assert %Ecto.Changeset{} = WorkProject.change_project_version(project_version)
     end
   end
+
+  describe "user_stories" do
+    alias Pelable.WorkProject.UserStory
+
+    @valid_attrs %{body: "some body"}
+    @update_attrs %{body: "some updated body"}
+    @invalid_attrs %{body: nil}
+
+    def user_story_fixture(attrs \\ %{}) do
+      {:ok, user_story} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> WorkProject.create_user_story()
+
+      user_story
+    end
+
+    test "list_user_stories/0 returns all user_stories" do
+      user_story = user_story_fixture()
+      assert WorkProject.list_user_stories() == [user_story]
+    end
+
+    test "get_user_story!/1 returns the user_story with given id" do
+      user_story = user_story_fixture()
+      assert WorkProject.get_user_story!(user_story.id) == user_story
+    end
+
+    test "create_user_story/1 with valid data creates a user_story" do
+      assert {:ok, %UserStory{} = user_story} = WorkProject.create_user_story(@valid_attrs)
+      assert user_story.body == "some body"
+    end
+
+    test "create_user_story/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = WorkProject.create_user_story(@invalid_attrs)
+    end
+
+    test "update_user_story/2 with valid data updates the user_story" do
+      user_story = user_story_fixture()
+      assert {:ok, %UserStory{} = user_story} = WorkProject.update_user_story(user_story, @update_attrs)
+      assert user_story.body == "some updated body"
+    end
+
+    test "update_user_story/2 with invalid data returns error changeset" do
+      user_story = user_story_fixture()
+      assert {:error, %Ecto.Changeset{}} = WorkProject.update_user_story(user_story, @invalid_attrs)
+      assert user_story == WorkProject.get_user_story!(user_story.id)
+    end
+
+    test "delete_user_story/1 deletes the user_story" do
+      user_story = user_story_fixture()
+      assert {:ok, %UserStory{}} = WorkProject.delete_user_story(user_story)
+      assert_raise Ecto.NoResultsError, fn -> WorkProject.get_user_story!(user_story.id) end
+    end
+
+    test "change_user_story/1 returns a user_story changeset" do
+      user_story = user_story_fixture()
+      assert %Ecto.Changeset{} = WorkProject.change_user_story(user_story)
+    end
+  end
 end

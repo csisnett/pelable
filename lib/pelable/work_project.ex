@@ -101,4 +101,100 @@ defmodule Pelable.WorkProject do
   def change_project_version(%ProjectVersion{} = project_version) do
     ProjectVersion.changeset(project_version, %{})
   end
+
+  alias Pelable.WorkProject.UserStory
+
+  @doc """
+  Returns the list of user_stories.
+
+  ## Examples
+
+      iex> list_user_stories()
+      [%UserStory{}, ...]
+
+  """
+  def list_user_stories do
+    Repo.all(UserStory)
+  end
+
+  @doc """
+  Gets a single user_story.
+
+  Raises `Ecto.NoResultsError` if the User story does not exist.
+
+  ## Examples
+
+      iex> get_user_story!(123)
+      %UserStory{}
+
+      iex> get_user_story!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_user_story!(id), do: Repo.get!(UserStory, id)
+
+  @doc """
+  Creates a user_story.
+
+  ## Examples
+
+      iex> create_user_story(%{field: value})
+      {:ok, %UserStory{}}
+
+      iex> create_user_story(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_user_story(attrs \\ %{}) do
+    %UserStory{}
+    |> UserStory.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a user_story.
+
+  ## Examples
+
+      iex> update_user_story(user_story, %{field: new_value})
+      {:ok, %UserStory{}}
+
+      iex> update_user_story(user_story, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user_story(%UserStory{} = user_story, attrs) do
+    user_story
+    |> UserStory.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a UserStory.
+
+  ## Examples
+
+      iex> delete_user_story(user_story)
+      {:ok, %UserStory{}}
+
+      iex> delete_user_story(user_story)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_user_story(%UserStory{} = user_story) do
+    Repo.delete(user_story)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking user_story changes.
+
+  ## Examples
+
+      iex> change_user_story(user_story)
+      %Ecto.Changeset{source: %UserStory{}}
+
+  """
+  def change_user_story(%UserStory{} = user_story) do
+    UserStory.changeset(user_story, %{})
+  end
 end
