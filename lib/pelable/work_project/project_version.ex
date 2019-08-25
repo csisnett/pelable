@@ -3,6 +3,7 @@ defmodule Pelable.WorkProject.ProjectVersion do
   import Ecto.Changeset
 
   alias Pelable.Users.User
+  alias Pelable.WorkProject.{ProjectVersion, UserStory}
 
   schema "project_versions" do
     field :description, :string
@@ -13,6 +14,7 @@ defmodule Pelable.WorkProject.ProjectVersion do
     field :project_id, :id
 
     many_to_many :users, User, join_through: "project_version_user"
+    many_to_many :user_stories, UserStory, join_through: "project_version_user_story"
     timestamps()
   end
 
