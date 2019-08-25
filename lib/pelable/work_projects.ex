@@ -1,4 +1,4 @@
-defmodule Pelable.WorkProject do
+defmodule Pelable.WorkProjects do
   @moduledoc """
   The WorkProject context.
   """
@@ -6,8 +6,7 @@ defmodule Pelable.WorkProject do
   import Ecto.Query, warn: false
   alias Pelable.Repo
 
-  alias Pelable.WorkProject.{ProjectVersion, UserStory, WorkProject}
-
+  alias Pelable.WorkProjects.{ProjectVersion, UserStory, WorkProject}
   @doc """
   Returns the list of work_projects.
 
@@ -195,8 +194,6 @@ defmodule Pelable.WorkProject do
   def change_project_version(%ProjectVersion{} = project_version) do
     ProjectVersion.changeset(project_version, %{})
   end
-
-  alias Pelable.WorkProject.UserStory
 
   @doc """
   Returns the list of user_stories.

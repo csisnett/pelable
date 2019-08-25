@@ -1,8 +1,8 @@
-defmodule Pelable.WorkProject.UserStory do
+defmodule Pelable.WorkProjects.UserStory do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Pelable.WorkProject.{ProjectVersion, UserStory}
+  alias Pelable.WorkProjects.{ProjectVersion, UserStory}
 
   schema "user_stories" do
     field :body, :string

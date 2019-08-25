@@ -1,9 +1,9 @@
-defmodule Pelable.WorkProject.ProjectVersion do
+defmodule Pelable.WorkProjects.ProjectVersion do
   use Ecto.Schema
   import Ecto.Changeset
 
   alias Pelable.Users.User
-  alias Pelable.WorkProject.{ProjectVersion, UserStory}
+  alias Pelable.WorkProjects.{ProjectVersion, UserStory}
   alias Pelable.Projects.Project
 
   schema "project_versions" do

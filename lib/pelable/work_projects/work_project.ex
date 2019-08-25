@@ -1,8 +1,9 @@
-defmodule Pelable.WorkProject.WorkProject do
+defmodule Pelable.WorkProjects.WorkProject do
   use Ecto.Schema
   import Ecto.Changeset
 
   alias Pelable.Users.User
+  alias Pelable.WorkProjects.{WorkProject, ProjectVersion}
 
   schema "work_projects" do
     field :description, :string

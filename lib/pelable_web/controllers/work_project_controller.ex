@@ -1,21 +1,21 @@
 defmodule PelableWeb.WorkProjectController do
   use PelableWeb, :controller
 
-  alias Pelable.WorkProject
-  alias Pelable.WorkProject.WorkProject
+  alias Pelable.WorkProjects
+  alias Pelable.WorkProjects.WorkProject
 
   def index(conn, _params) do
-    work_projects = WorkProject.list_work_projects()
+    work_projects = WorkProjects.list_work_projects()
     render(conn, "index.html", work_projects: work_projects)
   end
 
   def new(conn, _params) do
-    changeset = WorkProject.change_work_project(%WorkProject{})
+    changeset = WorkProjects.change_work_project(%WorkProject{})
     render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"work_project" => work_project_params}) do
-    case WorkProject.create_work_project(work_project_params) do
+    case WorkProjects.create_work_project(work_project_params) do
       {:ok, work_project} ->
         conn
         |> put_flash(:info, "Work project created successfully.")
@@ -27,20 +27,20 @@ defmodule PelableWeb.WorkProjectController do
   end
 
   def show(conn, %{"id" => id}) do
-    work_project = WorkProject.get_work_project!(id)
+    work_project = WorkProjects.get_work_project!(id)
     render(conn, "show.html", work_project: work_project)
   end
 
   def edit(conn, %{"id" => id}) do
-    work_project = WorkProject.get_work_project!(id)
-    changeset = WorkProject.change_work_project(work_project)
+    work_project = WorkProjects.get_work_project!(id)
+    changeset = WorkProjects.change_work_project(work_project)
     render(conn, "edit.html", work_project: work_project, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "work_project" => work_project_params}) do
-    work_project = WorkProject.get_work_project!(id)
+    work_project = WorkProjects.get_work_project!(id)
 
-    case WorkProject.update_work_project(work_project, work_project_params) do
+    case WorkProjects.update_work_project(work_project, work_project_params) do
       {:ok, work_project} ->
         conn
         |> put_flash(:info, "Work project updated successfully.")
@@ -52,8 +52,8 @@ defmodule PelableWeb.WorkProjectController do
   end
 
   def delete(conn, %{"id" => id}) do
-    work_project = WorkProject.get_work_project!(id)
-    {:ok, _work_project} = WorkProject.delete_work_project(work_project)
+    work_project = WorkProjects.get_work_project!(id)
+    {:ok, _work_project} = WorkProjects.delete_work_project(work_project)
 
     conn
     |> put_flash(:info, "Work project deleted successfully.")
