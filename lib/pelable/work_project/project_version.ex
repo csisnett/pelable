@@ -4,16 +4,16 @@ defmodule Pelable.WorkProject.ProjectVersion do
 
   alias Pelable.Users.User
   alias Pelable.WorkProject.{ProjectVersion, UserStory}
+  alias Pelable.Projects.Project
 
   schema "project_versions" do
-    field :description, :string
     field :name, :string
-    field :public_status, :string
-    field :creator_id, :id
-    field :parent_id, :id
-    field :project_id, :id
+    field :description, :text
+    field :public_status, :string, default: "public"
 
-    many_to_many :users, User, join_through: "project_version_user"
+    belongs_to :creator, User
+    belongs_to :project_versions, ProjectVersion
+    belongs_to :project, Project
     many_to_many :user_stories, UserStory, join_through: "project_version_user_story"
     timestamps()
   end
