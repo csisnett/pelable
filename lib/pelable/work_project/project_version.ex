@@ -8,7 +8,7 @@ defmodule Pelable.WorkProject.ProjectVersion do
 
   schema "project_versions" do
     field :name, :string
-    field :description, :text
+    field :description, :string
     field :public_status, :string, default: "public"
 
     belongs_to :creator, User
