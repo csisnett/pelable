@@ -1,0 +1,36 @@
+<h1>Listing Work projects</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Repo url</th>
+      <th>Work status</th>
+      <th>Public status</th>
+      <th>Start date</th>
+      <th>End date</th>
+      <th>Description</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for work_project <- @work_projects do %>
+    <tr>
+      <td><%= work_project.repo_url %></td>
+      <td><%= work_project.work_status %></td>
+      <td><%= work_project.public_status %></td>
+      <td><%= work_project.start_date %></td>
+      <td><%= work_project.end_date %></td>
+      <td><%= work_project.description %></td>
+
+      <td>
+        <%= link "Show", to: Routes.work_project_path(@conn, :show, work_project) %>
+        <%= link "Edit", to: Routes.work_project_path(@conn, :edit, work_project) %>
+        <%= link "Delete", to: Routes.work_project_path(@conn, :delete, work_project), method: :delete, data: [confirm: "Are you sure?"] %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Work project", to: Routes.work_project_path(@conn, :new) %></span>
