@@ -1,0 +1,5 @@
+<h1>Edit Project version</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.project_version_path(@conn, :update, @project_version)) %>
+
+<span><%= link "Back", to: Routes.project_version_path(@conn, :index) %></span>

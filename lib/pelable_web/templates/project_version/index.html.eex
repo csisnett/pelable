@@ -1,0 +1,30 @@
+<h1>Listing Project versions</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Description</th>
+      <th>Name</th>
+      <th>Public status</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for project_version <- @project_versions do %>
+    <tr>
+      <td><%= project_version.description %></td>
+      <td><%= project_version.name %></td>
+      <td><%= project_version.public_status %></td>
+
+      <td>
+        <%= link "Show", to: Routes.project_version_path(@conn, :show, project_version) %>
+        <%= link "Edit", to: Routes.project_version_path(@conn, :edit, project_version) %>
+        <%= link "Delete", to: Routes.project_version_path(@conn, :delete, project_version), method: :delete, data: [confirm: "Are you sure?"] %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Project version", to: Routes.project_version_path(@conn, :new) %></span>
