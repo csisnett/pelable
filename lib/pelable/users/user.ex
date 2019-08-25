@@ -10,7 +10,7 @@ defmodule Pelable.Users.User do
     field :nickname, :string
     field :fullname, :string
     
-    many_to_many :project_versions, ProjectVersion, join_through: "project_version_user"
+    many_to_many :project_bookmarks, ProjectVersion, join_through: "project_version_bookmark"
     pow_user_fields()
     timestamps()
   end

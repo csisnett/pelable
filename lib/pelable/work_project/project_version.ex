@@ -14,6 +14,7 @@ defmodule Pelable.WorkProject.ProjectVersion do
     belongs_to :creator, User
     belongs_to :project_versions, ProjectVersion
     belongs_to :project, Project
+    many_to_many :bookmarked_by, User, join_through: "project_version_bookmark"
     many_to_many :user_stories, UserStory, join_through: "project_version_user_story"
     timestamps()
   end
