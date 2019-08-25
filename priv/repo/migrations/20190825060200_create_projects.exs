@@ -3,7 +3,6 @@ defmodule Pelable.Repo.Migrations.CreateProjects do
 
   def change do
     create table(:projects) do
-      add :name, :string
       add :creator_id, references(:users) 
       timestamps()
     end

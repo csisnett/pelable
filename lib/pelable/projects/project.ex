@@ -4,8 +4,6 @@ defmodule Pelable.Projects.Project do
   alias Pelable.Users.User
 
   schema "projects" do
-    field :name, :string
-
     belongs_to :creator, User
     timestamps()
   end
