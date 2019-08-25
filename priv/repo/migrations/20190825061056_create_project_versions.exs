@@ -12,9 +12,5 @@ defmodule Pelable.Repo.Migrations.CreateProjectVersions do
 
       timestamps()
     end
-
-    create index(:project_versions, [:creator_id])
-    create index(:project_versions, [:parent_id])
-    create index(:project_versions, [:project_id])
   end
 end
