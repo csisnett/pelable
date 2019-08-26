@@ -2,7 +2,7 @@ defmodule PelableWeb.WorkProjectControllerTest do
   use PelableWeb.ConnCase
 
   alias Pelable.WorkProjects
-
+  
   @create_attrs %{description: "some description", end_date: "2010-04-17T14:00:00Z", public_status: "some public_status", repo_url: "some repo_url", start_date: "2010-04-17T14:00:00Z", work_status: "some work_status"}
   @update_attrs %{description: "some updated description", end_date: "2011-05-18T15:01:01Z", public_status: "some updated public_status", repo_url: "some updated repo_url", start_date: "2011-05-18T15:01:01Z", work_status: "some updated work_status"}
   @invalid_attrs %{description: nil, end_date: nil, public_status: nil, repo_url: nil, start_date: nil, work_status: nil}

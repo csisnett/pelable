@@ -13,7 +13,7 @@ defmodule PelableWeb.ProjectUserStoryControllerTest do
   end
 
   describe "index" do
-    test "lists all workproject_userstory", %{conn: conn} do
+    test "lists all work_project_user_story", %{conn: conn} do
       conn = get(conn, Routes.project_user_story_path(conn, :index))
       assert html_response(conn, 200) =~ "Listing Workproject userstory"
     end

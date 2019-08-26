@@ -300,7 +300,7 @@ defmodule Pelable.WorkProjects do
       [%ProjectUserStory{}, ...]
 
   """
-  def list_workproject_userstory do
+  def list_work_project_user_story do
     Repo.all(ProjectUserStory)
   end
 

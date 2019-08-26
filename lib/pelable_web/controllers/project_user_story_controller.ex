@@ -5,7 +5,7 @@ defmodule PelableWeb.ProjectUserStoryController do
   alias Pelable.WorkProjects.ProjectUserStory
 
   def index(conn, _params) do
-    workproject_userstory = WorkProjects.list_workproject_userstory()
+    workproject_userstory = WorkProjects.list_work_project_user_story()
     render(conn, "index.html", workproject_userstory: workproject_userstory)
   end
 

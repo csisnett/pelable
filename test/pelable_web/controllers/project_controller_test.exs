@@ -3,9 +3,9 @@ defmodule PelableWeb.ProjectControllerTest do
 
   alias Pelable.Projects
 
-  @create_attrs %{name: "some name"}
-  @update_attrs %{name: "some updated name"}
-  @invalid_attrs %{name: nil}
+  @create_attrs %{}
+  @update_attrs %{}
+  @invalid_attrs %{}
 
   def fixture(:project) do
     {:ok, project} = Projects.create_project(@create_attrs)

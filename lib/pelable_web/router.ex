@@ -28,7 +28,11 @@ defmodule PelableWeb.Router do
   scope "/", PelableWeb do
     pipe_through [:browser]
 
-    resources "/work_projects", WorkProjectController
+    resources "work_projects", WorkProjectController
+    resources "user_stories", UserStoryController
+    resources "project_user_story", ProjectUserStoryController
+    resources "projects", ProjectController
+    resources "project_versions", ProjectVersionController
 
     get "/", PageController, :index
   end

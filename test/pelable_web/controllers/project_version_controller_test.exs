@@ -1,14 +1,14 @@
 defmodule PelableWeb.ProjectVersionControllerTest do
   use PelableWeb.ConnCase
 
-  alias Pelable.WorkProject
+  alias Pelable.WorkProjects
 
-  @create_attrs %{description: "some description", name: "some name", public_status: "some public_status"}
-  @update_attrs %{description: "some updated description", name: "some updated name", public_status: "some updated public_status"}
-  @invalid_attrs %{description: nil, name: nil, public_status: nil}
+  @create_attrs %{description: "some description", name: "some name", public_status: "some public_status", first?: true}
+  @update_attrs %{description: "some updated description", name: "some updated name", public_status: "some updated public_status", first?: false}
+  @invalid_attrs %{description: nil, name: nil, public_status: nil, first?: "nil"}
 
   def fixture(:project_version) do
-    {:ok, project_version} = WorkProject.create_project_version(@create_attrs)
+    {:ok, project_version} = WorkProjects.create_project_version(@create_attrs)
     project_version
   end
 

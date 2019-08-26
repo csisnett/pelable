@@ -75,9 +75,9 @@ defmodule Pelable.WorkProjectTest do
   describe "project_versions" do
     alias Pelable.WorkProjects.ProjectVersion
 
-    @valid_attrs %{description: "some description", name: "some name", public_status: "some public_status"}
-    @update_attrs %{description: "some updated description", name: "some updated name", public_status: "some updated public_status"}
-    @invalid_attrs %{description: nil, name: nil, public_status: nil}
+    @valid_attrs %{description: "some description", name: "some name", public_status: "some public_status", first?: true}
+    @update_attrs %{description: "some updated description", name: "some updated name", public_status: "some updated public_status", first?: false}
+    @invalid_attrs %{description: nil, name: nil, public_status: nil, first?: nil}
 
     def project_version_fixture(attrs \\ %{}) do
       {:ok, project_version} =

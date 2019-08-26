@@ -3,7 +3,7 @@ defmodule Pelable.WorkProjectsTest do
 
   alias Pelable.WorkProjects
 
-  describe "workproject_userstory" do
+  describe "work_project_user_story" do
     alias Pelable.WorkProjects.ProjectUserStory
 
     @valid_attrs %{status: "some status"}
@@ -19,9 +19,9 @@ defmodule Pelable.WorkProjectsTest do
       project_user_story
     end
 
-    test "list_workproject_userstory/0 returns all workproject_userstory" do
+    test "list_work_project_user_story/0 returns all work_project_user_story" do
       project_user_story = project_user_story_fixture()
-      assert WorkProjects.list_workproject_userstory() == [project_user_story]
+      assert WorkProjects.list_work_project_user_story() == [project_user_story]
     end
 
     test "get_project_user_story!/1 returns the project_user_story with given id" do

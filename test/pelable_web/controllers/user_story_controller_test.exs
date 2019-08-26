@@ -1,14 +1,14 @@
 defmodule PelableWeb.UserStoryControllerTest do
   use PelableWeb.ConnCase
 
-  alias Pelable.WorkProject
+  alias Pelable.WorkProjects
 
   @create_attrs %{body: "some body"}
   @update_attrs %{body: "some updated body"}
   @invalid_attrs %{body: nil}
 
   def fixture(:user_story) do
-    {:ok, user_story} = WorkProject.create_user_story(@create_attrs)
+    {:ok, user_story} = WorkProjects.create_user_story(@create_attrs)
     user_story
   end
 
