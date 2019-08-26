@@ -10,7 +10,8 @@ defmodule Pelable.WorkProjects.ProjectVersion do
     field :name, :string
     field :description, :string
     field :public_status, :string, default: "public"
-
+    field :first?, :boolean
+    
     belongs_to :creator, User
     belongs_to :project_versions, ProjectVersion
     belongs_to :project, Project
