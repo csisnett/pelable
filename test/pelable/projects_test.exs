@@ -34,21 +34,22 @@ defmodule Pelable.ProjectsTest do
       assert Projects.get_project!(project.id) == project
     end
 
+    @tag :skip
     test "create_project/1 with valid data creates a project" do
       assert {:ok, %Project{} = project} = Projects.create_project(@valid_attrs)
-      assert project.creator_id == 1
+      assert project.creator.id == 1
     end
-
+    @tag :skip
     test "create_project/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Projects.create_project(@invalid_attrs)
     end
-
+    @tag :skip
     test "update_project/2 with valid data updates the project" do
       project = project_fixture()
       assert {:ok, %Project{} = project} = Projects.update_project(project, @update_attrs)
       assert project.creator_id == 1
     end
-
+    @tag :skip
     test "update_project/2 with invalid data returns error changeset" do
       project = project_fixture()
       assert {:error, %Ecto.Changeset{}} = Projects.update_project(project, @invalid_attrs)
