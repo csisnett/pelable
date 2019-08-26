@@ -17,6 +17,10 @@
   <%= text_input f, :public_status %>
   <%= error_tag f, :public_status %>
 
+    <%= label f, :"Is it the first version?" %>
+  <%= checkbox f, :first?%>
+  <%= error_tag f, :first? %>
+
   <div>
     <%= submit "Save" %>
   </div>
