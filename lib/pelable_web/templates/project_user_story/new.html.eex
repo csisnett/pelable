@@ -1,0 +1,5 @@
+<h1>New Project user story</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.project_user_story_path(@conn, :create)) %>
+
+<span><%= link "Back", to: Routes.project_user_story_path(@conn, :index) %></span>

@@ -1,0 +1,26 @@
+<h1>Listing Workproject userstory</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Status</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for project_user_story <- @workproject_userstory do %>
+    <tr>
+      <td><%= project_user_story.status %></td>
+
+      <td>
+        <%= link "Show", to: Routes.project_user_story_path(@conn, :show, project_user_story) %>
+        <%= link "Edit", to: Routes.project_user_story_path(@conn, :edit, project_user_story) %>
+        <%= link "Delete", to: Routes.project_user_story_path(@conn, :delete, project_user_story), method: :delete, data: [confirm: "Are you sure?"] %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Project user story", to: Routes.project_user_story_path(@conn, :new) %></span>

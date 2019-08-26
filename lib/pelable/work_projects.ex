@@ -288,4 +288,100 @@ defmodule Pelable.WorkProjects do
   def change_user_story(%UserStory{} = user_story) do
     UserStory.changeset(user_story, %{})
   end
+
+  alias Pelable.WorkProjects.ProjectUserStory
+
+  @doc """
+  Returns the list of workproject_userstory.
+
+  ## Examples
+
+      iex> list_workproject_userstory()
+      [%ProjectUserStory{}, ...]
+
+  """
+  def list_workproject_userstory do
+    Repo.all(ProjectUserStory)
+  end
+
+  @doc """
+  Gets a single project_user_story.
+
+  Raises `Ecto.NoResultsError` if the Project user story does not exist.
+
+  ## Examples
+
+      iex> get_project_user_story!(123)
+      %ProjectUserStory{}
+
+      iex> get_project_user_story!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_project_user_story!(id), do: Repo.get!(ProjectUserStory, id)
+
+  @doc """
+  Creates a project_user_story.
+
+  ## Examples
+
+      iex> create_project_user_story(%{field: value})
+      {:ok, %ProjectUserStory{}}
+
+      iex> create_project_user_story(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_project_user_story(attrs \\ %{}) do
+    %ProjectUserStory{}
+    |> ProjectUserStory.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a project_user_story.
+
+  ## Examples
+
+      iex> update_project_user_story(project_user_story, %{field: new_value})
+      {:ok, %ProjectUserStory{}}
+
+      iex> update_project_user_story(project_user_story, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_project_user_story(%ProjectUserStory{} = project_user_story, attrs) do
+    project_user_story
+    |> ProjectUserStory.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a ProjectUserStory.
+
+  ## Examples
+
+      iex> delete_project_user_story(project_user_story)
+      {:ok, %ProjectUserStory{}}
+
+      iex> delete_project_user_story(project_user_story)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_project_user_story(%ProjectUserStory{} = project_user_story) do
+    Repo.delete(project_user_story)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking project_user_story changes.
+
+  ## Examples
+
+      iex> change_project_user_story(project_user_story)
+      %Ecto.Changeset{source: %ProjectUserStory{}}
+
+  """
+  def change_project_user_story(%ProjectUserStory{} = project_user_story) do
+    ProjectUserStory.changeset(project_user_story, %{})
+  end
 end

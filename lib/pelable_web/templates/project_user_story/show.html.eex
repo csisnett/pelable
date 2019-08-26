@@ -1,0 +1,13 @@
+<h1>Show Project user story</h1>
+
+<ul>
+
+  <li>
+    <strong>Status:</strong>
+    <%= @project_user_story.status %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.project_user_story_path(@conn, :edit, @project_user_story) %></span>
+<span><%= link "Back", to: Routes.project_user_story_path(@conn, :index) %></span>
