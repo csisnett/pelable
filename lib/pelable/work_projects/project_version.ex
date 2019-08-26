@@ -11,9 +11,9 @@ defmodule Pelable.WorkProjects.ProjectVersion do
     field :description, :string
     field :public_status, :string, default: "public"
     field :first?, :boolean
-
+    
     belongs_to :creator, User
-    belongs_to :project_version, ProjectVersion
+    belongs_to :parent, ProjectVersion
     belongs_to :project, Project
     many_to_many :bookmarked_by, User, join_through: "project_version_bookmark"
     many_to_many :user_stories, UserStory, join_through: "project_version_user_story"
