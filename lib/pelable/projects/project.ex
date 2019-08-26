@@ -7,7 +7,7 @@ defmodule Pelable.Projects.Project do
 
   schema "projects" do
     belongs_to :creator, User
-    has_many :project_versions, ProjectVersion
+    has_many :versions, ProjectVersion
     timestamps()
   end
 

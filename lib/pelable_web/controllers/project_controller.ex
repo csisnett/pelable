@@ -3,9 +3,11 @@ defmodule PelableWeb.ProjectController do
 
   alias Pelable.Projects
   alias Pelable.Projects.Project
+  alias Pelable.Repo
+
 
   def index(conn, _params) do
-    projects = Projects.list_projects()
+    projects = Projects.list_projects() |> Repo.preload(:versions)
     render(conn, "index.html", projects: projects)
   end
 
