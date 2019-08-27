@@ -20,9 +20,11 @@ defmodule Pelable.Users.User do
     timestamps()
   end
 
-  def changeset(user \\ %User{}, attrs) do
+  def changeset(user, attrs) do
     user
-    |> cast(attrs, [:username, :email])
-    |> validate_required([:username, :email])
+    |> cast(attrs, [:username, :nickname, :fullname, :email])
+    |> validate_required([:username, :email, :nickname])
+    |> unique_constraint(:username)
+    |> unique_constraint(:email)
   end
 end

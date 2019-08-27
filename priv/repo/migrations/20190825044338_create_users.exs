@@ -13,5 +13,6 @@ defmodule Pelable.Repo.Migrations.CreateUsers do
     end
 
     create unique_index(:users, [:email])
+    create unique_index(:users, [:username])
   end
 end
