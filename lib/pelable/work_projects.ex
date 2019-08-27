@@ -7,6 +7,8 @@ defmodule Pelable.WorkProjects do
   alias Pelable.Repo
 
   alias Pelable.WorkProjects.{ProjectVersion, UserStory, WorkProject}
+  alias WorkProjects
+
   @doc """
   Returns the list of work_projects.
 
@@ -266,7 +268,7 @@ defmodule Pelable.WorkProjects do
   end
 
   def create_user_stories(%{"user_stories" => user_stories}) do
-    Enum.map(user_stories, fn u -> create_user_story(u) end)
+    Enum.map(user_stories, &Pelable.WorkProjects.create_user_story/1)
   end
 
   @doc """
