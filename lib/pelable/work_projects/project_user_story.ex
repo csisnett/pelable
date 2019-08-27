@@ -17,5 +17,8 @@ defmodule Pelable.WorkProjects.ProjectUserStory do
     project_user_story
     |> cast(attrs, [:status])
     |> validate_required([:status])
+    |> foreign_key_constraint(:work_project_id)
+    |> foreign_key_constraint(:user_story_id)
+    |> unique_constraint(:only_one_user_per_work_project, name: :unique_user_work_project)
   end
 end

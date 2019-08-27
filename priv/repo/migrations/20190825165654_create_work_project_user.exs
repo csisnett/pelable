@@ -7,6 +7,7 @@ defmodule Pelable.Repo.Migrations.CreateWorkProjectUser do
       add :work_project_id, references(:work_projects)
     end
 
-    create unique_index(:work_project_user, [:user_id, :work_project_id])
+    create unique_index(:work_project_user, [:user_id, :work_project_id],
+    name: unique_user_work_project)
   end
 end
