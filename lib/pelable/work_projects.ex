@@ -295,7 +295,7 @@ defmodule Pelable.WorkProjects do
     UserStory.changeset(user_story, %{})
   end
 
-  alias Pelable.WorkProjects.ProjectUserStory
+  alias Pelable.WorkProjects.WorkProjectUserStory
 
   @doc """
   Returns the list of workproject_userstory.
@@ -303,11 +303,11 @@ defmodule Pelable.WorkProjects do
   ## Examples
 
       iex> list_workproject_userstory()
-      [%ProjectUserStory{}, ...]
+      [%WorkProjectUserStory{}, ...]
 
   """
   def list_work_project_user_story do
-    Repo.all(ProjectUserStory)
+    Repo.all(WorkProjectUserStory)
   end
 
   @doc """
@@ -318,13 +318,13 @@ defmodule Pelable.WorkProjects do
   ## Examples
 
       iex> get_project_user_story!(123)
-      %ProjectUserStory{}
+      %WorkProjectUserStory{}
 
       iex> get_project_user_story!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_project_user_story!(id), do: Repo.get!(ProjectUserStory, id)
+  def get_project_user_story!(id), do: Repo.get!(WorkProjectUserStory, id)
 
   @doc """
   Creates a project_user_story.
@@ -332,15 +332,15 @@ defmodule Pelable.WorkProjects do
   ## Examples
 
       iex> create_project_user_story(%{field: value})
-      {:ok, %ProjectUserStory{}}
+      {:ok, %WorkProjectUserStory{}}
 
       iex> create_project_user_story(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
   def create_project_user_story(attrs \\ %{}) do
-    %ProjectUserStory{}
-    |> ProjectUserStory.changeset(attrs)
+    %WorkProjectUserStory{}
+    |> WorkProjectUserStory.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -350,31 +350,31 @@ defmodule Pelable.WorkProjects do
   ## Examples
 
       iex> update_project_user_story(project_user_story, %{field: new_value})
-      {:ok, %ProjectUserStory{}}
+      {:ok, %WorkProjectUserStory{}}
 
       iex> update_project_user_story(project_user_story, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_project_user_story(%ProjectUserStory{} = project_user_story, attrs) do
+  def update_project_user_story(%WorkProjectUserStory{} = project_user_story, attrs) do
     project_user_story
-    |> ProjectUserStory.changeset(attrs)
+    |> WorkProjectUserStory.changeset(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Deletes a ProjectUserStory.
+  Deletes a WorkProjectUserStory.
 
   ## Examples
 
       iex> delete_project_user_story(project_user_story)
-      {:ok, %ProjectUserStory{}}
+      {:ok, %WorkProjectUserStory{}}
 
       iex> delete_project_user_story(project_user_story)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_project_user_story(%ProjectUserStory{} = project_user_story) do
+  def delete_project_user_story(%WorkProjectUserStory{} = project_user_story) do
     Repo.delete(project_user_story)
   end
 
@@ -384,10 +384,10 @@ defmodule Pelable.WorkProjects do
   ## Examples
 
       iex> change_project_user_story(project_user_story)
-      %Ecto.Changeset{source: %ProjectUserStory{}}
+      %Ecto.Changeset{source: %WorkProjectUserStory{}}
 
   """
-  def change_project_user_story(%ProjectUserStory{} = project_user_story) do
-    ProjectUserStory.changeset(project_user_story, %{})
+  def change_project_user_story(%WorkProjectUserStory{} = project_user_story) do
+    WorkProjectUserStory.changeset(project_user_story, %{})
   end
 end

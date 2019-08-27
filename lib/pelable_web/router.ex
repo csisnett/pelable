@@ -30,7 +30,7 @@ defmodule PelableWeb.Router do
 
     resources "work_projects", WorkProjectController
     resources "user_stories", UserStoryController
-    resources "project_user_story", ProjectUserStoryController
+    resources "project_user_story", WorkProjectUserStoryController
     resources "projects", ProjectController
     resources "project_versions", ProjectVersionController
     resources "goals", GoalController
