@@ -7,6 +7,8 @@ defmodule Pelable.Projects do
   alias Pelable.Repo
 
   alias Pelable.Projects.Project
+  alias Pelable.WorkProjects
+  alias Pelable.WorkProjects.ProjectVersion
 
   @doc """
   Returns the list of projects.
@@ -50,9 +52,10 @@ defmodule Pelable.Projects do
 
   """
   def create_project(attrs \\ %{}) do
-    %Project{}
-    |> Project.changeset(attrs)
-    |> Repo.insert()
+    {:ok, project} = %Project{} |> Project.changeset(attrs) |> Repo.insert
+    project_version = %ProjectVersion{project_id: project.id}
+    project_version = WorkProjects.create_project_version(project_version, attrs)
+    project
   end
 
   @doc """

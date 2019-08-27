@@ -2,12 +2,16 @@ defmodule PelableWeb.ProjectControllerTest do
   use PelableWeb.ConnCase
 
   alias Pelable.Projects
-
-  @create_attrs %{}
-  @update_attrs %{}
+  alias Pelable.WorkProjects
+  alias Pelable.Repo
+  
+  @create_attrs %{"creator_id" => 1}
+  @update_attrs %{"creator_id" => 2}
   @invalid_attrs %{updated_at: nil}
 
   def fixture(:project) do
+    Pelable.Users.User.changeset(%{"creator_id" => 1,"username" => "carlos", "email" => "a@calr.com"}) |> Repo.insert
+    Pelable.Users.User.changeset(%{"creator_id" => 1,"username" => "carlos2", "email" => "a@ca2lr.com"}) |> Repo.insert
     {:ok, project} = Projects.create_project(@create_attrs)
     project
   end

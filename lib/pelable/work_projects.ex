@@ -148,6 +148,12 @@ defmodule Pelable.WorkProjects do
     |> Repo.insert()
   end
 
+  def create_project_version(%ProjectVersion{} = project_version, %{} = attrs) do
+    project_version
+    |> ProjectVersion.changeset(attrs)
+    |> Repo.insert()
+  end
+
   @doc """
   Updates a project_version.
 
