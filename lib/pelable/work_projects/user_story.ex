@@ -2,12 +2,13 @@ defmodule Pelable.WorkProjects.UserStory do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Pelable.WorkProjects.{ProjectVersion, UserStory}
+  alias Pelable.WorkProjects.{ProjectVersion, UserStory, WorkProject}
 
   schema "user_stories" do
     field :body, :string
 
     many_to_many :project_version, ProjectVersion, join_through: "project_version_user_story"
+    many_to_many :work_projects, WorkProject, join_through: "work_project_user_story"
     timestamps()
   end
 
