@@ -242,10 +242,31 @@ defmodule Pelable.WorkProjects do
       {:error, %Ecto.Changeset{}}
 
   """
+
+  def get_insert_user_story(changeset, true) do
+    existing_user_story = Repo.get_by(UserStory, body: changeset.changes.body)
+
+    case existing_user_story do
+      nil -> Repo.insert(changeset)
+      user_story -> user_story
+    end
+  end
+
+  def get_insert_user_story(changeset, false) do
+    {:error, changeset}
+  end
+
   def create_user_story(attrs \\ %{}) do
-    %UserStory{}
-    |> UserStory.changeset(attrs)
-    |> Repo.insert()
+    changeset = %UserStory{} |> UserStory.changeset(attrs)
+    
+    case get_insert_user_story(changeset, changeset.valid?) do
+      {:ok, u} -> u
+      u -> u
+    end
+  end
+
+  def create_user_stories(%{"user_stories" => user_stories}) do
+    Enum.map(user_stories, fn u -> create_user_story(u) end)
   end
 
   @doc """
