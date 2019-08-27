@@ -14,7 +14,8 @@ defmodule Pelable.Projects.Project do
   @doc false
   def changeset(project, attrs) do
     project
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:creator_id])
+    |> validate_required([:creator_id])
+    |> foreign_key_constraint(:creator_id)
   end
 end
