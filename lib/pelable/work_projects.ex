@@ -156,6 +156,19 @@ defmodule Pelable.WorkProjects do
     |> Repo.insert()
   end
 
+  # %{"creator_id", %{"project_version_id"}} -> %ProjectVersion
+  # gets a request from a user returns a new project version with the previous one as parent
+  def fork_project_version(%{} = attrs) do
+    project_version_id = Map.get(attrs, "project_version_id")
+    creator_id = Map.get(attrs, "creator_id")
+
+    project_version = get_project_version!(project_version_id) |> Repo.preload([:creator, :parent, :project, :bookmarked_by, :user_stories])
+    new_project_version = %{} |> Map.put("name", project_version.name) |> Map.put("description", project_version.description) |> Map.put("public_status", project_version.public_status) |> Map.put("creator_id", creator_id) |> Map.put("first?", false) |> Map.put("parent_id", project_version.id) 
+    {:ok, new_project_version} = create_project_version(new_project_version)
+    user_stories_changeset = new_project_version |> Repo.preload([:user_stories]) |> Ecto.Changeset.change |> Ecto.Changeset.put_assoc(:user_stories, project_version.user_stories)
+    Repo.update(user_stories_changeset)
+  end
+
   @doc """
   Updates a project_version.
 
