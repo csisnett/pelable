@@ -7,6 +7,6 @@ defmodule Pelable.Repo.Migrations.CreateUserStories do
 
       timestamps()
     end
-
+    create unique_index(:user_stories, [:body])
   end
 end
