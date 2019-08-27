@@ -16,5 +16,6 @@ defmodule Pelable.Learn.Goal do
     goal
     |> cast(attrs, [:title])
     |> validate_required([:title])
+    |> unique_constraint(:title)
   end
 end

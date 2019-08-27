@@ -7,6 +7,6 @@ defmodule Pelable.Repo.Migrations.CreateGoals do
 
       timestamps()
     end
-
+    create unique_index(:goals, [:title])
   end
 end
