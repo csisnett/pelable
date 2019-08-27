@@ -16,6 +16,6 @@ defmodule Pelable.WorkProjects.UserStory do
     user_story
     |> cast(attrs, [:body])
     |> validate_required([:body])
-    |> unique_constraint(:uuid)
+    |> unique_constraint(:body)
   end
 end
