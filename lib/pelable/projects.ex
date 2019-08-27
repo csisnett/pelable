@@ -54,8 +54,13 @@ defmodule Pelable.Projects do
   def create_project(attrs \\ %{}) do
     {:ok, project} = %Project{} |> Project.changeset(attrs) |> Repo.insert
     project_version = %ProjectVersion{project_id: project.id}
-    project_version = WorkProjects.create_project_version(project_version, attrs)
-    project
+    {:ok, project_version} = WorkProjects.create_project_version(project_version, attrs)
+    user_stories = WorkProjects.create_user_stories(attrs)
+    project_version = Repo.preload(project_version, [:user_stories])
+    project_version_changeset = Ecto.Changeset.change(project_version)
+    user_stories_project_version_changeset = project_version_changeset |> Ecto.Changeset.put_assoc(:user_stories, user_stories)
+    new_project_version = Repo.update(user_stories_project_version_changeset)
+    project |> Repo.preload(:versions)
   end
 
   @doc """
