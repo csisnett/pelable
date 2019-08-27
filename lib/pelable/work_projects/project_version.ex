@@ -25,5 +25,7 @@ defmodule Pelable.WorkProjects.ProjectVersion do
     project_version
     |> cast(attrs, [:description, :name, :public_status, :first?])
     |> validate_required([:description, :name, :public_status, :first?])
+    |> foreign_key_constraint(:creator_id)
+    |> foreign_key_constraint(:project_id)
   end
 end
