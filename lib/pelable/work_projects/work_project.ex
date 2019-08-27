@@ -23,5 +23,7 @@ defmodule Pelable.WorkProjects.WorkProject do
     work_project
     |> cast(attrs, [:repo_url, :work_status, :public_status, :start_date, :end_date, :description])
     |> validate_required([:repo_url, :work_status, :public_status, :start_date, :end_date, :description])
+    |> foreign_key_constraint(:creator_id)
+    |> foreign_key_constraint(:project_version_id)
   end
 end
