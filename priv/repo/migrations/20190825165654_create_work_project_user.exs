@@ -8,6 +8,6 @@ defmodule Pelable.Repo.Migrations.CreateWorkProjectUser do
     end
 
     create unique_index(:work_project_user, [:user_id, :work_project_id],
-    name: unique_user_work_project)
+    name: :unique_user_work_project)
   end
 end
