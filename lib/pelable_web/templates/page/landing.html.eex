@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Blue Template</title>
+    <title>Pelable Landing Page</title>
     <link href="https://fonts.googleapis.com/css?family=Oxygen:400,700|Arimo:400,700" rel="stylesheet">
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/blue/dist/css/style.css")%>">
     <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"></script>
@@ -17,7 +17,7 @@
                     <div class="brand header-brand">
                         <h1 class="m-0">
                             <a href="#">
-                                <img src="<%= Routes.static_path(@conn, "/blue/dist/images/logo.svg") %>" alt="Blue logo">
+                                <img src="<%= Routes.static_path(@conn, "/images/100icon.png") %>" alt="Pelable logo">
                             </a>
                         </h1>
                     </div>
@@ -32,10 +32,10 @@
                 <div class="container">
                     <div class="hero-inner">
 						<div class="hero-copy">
-	                        <h1 class="hero-title mt-0 is-revealing">Stuck in tutorial Purgatory?</h1>
+	                        <h1 class="hero-title mt-0 is-revealing">Stuck in Tutorial Purgatory?</h1>
 	                        <p class="hero-paragraph is-revealing"> Level up your coding skills.</p>
 	                        <p class="hero-cta mb-0 is-revealing">
-								<a class="button button-primary button-shadow" href="#"> Join the waitlist</a>
+								<a class="button button-primary button-shadow" href="#"> Join the waiting list</a>
 							</p>
 						</div>
 						<div class="hero-illustration">
@@ -55,7 +55,7 @@
                                     <img src="<%= Routes.static_path(@conn, "/blue/dist/images/freecodecamp1.png") %>" alt="FreeCodeCamp logo">
                                 </li>
                                 <li class="is-revealing">
-                                    <img src="http://resources.wwps.org/prospectpoint/allresources/code/codeAcademy.png" alt="CodeAcademy logo">
+                                    <img src="<%= Routes.static_path(@conn, "/images/codeAcademy.png") %>" alt="CodeAcademy logo">
                                 </li>
                             
 								
@@ -71,7 +71,7 @@
 						<div class="features-header text-center">
 							<div class="container-sm">
 								<h2 class="section-title mt-0">Meet Pelable</h2>
-								<p class="section-paragraph mb-0">Pelable is a community of amazing programmers who are developing projects and getting real experience.</p>
+								<p class="section-paragraph mb-0">Pelable is a community of passionate programmers who are developing projects and getting real experience.</p>
 							</div>
 						</div>
                         <div class="features-wrap">
@@ -90,7 +90,7 @@
                                         <img src="<%= Routes.static_path(@conn, "/blue/dist/images/feature-icon-02.svg") %>" alt="Feature 02">
                                     </div>
                                     <h4 class="feature-title">Start Working</h4>
-                                    <p class="text-sm">Setup your git repository and start developing</p>
+                                    <p class="text-sm">Set up your git repository and start developing</p>
                                 </div>
                             </div>
                             <div class="feature is-revealing">
@@ -162,204 +162,14 @@
                 </div>
             </section>
 
-			<section class="testimonials section">
-				<div class="container">
-					<div class="testimonials-inner section-inner">
-						<div class="testimonials-header text-center text-light">
-							<h2 class="section-title mt-0">Testimonials</h2>
-						</div>
-						<div class="testimonials-wrap">
-							<div class="testimonial text-sm is-revealing">
-								<div class="testimonial-inner">
-									<div class="testimonial-main">
-										<div class="testimonial-body">
-											<p>I’ve read a ton of blog posts about how some startups hit this milestone with ease. They came up with an amazing idea that “just clicked”, made!</p>
-										</div>
-									</div>
-									<div class="testimonial-footer">
-										<div class="testimonial-name"><a href="#">@mikesmith</a></div>
-									</div>
-								</div>
-							</div>
-							<div class="testimonial text-sm is-revealing">
-								<div class="testimonial-inner">
-									<div class="testimonial-main">
-										<div class="testimonial-body">
-											<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eleifend donec pretium vulputate sapien. Quisque egestas diam in arcu cursus euismod quis.</p>
-										</div>
-									</div>
-									<div class="testimonial-footer">
-										<div class="testimonial-name"><a href="#">@mikesmith</a></div>
-									</div>
-								</div>
-							</div>
-							<div class="testimonial text-sm is-revealing">
-								<div class="testimonial-inner">
-									<div class="testimonial-main">
-										<div class="testimonial-body">
-											<p>I’ve read a ton of blog posts about how some startups hit this milestone with ease. They came up with an amazing idea that “just clicked”, made!</p>
-										</div>
-									</div>
-									<div class="testimonial-footer">
-										<div class="testimonial-name"><a href="#">@mikesmith</a></div>
-									</div>
-								</div>
-							</div>
-							<div class="testimonial text-sm is-revealing">
-								<div class="testimonial-inner">
-									<div class="testimonial-main">
-										<div class="testimonial-body">
-											<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eleifend donec pretium vulputate sapien. Quisque egestas diam in arcu cursus euismod quis.</p>
-										</div>
-									</div>
-									<div class="testimonial-footer">
-										<div class="testimonial-name"><a href="#">@mikesmith</a></div>
-									</div>
-								</div>
-							</div>
-							<div class="testimonial text-sm is-revealing">
-								<div class="testimonial-inner">
-									<div class="testimonial-main">
-										<div class="testimonial-body">
-											<p>I’ve read a ton of blog posts about how some startups hit this milestone with ease. They came up with an amazing idea that “just clicked”, made!</p>
-										</div>
-									</div>
-									<div class="testimonial-footer">
-										<div class="testimonial-name"><a href="#">@mikesmith</a></div>
-									</div>
-								</div>
-							</div>
-							<div class="testimonial text-sm is-revealing">
-								<div class="testimonial-inner">
-									<div class="testimonial-main">
-										<div class="testimonial-body">
-											<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eleifend donec pretium vulputate sapien. Quisque egestas diam in arcu cursus euismod quis.</p>
-										</div>
-									</div>
-									<div class="testimonial-footer">
-										<div class="testimonial-name"><a href="#">@mikesmith</a></div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-
-            <section class="pricing section">
-                <div class="container">
-                    <div class="pricing-inner section-inner">
-                        <h2 class="section-title mt-0 text-center">Pricing</h2>
-						<div>
-							<div class="pricing-tables-wrap">
-								<div class="pricing-table is-revealing">
-									<div class="pricing-table-inner">
-										<div class="pricing-table-main">
-											<div class="pricing-table-header mb-24 pb-24">
-												<div class="pricing-table-title h4 mt-0 mb-16">Startup</div>
-												<div class="pricing-table-price"><span class="pricing-table-price-currency">$</span><span class="pricing-table-price-amount h1">29</span>/m</div>
-											</div>
-											<ul class="pricing-table-features list-reset text-xs">
-												<li>
-													<span>Lorem ipsum dolor sit amet</span>
-												</li>
-												<li>
-													<span>Lorem ipsum dolor sit amet</span>
-												</li>
-												<li>
-													<span>Lorem ipsum dolor sit amet</span>
-												</li>
-												<li>
-													<span>Lorem ipsum dolor sit amet</span>
-												</li>
-											</ul>
-										</div>
-										<div class="pricing-table-cta">
-											<a class="button button-secondary button-shadow button-block" href="#">Get started</a>
-										</div>
-									</div>
-								</div>
-								<div class="pricing-table is-revealing">
-									<div class="pricing-table-inner">
-										<div class="pricing-table-main">
-											<div class="pricing-table-header mb-24 pb-24">
-												<div class="pricing-table-title h4 mt-0 mb-16">Enterprise</div>
-												<div class="pricing-table-price"><span class="pricing-table-price-currency">$</span><span class="pricing-table-price-amount h1">49</span>/m</div>
-											</div>
-											<ul class="pricing-table-features list-reset text-xs">
-												<li>
-													<span>Lorem ipsum dolor sit amet</span>
-												</li>
-												<li>
-													<span>Lorem ipsum dolor sit amet</span>
-												</li>
-												<li>
-													<span>Lorem ipsum dolor sit amet</span>
-												</li>
-												<li>
-													<span>Lorem ipsum dolor sit amet</span>
-												</li>
-											</ul>
-										</div>
-										<div class="pricing-table-cta">
-											<a class="button button-primary button-shadow button-block" href="#">Get started</a>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="pricing-faqs container-sm is-revealing">
-							<h4 class="mt-40 mb-32">FAQs</h4>
-	                        <ul class="accordion">
-	                            <li>
-	                                <div class="accordion-title">
-										<span>In a professional context it often happens that private?</span>
-										<div class="accordion-icon"></div>
-									</div>
-	                                <div class="accordion-body">
-	                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
-	                                </div>
-	                            </li>
-								<li>
-									<div class="accordion-title">
-										<span>Lorem ipsum dolor sit amet, consectetur</span>
-										<div class="accordion-icon"></div>
-									</div>
-									<div class="accordion-body">
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam. Ut enim ad minim veniam semper. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-									</div>
-								</li>
-								<li>
-									<div class="accordion-title">
-										<span>In a professional context it often happens that private?</span>
-										<div class="accordion-icon"></div>
-									</div>
-									<div class="accordion-body">
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
-									</div>
-								</li>
-								<li>
-									<div class="accordion-title">
-										<span>Lorem ipsum dolor sit amet, consectetur</span>
-										<div class="accordion-icon"></div>
-									</div>
-									<div class="accordion-body">
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam. Ut enim ad minim veniam semper. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-									</div>
-								</li>
-	                        </ul>
-						</div>
-                    </div>
-                </div>
-            </section>
-
 			<section class="cta section">
 				<div class="container">
 					<div class="cta-inner section-inner is-revealing">
-						<h3 class="section-title mt-0">Still not convinced?</h3>
+						<h3 class="section-title mt-0">Be part of our community (It's free) </h3>
 						<div class="cta-cta">
-							<a class="button button-primary button-shadow" href="#">Schedule a live demo</a>
+							<a class="button button-primary button-shadow" href="https://forms.gle/zeGzWMYR76EG4CwP6">Join the waiting list</a>
 						</div>
+						
 					</div>
 				</div>
 			</section>
@@ -370,26 +180,19 @@
                 <div class="site-footer-inner">
                     <div class="brand footer-brand">
                         <a href="#">
-                            <img src="<%= Routes.static_path(@conn, "/blue/dist/images/logo.svg") %>" alt="Blue logo">
+                            <img src="<%= Routes.static_path(@conn, "/images/side.png") %>" alt="Pelable logo">
                         </a>
                     </div>
                     <ul class="footer-links list-reset">
                         <li>
-                            <a href="#">Contact</a>
+						Have any questions? Contact us at
+                            <a href="mailto:carlos@pelable.com">carlos@pelable.com</a>
                         </li>
-                        <li>
-                            <a href="#">About us</a>
-                        </li>
-                        <li>
-                            <a href="#">FAQ's</a>
-                        </li>
-                        <li>
-                            <a href="#">Support</a>
-                        </li>
+                      
                     </ul>
                     <ul class="footer-social-links list-reset">
                         <li>
-                            <a href="#">
+                            <a href="https://facebook.com">
                                 <span class="screen-reader-text">Facebook</span>
                                 <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M6.023 16L6 9H3V6h3V4c0-2.7 1.672-4 4.08-4 1.153 0 2.144.086 2.433.124v2.821h-1.67c-1.31 0-1.563.623-1.563 1.536V6H13l-1 3H9.28v7H6.023z" fill="#FFF"/>
@@ -413,7 +216,7 @@
                             </a>
                         </li>
                     </ul>
-                    <div class="footer-copyright">&copy; 2018 Blue, all rights reserved</div>
+                    <div class="footer-copyright">&copy; 2019 Pelable, all rights reserved</div>
                 </div>
             </div>
         </footer>
