@@ -51,6 +51,8 @@ defmodule Pelable.Projects do
       {:error, %Ecto.Changeset{}}
 
   """
+  #%{"creator_id", "description", "name", "public_status", "user_stories" => [%{body => "do X", %{"body" => "do Y"}}] } -> 
+    # %Project{} _ %ProjectVersion _ %UserStory{}s 
   def create_project(attrs \\ %{}) do
     {:ok, project} = %Project{} |> Project.changeset(attrs) |> Repo.insert
     project_version = %ProjectVersion{project_id: project.id}

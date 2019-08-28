@@ -4,4 +4,9 @@ defmodule PelableWeb.PageController do
   def index(conn, _params) do
     render(conn, "index.html")
   end
+
+  def landing(conn, _params) do
+    conn = put_layout conn, false
+    render(conn, "landing.html")
+  end
 end

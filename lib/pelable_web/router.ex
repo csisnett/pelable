@@ -34,6 +34,7 @@ defmodule PelableWeb.Router do
     resources "projects", ProjectController
     resources "project_versions", ProjectVersionController
     resources "goals", GoalController
+    get "/landing", PageController, :landing
 
     get "/", PageController, :index
   end
