@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pelable Landing Page</title>
     <link href="https://fonts.googleapis.com/css?family=Oxygen:400,700|Arimo:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/blue/dist/css/style.css")%>">
+    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/style.css")%>">
     <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"></script>
 </head>
 <body class="is-boxed has-animations">
@@ -52,7 +52,7 @@
                             <ul class="list-reset mb-0">
 							
                                 <li class="is-revealing">
-                                    <img src="<%= Routes.static_path(@conn, "/blue/dist/images/freecodecamp1.png") %>" alt="FreeCodeCamp logo">
+                                    <img src="<%= Routes.static_path(@conn, "/images/freecodecamp1.png") %>" alt="FreeCodeCamp logo">
                                 </li>
                                 <li class="is-revealing">
                                     <img src="<%= Routes.static_path(@conn, "/images/codeAcademy.png") %>" alt="CodeAcademy logo">
@@ -78,7 +78,7 @@
                             <div class="feature is-revealing">
                                 <div class="feature-inner">
                                     <div class="feature-icon">
-                                        <img src="<%= Routes.static_path(@conn, "/blue/dist/images/feature-icon-01.svg") %>" alt="Feature 01">
+                                        <img src="<%= Routes.static_path(@conn, "/images/feature-icon-01.svg") %>" alt="Feature 01">
                                     </div>
                                     <h4 class="feature-title">Choose a Project</h4>
                                     <p class="text-sm">Select your first project from our catalog</p>
@@ -87,7 +87,7 @@
                             <div class="feature is-revealing">
                                 <div class="feature-inner">
                                     <div class="feature-icon">
-                                        <img src="<%= Routes.static_path(@conn, "/blue/dist/images/feature-icon-02.svg") %>" alt="Feature 02">
+                                        <img src="<%= Routes.static_path(@conn, "/images/feature-icon-02.svg") %>" alt="Feature 02">
                                     </div>
                                     <h4 class="feature-title">Start Working</h4>
                                     <p class="text-sm">Set up your git repository and start developing</p>
@@ -123,19 +123,19 @@
 							<ul class="tabs-links">
 								<li class="is-revealing">
 									<a href="#tab-1" class="tab-link is-active">
-										<img src="<%= Routes.static_path(@conn, "/blue/dist/images/tabs-icon-01.svg") %>" alt="Tabs icon 01">
+										<img src="<%= Routes.static_path(@conn, "/images/tabs-icon-01.svg") %>" alt="Tabs icon 01">
 										<span class="h4 m-0">Get Inspired</span>
 									</a>
 								</li>
 								<li class="is-revealing">
 									<a href="#tab-2" class="tab-link">
-										<img src="<%= Routes.static_path(@conn, "/blue/dist/images/tabs-icon-02.svg") %>" alt="Tabs icon 02">
+										<img src="<%= Routes.static_path(@conn, "/images/tabs-icon-02.svg") %>" alt="Tabs icon 02">
 										<span class="h4 m-0">Create a Project</span>
 									</a>
 								</li>
 								<li class="is-revealing">
 									<a href="#tab-3" class="tab-link">
-										<img src="<%= Routes.static_path(@conn, "/blue/dist/images/tabs-icon-03.svg") %>" alt="Tabs icon 03">
+										<img src="<%= Routes.static_path(@conn, "/images/tabs-icon-03.svg") %>" alt="Tabs icon 03">
 										<span class="h4 m-0">Join the Conversation</span>
 									</a>
 								</li>
@@ -222,6 +222,6 @@
         </footer>
     </div>
 
-    <script src="<%= Routes.static_path(@conn, "/blue/dist/js/main.min.js") %>"></script>
+    <script src="<%= Routes.static_path(@conn, "/js/main.min.js") %>"></script>
 </body>
 </html>
