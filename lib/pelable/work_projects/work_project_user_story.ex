@@ -3,7 +3,7 @@ defmodule Pelable.WorkProjects.WorkProjectUserStory do
   import Ecto.Changeset
 
   schema "work_project_user_story" do
-    field :status, :string
+    field :status, :string, default: "not started"
     field :work_project_id, :id
     field :user_story_id, :id
 

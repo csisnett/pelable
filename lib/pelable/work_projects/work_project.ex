@@ -8,10 +8,10 @@ defmodule Pelable.WorkProjects.WorkProject do
   schema "work_projects" do
     field :description, :string
     field :end_date, :utc_datetime
-    field :public_status, :string
+    field :public_status, :string, default: "public"
     field :repo_url, :string
     field :start_date, :utc_datetime
-    field :work_status, :string
+    field :work_status, :string, default: "not started"
 
     belongs_to :creator, User
     belongs_to :project_version, ProjectVersion

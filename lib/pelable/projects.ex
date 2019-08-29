@@ -52,7 +52,8 @@ defmodule Pelable.Projects do
 
   """
   #%{"creator_id", "description", "name", "public_status", "user_stories" => [%{body => "do X", %{"body" => "do Y"}}] } -> 
-    # %Project{} _ %ProjectVersion _ %UserStory{}s 
+    #  -> %Project{} & %ProjectVersion & %UserStory{}s 
+  # %{"creator_id" => 1, "description" => "a project", "name" => "mi prmero", "public_status" => "public", "first?" => true, "user_stories" => [%{"body" => "hola"}, %{"body" => "waa"}, %{"body" => "amen"}]}
   def create_project(attrs \\ %{}) do
     {:ok, project} = %Project{} |> Project.changeset(attrs) |> Repo.insert
     project_version = %ProjectVersion{project_id: project.id}
