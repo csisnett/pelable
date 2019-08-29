@@ -11,3 +11,6 @@ mix phx.digest
 # Remove the existing release directory and build the release
 rm -rf "_build"
 MIX_ENV=prod mix release
+
+#for auto dB migration upon deploy
+MIX_ENV=prod mix ecto.migrate
