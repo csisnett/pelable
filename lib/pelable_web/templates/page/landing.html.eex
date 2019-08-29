@@ -35,7 +35,7 @@
 	                        <h1 class="hero-title mt-0 is-revealing">Stuck in Tutorial Purgatory?</h1>
 	                        <p class="hero-paragraph is-revealing"> Level up your coding skills.</p>
 	                        <p class="hero-cta mb-0 is-revealing">
-								<a class="button button-primary button-shadow" href="#"> Join the waiting list</a>
+								<a class="button button-primary button-shadow" href="https://forms.gle/zeGzWMYR76EG4CwP6"> Join the waiting list</a>
 							</p>
 						</div>
 						<div class="hero-illustration">
@@ -96,7 +96,7 @@
                             <div class="feature is-revealing">
                                 <div class="feature-inner">
                                     <div class="feature-icon">
-                                        <img src="<%= Routes.static_path(@conn, "/blue/dist/images/feature-icon-03.svg") %>" alt="Feature 03">
+                                        <img src="<%= Routes.static_path(@conn, "/images/feature-icon-03.svg") %>" alt="Feature 03">
                                     </div>
                                     <h4 class="feature-title">Track your Progress</h4>
                                     <p class="text-sm">Checkmark your completed user stories</p>
@@ -105,7 +105,7 @@
                             <div class="feature is-revealing">
                                 <div class="feature-inner">
                                     <div class="feature-icon">
-                                        <img src="<%= Routes.static_path(@conn, "/blue/dist/images/feature-icon-04.svg") %>" alt="Feature 04">
+                                        <img src="<%= Routes.static_path(@conn, "/images/feature-icon-04.svg") %>" alt="Feature 04">
                                     </div>
                                     <h4 class="feature-title">Show it to the World</h4>
                                     <p class="text-sm">Deploy your project and receive feedback from the community</p>
