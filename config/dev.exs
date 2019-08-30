@@ -72,4 +72,5 @@ config :pelable, Pelable.Repo,
   password: "postgres",
   database: "pelable_dev",
   hostname: "localhost",
+  ssl: true,
   pool_size: 10

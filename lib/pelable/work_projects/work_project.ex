@@ -24,7 +24,7 @@ defmodule Pelable.WorkProjects.WorkProject do
   def changeset(work_project, attrs) do
     work_project
     |> cast(attrs, [:creator_id, :work_status, :public_status, :start_date, :end_date, :description, :project_version_id])
-    |> validate_required([:creator_id, :work_status, :public_status, :project_version_id])
+    |> validate_required([:creator_id, :work_status, :public_status, :start_date, :project_version_id])
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:project_version_id)
   end
