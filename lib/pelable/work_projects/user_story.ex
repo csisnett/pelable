@@ -5,9 +5,7 @@ defmodule Pelable.WorkProjects.UserStory do
   alias Pelable.WorkProjects.{ProjectVersion, UserStory, WorkProject}
 
   schema "user_stories" do
-    field :body, :string
-
-    many_to_many :project_version, ProjectVersion, join_through: "project_version_user_story"
+    field :title, :string
     many_to_many :work_projects, WorkProject, join_through: "work_project_user_story"
     timestamps()
   end
@@ -15,8 +13,8 @@ defmodule Pelable.WorkProjects.UserStory do
   @doc false
   def changeset(user_story, attrs) do
     user_story
-    |> cast(attrs, [:body])
-    |> validate_required([:body])
-    |> unique_constraint(:body)
+    |> cast(attrs, [:title])
+    |> validate_required([:title])
+    |> unique_constraint(:title)
   end
 end

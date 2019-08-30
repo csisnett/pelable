@@ -3,6 +3,7 @@ defmodule Pelable.Repo.Migrations.CreateWorkProjects do
 
   def change do
     create table(:work_projects) do
+      add :name, :string
       add :repo_url, :string
       add :work_status, :string
       add :public_status, :string

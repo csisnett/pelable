@@ -2,10 +2,10 @@ defmodule Pelable.Repo.Migrations.CreateProjectVersionBookmark do
   use Ecto.Migration
 
   def change do
-    create table(:project_version_bookmark) do
+    create table(:project_bookmark) do
       add :user_id, references(:users)
-      add :project_version_id, references(:project_versions)
+      add :work_project_id, references(:work_projects)
     end
-    create unique_index(:project_version_bookmark, [:user_id, :project_version_id])
+    create unique_index(:project_bookmark, [:user_id, :work_project_id])
   end
 end

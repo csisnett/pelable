@@ -3,10 +3,10 @@ defmodule Pelable.Repo.Migrations.CreateUserStories do
 
   def change do
     create table(:user_stories) do
-      add :body, :text
+      add :title, :text
 
       timestamps()
     end
-    create unique_index(:user_stories, [:body])
+    create unique_index(:user_stories, [:title])
   end
 end
