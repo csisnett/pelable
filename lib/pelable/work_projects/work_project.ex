@@ -3,7 +3,7 @@ defmodule Pelable.WorkProjects.WorkProject do
   import Ecto.Changeset
 
   alias Pelable.Users.User
-  alias Pelable.WorkProjects.{WorkProject, ProjectVersion}
+  alias Pelable.WorkProjects.{WorkProject, ProjectVersion, UserStory}
 
   schema "work_projects" do
     field :description, :string
@@ -15,14 +15,15 @@ defmodule Pelable.WorkProjects.WorkProject do
 
     belongs_to :creator, User
     belongs_to :project_version, ProjectVersion
+    many_to_many :user_stories, UserStory, join_through: "work_project_user_story"
     timestamps()
   end
 
   @doc false
   def changeset(work_project, attrs) do
     work_project
-    |> cast(attrs, [:repo_url, :work_status, :public_status, :start_date, :end_date, :description])
-    |> validate_required([:repo_url, :work_status, :public_status, :start_date, :end_date, :description])
+    |> cast(attrs, [:repo_url, :work_status, :public_status, :start_date, :end_date, :description, :project_version_id])
+    |> validate_required([:repo_url, :work_status, :public_status, :start_date, :end_date, :description, :project_version_id])
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:project_version_id)
   end

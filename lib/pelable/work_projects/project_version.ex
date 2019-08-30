@@ -3,12 +3,13 @@ defmodule Pelable.WorkProjects.ProjectVersion do
   import Ecto.Changeset
 
   alias Pelable.Users.User
-  alias Pelable.WorkProjects.{ProjectVersion, UserStory, WorkProject}
+  alias Pelable.WorkProjects.{ProjectVersion, WorkProject}
 
   schema "project_versions" do
-    field :first? :boolean, default: true
-    field :added_by :user, User
+    field :first?, :boolean, default: true
+    
     has_many :work_projects, WorkProject
+    belongs_to :added_by, User
     belongs_to :parent, ProjectVersion
     timestamps()
   end
