@@ -15,7 +15,7 @@ defmodule Pelable.Users.User do
     
     many_to_many :goals, Goal, join_through: "user_goal"
     many_to_many :work_projects, WorkProject, join_through: "work_project_user"
-    many_to_many :project_bookmarks, ProjectVersion, join_through: "project_version_bookmark"
+    many_to_many :project_bookmarks, WorkProject, join_through: "project_bookmark"
     pow_user_fields()
     timestamps()
   end
@@ -23,7 +23,7 @@ defmodule Pelable.Users.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:username, :nickname, :fullname, :email])
-    |> validate_required([:username, :email, :nickname])
+    |> validate_required([:username, :email])
     |> unique_constraint(:username)
     |> unique_constraint(:email)
   end

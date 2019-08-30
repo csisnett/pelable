@@ -53,10 +53,12 @@ defmodule Pelable.Projects do
   """
   #%{"creator_id", "description", "name", "public_status", "user_stories" => [%{body => "do X", %{"body" => "do Y"}}] } -> 
     #  -> %Project{} & %ProjectVersion & %UserStory{}s 
-  # %{"creator_id" => 1, "description" => "a project", "name" => "mi prmero", "public_status" => "public", "first?" => true, "user_stories" => [%{"body" => "hola"}, %{"body" => "waa"}, %{"body" => "amen"}]}
+  # %{"added_by_id" => 1, "repo_url" =>  "description" => "a project", "name" => "mi prmero", "public_status" => "public", "first?" => true, "user_stories" => [%{"body" => "hola"}, %{"body" => "waa"}, %{"body" => "amen"}]}
   def create_project(attrs \\ %{}) do
     #{:ok, project} = %Project{} |> Project.changeset(attrs) |> Repo.insert
     #project_version = %ProjectVersion{project_id: project.id}
+    user_id = Map.get(attrs, "user_id")
+    attrs = Map.put(attrs, "creator_id", user_id) |> Map.put("added_by_id", user_id)
     {:ok, project_version} = WorkProjects.create_project_version(attrs)
     attrs = Map.put(attrs, "project_version_id", project_version.id)
     {:ok, work_project} = WorkProjects.create_work_project(attrs)

@@ -17,8 +17,8 @@ defmodule Pelable.WorkProjects.ProjectVersion do
   @doc false
   def changeset(project_version, attrs) do
     project_version
-    |> cast(attrs, [:first?, :parent_id])
-    |> validate_required([:creator_id])
-    |> foreign_key_constraint(:creator_id)
+    |> cast(attrs, [:first?, :parent_id, :added_by_id])
+    |> validate_required([:added_by_id, :first?])
+    |> foreign_key_constraint(:added_by_id)
   end
 end
