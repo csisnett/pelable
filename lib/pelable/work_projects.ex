@@ -75,6 +75,32 @@ defmodule Pelable.WorkProjects do
     |> Repo.update()
   end
 
+  # %{user_id, id} -> %WorkProject{} || {:error, message}
+  # Verifies the user_id can start this project and if so sends data down the pipeline
+  def start_work_project(%{} = attrs) do
+    id = Map.get(attrs, "id")
+    work_project = get_work_project!(id)
+    user_id = Map.get(attrs, "user_id")
+    if work_project.creator_id == user_id do
+      start_work_project(work_project, attrs)
+
+    else
+      {:error, "User is not authorized to start this project"}
+
+    end
+  end
+
+  # %WorkProject, %{} -> %WorkProject{}
+  # Updates workproject with Id, start_date to utc_now and work_status to "started"
+  def start_work_project(%WorkProject{} = work_project, _attrs) do
+    
+    current_date = DateTime.utc_now
+    work_status = "started"
+    params = Map.put(%{}, "start_date", current_date) |> Map.put("work_status", work_status)
+    {:ok, work_project} = update_work_project(work_project, params)
+    work_project
+  end
+
   @doc """
   Deletes a WorkProject.
 
@@ -153,7 +179,7 @@ defmodule Pelable.WorkProjects do
 
   def create_work_project_version(attrs = %{}) do
     user_id = Map.get(attrs, "user_id")
-    attrs = Map.put(attrs, "creator_id", user_id) |> Map.put("added_by_id", user_id)
+    attrs = Map.put(attrs, "creator_id", user_id)
     {:ok, project_version} = create_project_version(attrs)
     attrs = Map.put(attrs, "project_version_id", project_version.id)
     {:ok, work_project} = create_work_project(attrs)
