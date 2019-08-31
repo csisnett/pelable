@@ -75,23 +75,31 @@ defmodule Pelable.WorkProjects do
     |> Repo.update()
   end
 
+  #%{"user_id", "work_project_id"} -> %WorkProject
+  # Forks(Copies) the work_project with the id given, creates a new %WorkProject{} and then it starts it
+  def fork_and_start_work_project(%{"user_id" => user_id, "work_project_id" => _old_work_project_id} = attrs) do
+    work_project = fork_work_project(attrs)
+    attrs = Map.put(attrs, "work_project_id", work_project.id)
+    start_work_project(attrs)
+  end
+
   # %{user_id, id} -> %WorkProject{} || {:error, message}
   # Verifies the user_id can start this project and if so sends data down the pipeline
-  def start_work_project(%{} = attrs) do
-    id = Map.get(attrs, "id")
-    work_project = get_work_project!(id)
-    user_id = Map.get(attrs, "user_id")
+  def start_work_project(%{"work_project_id" => work_project_id, "user_id" => user_id} = attrs) do
+    work_project = get_work_project!(work_project_id)
+
     if work_project.creator_id == user_id do
       start_work_project(work_project, attrs)
 
     else
-      {:error, "User is not authorized to start this project"}
+      {:error, "You're not the owner of this project, If you would like to work on it click press and fork"}
 
     end
   end
 
   # %WorkProject, %{} -> %WorkProject{}
   # Updates workproject with Id, start_date to utc_now and work_status to "started"
+  # Internal only
   def start_work_project(%WorkProject{} = work_project, _attrs) do
     
     current_date = DateTime.utc_now
@@ -177,7 +185,7 @@ defmodule Pelable.WorkProjects do
     |> Repo.insert()
   end
 
-  def create_work_project_version(attrs = %{}) do
+  def create_project_version_assoc(attrs = %{}) do
     user_id = Map.get(attrs, "user_id")
     attrs = Map.put(attrs, "creator_id", user_id)
     {:ok, project_version} = create_project_version(attrs)
@@ -194,12 +202,10 @@ defmodule Pelable.WorkProjects do
     |> Repo.insert()
   end
 
-  # %{"id", %{"user_id"}} -> %WorkProject
+  # %{"work_project_id", %{"user_id"}} -> %WorkProject
   # Receives a work_project id and a user id returns a new work_project with the previous project version as parent
-  def fork_work_project(%{} = attrs) do
-    work_project_id = Map.get(attrs, "id")
+  def fork_work_project(%{"work_project_id" => work_project_id, "user_id" => user_id} = attrs) do
     work_project = get_work_project!(work_project_id) |> Repo.preload([:user_stories])
-    user_id = Map.get(attrs, "user_id")
     project_version_id = work_project.project_version_id
     user_stories = work_project.user_stories
 
