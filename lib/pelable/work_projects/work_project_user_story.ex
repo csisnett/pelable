@@ -13,7 +13,7 @@ defmodule Pelable.WorkProjects.WorkProjectUserStory do
   @doc false
   def changeset(work_project_user_story, attrs) do
     work_project_user_story
-    |> cast(attrs, [:status])
-    |> validate_required([:status])
+    |> cast(attrs, [:status, :work_project_id, :user_story_id])
+    |> validate_required([:status, :work_project_id, :user_story_id])
   end
 end

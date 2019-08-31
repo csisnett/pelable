@@ -7,7 +7,8 @@ defmodule Pelable.WorkProjects do
   alias Pelable.Repo
 
   alias Pelable.WorkProjects.{ProjectVersion, UserStory, WorkProject}
-  alias WorkProjects
+  alias Pelable.WorkProjects.WorkProjectUserStory
+  alias Pelable.WorkProjects
 
   @doc """
   Returns the list of work_projects.
@@ -157,10 +158,7 @@ defmodule Pelable.WorkProjects do
     attrs = Map.put(attrs, "project_version_id", project_version.id)
     {:ok, work_project} = create_work_project(attrs)
     user_stories = create_user_stories(attrs)
-    work_project = Repo.preload(work_project, [:user_stories])
-    work_project_changeset = Ecto.Changeset.change(work_project)
-    user_stories_work_project_changeset = work_project_changeset |> Ecto.Changeset.put_assoc(:user_stories, user_stories)
-    new_work_project = Repo.update(user_stories_work_project_changeset)
+    add_user_stories_work_project(user_stories, work_project)
     project_version |> Repo.preload([:work_projects])
   end
 
@@ -392,6 +390,15 @@ defmodule Pelable.WorkProjects do
     %WorkProjectUserStory{}
     |> WorkProjectUserStory.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def add_user_story_work_project(%UserStory{} = user_story, %WorkProject{} = work_project) do
+    {:ok, work_project_user_story} = Map.put(%{}, "user_story_id", user_story.id) |> Map.put("work_project_id", work_project.id) |> create_work_project_user_story
+    work_project_user_story
+  end
+
+  def add_user_stories_work_project(user_stories, %WorkProject{} = work_project) when is_list(user_stories) do
+    Enum.each(user_stories, &Pelable.WorkProjects.add_user_story_work_project(&1, work_project))
   end
 
   @doc """
