@@ -168,17 +168,22 @@ defmodule Pelable.WorkProjects do
     |> Repo.insert()
   end
 
-  # %{"creator_id", %{"project_version_id"}} -> %ProjectVersion
-  # gets a request from a user returns a new project version with the previous one as parent
-  def fork_project_version(%{} = attrs) do
-    project_version_id = Map.get(attrs, "project_version_id")
-    creator_id = Map.get(attrs, "creator_id")
+  # %{"id", %{"user_id"}} -> %WorkProject
+  # Receives a work_project id and a user id returns a new work_project with the previous project version as parent
+  def fork_work_project(%{} = attrs) do
+    work_project_id = Map.get(attrs, "id")
+    work_project = get_work_project!(work_project_id) |> Repo.preload([:user_stories])
+    user_id = Map.get(attrs, "user_id")
+    project_version_id = work_project.project_version_id
+    user_stories = work_project.user_stories
 
-    project_version = get_project_version!(project_version_id) |> Repo.preload([:creator, :parent, :project, :bookmarked_by, :user_stories])
-    new_project_version = %{} |> Map.put("name", project_version.name) |> Map.put("description", project_version.description) |> Map.put("public_status", project_version.public_status) |> Map.put("creator_id", creator_id) |> Map.put("first?", false) |> Map.put("parent_id", project_version.id) 
+    new_project_version = %{} |> Map.put("first?", false) |> Map.put("parent_id", project_version_id)
     {:ok, new_project_version} = create_project_version(new_project_version)
-    user_stories_changeset = new_project_version |> Repo.preload([:user_stories]) |> Ecto.Changeset.change |> Ecto.Changeset.put_assoc(:user_stories, project_version.user_stories)
-    Repo.update(user_stories_changeset)
+    new_work_project = %{} |> Map.put("project_version_id", new_project_version.id) |> Map.put("name", work_project.name) |> Map.put("description", work_project.description) |> Map.put("public_status", work_project.public_status) |> Map.put("creator_id", user_id)
+    {:ok, new_work_project} = create_work_project(new_work_project)
+    
+    add_user_stories_work_project(user_stories, new_work_project)
+    new_work_project |> Repo.preload([:user_stories])
   end
 
   @doc """
