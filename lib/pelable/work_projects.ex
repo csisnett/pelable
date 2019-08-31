@@ -150,6 +150,20 @@ defmodule Pelable.WorkProjects do
     |> Repo.insert()
   end
 
+  def create_work_project_version(attrs = %{}) do
+    user_id = Map.get(attrs, "user_id")
+    attrs = Map.put(attrs, "creator_id", user_id) |> Map.put("added_by_id", user_id)
+    {:ok, project_version} = create_project_version(attrs)
+    attrs = Map.put(attrs, "project_version_id", project_version.id)
+    {:ok, work_project} = create_work_project(attrs)
+    user_stories = create_user_stories(attrs)
+    work_project = Repo.preload(work_project, [:user_stories])
+    work_project_changeset = Ecto.Changeset.change(work_project)
+    user_stories_work_project_changeset = work_project_changeset |> Ecto.Changeset.put_assoc(:user_stories, user_stories)
+    new_work_project = Repo.update(user_stories_work_project_changeset)
+    project_version |> Repo.preload([:work_projects])
+  end
+
   def create_project_version(%ProjectVersion{} = project_version, %{} = attrs) do
     project_version
     |> ProjectVersion.changeset(attrs)
@@ -259,7 +273,7 @@ defmodule Pelable.WorkProjects do
   """
 
   def get_insert_user_story(changeset, true) do
-    existing_user_story = Repo.get_by(UserStory, body: changeset.changes.body)
+    existing_user_story = Repo.get_by(UserStory, title: changeset.changes.title)
 
     case existing_user_story do
       nil -> Repo.insert(changeset)

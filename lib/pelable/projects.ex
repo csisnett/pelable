@@ -8,7 +8,7 @@ defmodule Pelable.Projects do
 
   alias Pelable.Projects.Project
   alias Pelable.WorkProjects
-  alias Pelable.WorkProjects.ProjectVersion
+  alias Pelable.WorkProjects.{WorkProject, ProjectVersion}
 
   @doc """
   Returns the list of projects.
@@ -53,7 +53,7 @@ defmodule Pelable.Projects do
   """
   #%{"creator_id", "description", "name", "public_status", "user_stories" => [%{body => "do X", %{"body" => "do Y"}}] } -> 
     #  -> %Project{} & %ProjectVersion & %UserStory{}s 
-  # %{"added_by_id" => 1, "repo_url" =>  "description" => "a project", "name" => "mi prmero", "public_status" => "public", "first?" => true, "user_stories" => [%{"body" => "hola"}, %{"body" => "waa"}, %{"body" => "amen"}]}
+  # %{"user_id" => 1,  "description" => "a project", "name" => "mi prmero", "public_status" => "public", "user_stories" => [%{"title" => "hola"}, %{"title" => "waa"}, %{"title" => "amen"}]}
   def create_project(attrs \\ %{}) do
     #{:ok, project} = %Project{} |> Project.changeset(attrs) |> Repo.insert
     #project_version = %ProjectVersion{project_id: project.id}

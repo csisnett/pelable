@@ -8,10 +8,11 @@ defmodule Pelable.WorkProjects.WorkProject do
   schema "work_projects" do
     field :name, :string
     field :description, :string
-    field :end_date, :utc_datetime
-    field :public_status, :string, default: "public"
-    field :repo_url, :string
     field :start_date, :utc_datetime, default: ~U[1000-01-01 11:11:00Z]
+    field :end_date, :utc_datetime
+    field :repo_url, :string
+    field :show_url, :string
+    field :public_status, :string, default: "public"
     field :work_status, :string, default: "not started"
 
     belongs_to :creator, User
@@ -23,8 +24,8 @@ defmodule Pelable.WorkProjects.WorkProject do
   @doc false
   def changeset(work_project, attrs) do
     work_project
-    |> cast(attrs, [:creator_id, :work_status, :public_status, :start_date, :end_date, :description, :project_version_id])
-    |> validate_required([:creator_id, :work_status, :public_status, :start_date, :project_version_id])
+    |> cast(attrs, [:name, :description, :creator_id, :work_status, :public_status, :start_date, :end_date, :project_version_id, :repo_url, :show_url])
+    |> validate_required([:name, :creator_id, :work_status, :public_status, :start_date, :project_version_id])
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:project_version_id)
   end
