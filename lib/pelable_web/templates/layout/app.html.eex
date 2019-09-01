@@ -21,7 +21,7 @@ function myFunction() {
   }
 } 
     </script>
-      <section class="container">
+      <section class="">
         <nav role="navigation">
           <div class="topnav" id="myTopnav">
   <a href="/projects" class="">Projects</a>
