@@ -9,6 +9,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
   <body>
+  <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/5d6c01ea77aa790be331dcfc/default';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
     <header>
     <script>
     /* Toggle between adding and removing the "responsive" class to topnav when the user clicks on the icon */
@@ -25,6 +38,7 @@ function myFunction() {
         <nav role="navigation">
           <div class="topnav" id="myTopnav">
   <a href="/projects" class="">Projects</a>
+  <a href="/landing" class="">Sign up</a>
   <a href="/chat">Chat</a>
   <a href="#about">About</a>
   <a href="/dashboard"> My Dashboard </a>
