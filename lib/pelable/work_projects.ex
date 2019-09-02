@@ -194,6 +194,49 @@ defmodule Pelable.WorkProjects do
   # %{"name", "user_id", "description" "user_stories"} -> %ProjectVersion{}
   #Gets a map and returns a new project version with a new work project with new associated user stories to it
   #This is the function used to create new projects
+
+  @doc """
+  Example:
+
+  iex > create_project_version_assoc(%{"user_id" => 1,
+    "description" => "description",
+    "name" => "Quote",
+    "public_status" => "public",
+    "user_stories" => [%{"title" => "hola"}, %{"title" => "waa"}, %{"title" => "amen"}]
+   }) 
+   
+  %Pelable.WorkProjects.ProjectVersion{
+  __meta__: #Ecto.Schema.Metadata<:loaded, "project_versions">,
+  first?: true,
+  id: 18,
+  inserted_at: ~N[2019-09-02 21:49:26],
+  parent: #Ecto.Association.NotLoaded<association :parent is not loaded>,
+  parent_id: nil,
+  updated_at: ~N[2019-09-02 21:49:26],
+  work_projects: [
+    %Pelable.WorkProjects.WorkProject{
+      __meta__: #Ecto.Schema.Metadata<:loaded, "work_projects">,
+      creator: #Ecto.Association.NotLoaded<association :creator is not loaded>,
+      creator_id: 1,
+      description: "description",
+      end_date: nil,
+      id: 16,
+      inserted_at: ~N[2019-09-02 21:49:26],
+      name: "Quote",
+      project_version: #Ecto.Association.NotLoaded<association :project_version is not loaded>,
+      project_version_id: 18,
+      public_status: "public",
+      repo_url: nil,
+      show_url: nil,
+      start_date: ~U[1000-01-01 11:11:00Z],
+      updated_at: ~N[2019-09-02 21:49:26],
+      user_stories: #Ecto.Association.NotLoaded<association :user_stories is not loaded>,
+      work_status: "not started"
+    }
+  ]
+} 
+
+   """
   def create_project_version_assoc(attrs = %{}) do
     user_id = Map.get(attrs, "user_id")
     attrs = Map.put(attrs, "creator_id", user_id)
