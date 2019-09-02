@@ -39,6 +39,13 @@ defmodule Pelable.WorkProjects do
   """
   def get_work_project!(id), do: Repo.get!(WorkProject, id)
 
+  # Number -> Map %{workproject, user_stories}
+  # Gets work_project id, returns a map with the work_project and a list of its user stories information
+  def show_work_project(id) do
+    work_project = get_work_project!(id)
+    user_stories = get_user_stories_info_from_project(id)
+    %{work_project: work_project, user_stories: user_stories}
+  end
   @doc """
   Creates a work_project.
 
@@ -103,8 +110,7 @@ defmodule Pelable.WorkProjects do
   def start_work_project(%WorkProject{} = work_project, _attrs) do
     
     current_date = DateTime.utc_now
-    work_status = "started"
-    params = Map.put(%{}, "start_date", current_date) |> Map.put("work_status", work_status)
+    params = Map.put(%{}, "start_date", current_date) |> Map.put("work_status", "started")
     {:ok, work_project} = update_work_project(work_project, params)
     work_project
   end
@@ -185,13 +191,16 @@ defmodule Pelable.WorkProjects do
     |> Repo.insert()
   end
 
+  # %{"name", "user_id", "description" "user_stories"} -> %ProjectVersion{}
+  #Gets a map and returns a new project version with a new work project with new associated user stories to it
+  #This is the function used to create new projects
   def create_project_version_assoc(attrs = %{}) do
     user_id = Map.get(attrs, "user_id")
     attrs = Map.put(attrs, "creator_id", user_id)
     {:ok, project_version} = create_project_version(attrs)
     attrs = Map.put(attrs, "project_version_id", project_version.id)
     {:ok, work_project} = create_work_project(attrs)
-    user_stories = create_user_stories(attrs)
+    user_stories = create_user_stories(attrs["user_stories"])
     add_user_stories_work_project(user_stories, work_project)
     project_version |> Repo.preload([:work_projects])
   end
@@ -202,8 +211,8 @@ defmodule Pelable.WorkProjects do
     |> Repo.insert()
   end
 
-  # %{"work_project_id", %{"user_id"}} -> %WorkProject
-  # Receives a work_project id and a user id returns a new work_project with the previous project version as parent
+  # %{"work_project_id", %{"user_id"}} -> %WorkProject{}
+  # Receives a work_project id and a user id returns a copy of the work_project with the received one as parent
   def fork_work_project(%{"work_project_id" => work_project_id, "user_id" => user_id} = attrs) do
     work_project = get_work_project!(work_project_id) |> Repo.preload([:user_stories])
     project_version_id = work_project.project_version_id
@@ -307,7 +316,7 @@ defmodule Pelable.WorkProjects do
 
   """
 
-  def get_insert_user_story(changeset, true) do
+  defp get_insert_user_story(changeset, true) do
     existing_user_story = Repo.get_by(UserStory, title: changeset.changes.title)
 
     case existing_user_story do
@@ -316,10 +325,12 @@ defmodule Pelable.WorkProjects do
     end
   end
 
-  def get_insert_user_story(changeset, false) do
+  defp get_insert_user_story(changeset, false) do
     {:error, changeset}
   end
 
+  # {"title", } -> %UserStory{}
+  # Gets a map and returns a user story
   def create_user_story(attrs \\ %{}) do
     changeset = %UserStory{} |> UserStory.changeset(attrs)
     
@@ -329,7 +340,9 @@ defmodule Pelable.WorkProjects do
     end
   end
 
-  def create_user_stories(%{"user_stories" => user_stories}) do
+  # [%{"title", }, ...] -> [%UserStory, ...]
+  # Gets a list of maps with fields from which we return a list of the created user stories 
+  def create_user_stories(user_stories) when is_list(user_stories) do
     Enum.map(user_stories, &Pelable.WorkProjects.create_user_story/1)
   end
 
@@ -395,6 +408,21 @@ defmodule Pelable.WorkProjects do
     Repo.all(WorkProjectUserStory)
   end
 
+  # %WorkProjectUserStory -> %{"title", "work_status"}
+  #Gets together all the information from the %WorkProjectUserStory{} and its parent %UserStory{} into a map
+  def get_user_story_info(%WorkProjectUserStory{} = wu) do
+    user_story = Repo.get_by(UserStory, id: wu.user_story_id)
+    %{} |> Map.put(:title, user_story.title) |> Map.put(:work_status, wu.status)
+  end
+
+  # Number(id) -> [%{"title", "work_status"}, ...]
+  # Gets all the information from all the user stories of a project with 'id'
+  def get_user_stories_info_from_project(id) when is_number(id) do
+    query = from wu in WorkProjectUserStory, where: wu.work_project_id == ^id, select: wu
+    work_project_user_stories = Repo.all(query)
+    Enum.map(work_project_user_stories, &get_user_story_info/1)
+  end
+
   @doc """
   Gets a single work_project_user_story.
 
@@ -429,11 +457,15 @@ defmodule Pelable.WorkProjects do
     |> Repo.insert()
   end
 
+  # %UserStory{}, %WorkProject{} -> %WorkProjectUserStory{}
+  #Gets a %UserStory and a %WorkProject and creates the corresponding WorkProjectUSerStory
   def add_user_story_work_project(%UserStory{} = user_story, %WorkProject{} = work_project) do
     {:ok, work_project_user_story} = Map.put(%{}, "user_story_id", user_story.id) |> Map.put("work_project_id", work_project.id) |> create_work_project_user_story
     work_project_user_story
   end
 
+  # [%UserStory, ...], %WorkProject -> [%WorkProjectUserStory, ...]
+  #Gets a list of user_stories and a %WorkProject{} and create a WorkProjectUserStory for each user story
   def add_user_stories_work_project(user_stories, %WorkProject{} = work_project) when is_list(user_stories) do
     Enum.each(user_stories, &Pelable.WorkProjects.add_user_story_work_project(&1, work_project))
   end

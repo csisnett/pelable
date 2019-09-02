@@ -3,6 +3,7 @@ defmodule PelableWeb.WorkProjectController do
 
   alias Pelable.WorkProjects
   alias Pelable.WorkProjects.WorkProject
+  alias Pelable.Repo
 
   def index(conn, _params) do
     work_projects = WorkProjects.list_work_projects()
@@ -27,8 +28,9 @@ defmodule PelableWeb.WorkProjectController do
   end
 
   def show(conn, %{"id" => id}) do
-    work_project = WorkProjects.get_work_project!(id)
-    render(conn, "show.html", work_project: work_project)
+    id = String.to_integer(id)
+    resp = WorkProjects.show_work_project(id)
+    render(conn, "show.html", resp: resp)
   end
 
   def edit(conn, %{"id" => id}) do
