@@ -3,8 +3,8 @@
 <ul>
 
   <li>
-    <strong>Body:</strong>
-    <%= @user_story.body %>
+    <strong>Title:</strong>
+    <%= @user_story.title %>
   </li>
 
 </ul>

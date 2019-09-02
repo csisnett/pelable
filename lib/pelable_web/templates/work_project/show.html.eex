@@ -1,38 +1,19 @@
-<h1>Show Work project</h1>
+<h2><%= @resp.work_project.name %></h2>
 
 <ul>
 
   <li>
-    <strong>Repo url:</strong>
-    <%= @work_project.repo_url %>
-  </li>
-
-  <li>
-    <strong>Work status:</strong>
-    <%= @work_project.work_status %>
-  </li>
-
-  <li>
-    <strong>Public status:</strong>
-    <%= @work_project.public_status %>
-  </li>
-
-  <li>
-    <strong>Start date:</strong>
-    <%= @work_project.start_date %>
-  </li>
-
-  <li>
-    <strong>End date:</strong>
-    <%= @work_project.end_date %>
-  </li>
-
-  <li>
     <strong>Description:</strong>
-    <%= @work_project.description %>
+    <%= @resp.work_project.description %>
   </li>
+
+  <h4> User stories </h4>
+  <%= for user_story <- @resp.user_stories do %>
+    <li>
+    <%= user_story.title %>, status: <%= user_story.work_status%>
+    <br> <br>
+  </li>
+
+  <%= end %>
 
 </ul>
-
-<span><%= link "Edit", to: Routes.work_project_path(@conn, :edit, @work_project) %></span>
-<span><%= link "Back", to: Routes.work_project_path(@conn, :index) %></span>
