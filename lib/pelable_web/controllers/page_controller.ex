@@ -9,7 +9,16 @@ defmodule PelableWeb.PageController do
     conn = put_layout conn, false
     render(conn, "landing.html")
   end
+
   def home(conn, _params) do
     render(conn, "home.html")
+  end
+
+  def layout(conn, _params) do
+    render(conn, "layout.html")
+  end
+
+  def chat(conn, _params) do
+    render(conn, "chat.html")
   end
 end

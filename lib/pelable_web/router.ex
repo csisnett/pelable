@@ -28,15 +28,16 @@ defmodule PelableWeb.Router do
   scope "/", PelableWeb do
     pipe_through [:browser]
 
-    resources "work_projects", WorkProjectController
-    resources "user_stories", UserStoryController
-    resources "work_project_user_story", WorkProjectUserStoryController
-    resources "projects", ProjectController
-    resources "project_versions", ProjectVersionController
-    resources "goals", GoalController
+    resources "/projects", WorkProjectController
+    resources "/user_stories", UserStoryController
+    resources "/work_project_user_story", WorkProjectUserStoryController
+    resources "/project_versions", ProjectVersionController
+    resources "/goals", GoalController
     get "/landing", PageController, :landing
     get "/home", PageController, :home
     get "/", PageController, :index
+    get "/layout", PageController, :layout
+    get "/chat", PageController, :chat
   end
 
   # Other scopes may use custom stacks.

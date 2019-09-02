@@ -41,13 +41,13 @@ function myFunction() {
   <a href="/landing" class="">Sign up</a>
   <a href="/chat">Chat</a>
   <a href="#about">About</a>
-  <a href="/dashboard"> My Dashboard </a>
+  <a href="/#dashboard"> My Dashboard </a>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
 </div>
         </nav>
-        <a href="https://pelable.com/home" class="">
+        <a href="https://pelable.com/" class="">
           <img src="<%= Routes.static_path(@conn, "/images/side.png") %>" alt="Pelable Community Logo"/>
         </a>
       </section>
