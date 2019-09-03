@@ -4,10 +4,12 @@ defmodule Pelable.WorkProjects.ProjectVersion do
 
   alias Pelable.Users.User
   alias Pelable.WorkProjects.{ProjectVersion, WorkProject}
+  alias Pelable.Learn.Tag
 
   schema "project_versions" do
     field :first?, :boolean, default: true
     
+    many_to_many :tags, Tag, join_through: "project_version_tag"
     has_many :work_projects, WorkProject
     belongs_to :parent, ProjectVersion
     timestamps()
