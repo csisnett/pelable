@@ -5,30 +5,25 @@
     </div>
   <% end %>
 
-  <%= label f, :repo_url %>
-  <%= text_input f, :repo_url %>
-  <%= error_tag f, :repo_url %>
+<%= label f, :name %>
+  <%= text_input f, :name %>
+  <%= error_tag f, :name %>
 
-  <%= label f, :work_status %>
-  <%= text_input f, :work_status %>
-  <%= error_tag f, :work_status %>
+  <%= label f, :short_description %>
+  <%= textarea f, :short_description %>
+  <%= error_tag f, :short_description %>
 
-  <%= label f, :public_status %>
-  <%= text_input f, :public_status %>
-  <%= error_tag f, :public_status %>
+  <%= label f, :description_markdown %>
+  <%= textarea f, :description_markdown %>
+  <%= error_tag f, :description_markdown %>
 
-  <%= label f, :start_date %>
-  <%= datetime_select f, :start_date %>
-  <%= error_tag f, :start_date %>
+  <%= label f, :project_version_id %>
+  <%= number_input f, :project_version_id %>
+  <%= error_tag f, :project_version_id %>
 
-  <%= label f, :end_date %>
-  <%= datetime_select f, :end_date %>
-  <%= error_tag f, :end_date %>
-
-  <%= label f, :description %>
-  <%= textarea f, :description %>
-  <%= error_tag f, :description %>
-
+  <%= label f, :creator_id %>
+  <%= number_input f, :creator_id %>
+  <%= error_tag f, :creator_id %>
   <div>
     <%= submit "Save" %>
   </div>

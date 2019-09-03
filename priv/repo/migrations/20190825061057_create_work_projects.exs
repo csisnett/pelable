@@ -10,6 +10,7 @@ defmodule Pelable.Repo.Migrations.CreateWorkProjects do
       add :public_status, :string
       add :start_date, :utc_datetime
       add :end_date, :utc_datetime
+      add :short_description, :text
       add :description, :text
       add :description_html, :text
       add :creator_id, references(:users, on_delete: :nothing)

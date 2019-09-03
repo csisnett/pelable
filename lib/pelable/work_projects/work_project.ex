@@ -7,6 +7,7 @@ defmodule Pelable.WorkProjects.WorkProject do
 
   schema "work_projects" do
     field :name, :string
+    field :short_description, :string
     field :description, :string
     field :description_html, :string
     field :description_markdown, :string, virtual: true
@@ -36,7 +37,7 @@ defmodule Pelable.WorkProjects.WorkProject do
   @doc false
   def changeset(work_project, attrs) do
     work_project
-    |> cast(attrs, [:name, :description, :description_html, :description_markdown, :creator_id, :work_status, :public_status, :start_date, :end_date, :project_version_id, :repo_url, :show_url])
+    |> cast(attrs, [:name, :short_description, :description, :description_html, :description_markdown, :creator_id, :work_status, :public_status, :start_date, :end_date, :project_version_id, :repo_url, :show_url])
     |> validate_required([:name, :creator_id, :work_status, :public_status, :start_date, :project_version_id])
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:project_version_id)

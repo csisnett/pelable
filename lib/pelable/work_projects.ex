@@ -6,8 +6,7 @@ defmodule Pelable.WorkProjects do
   import Ecto.Query, warn: false
   alias Pelable.Repo
 
-  alias Pelable.WorkProjects.{ProjectVersion, UserStory, WorkProject}
-  alias Pelable.WorkProjects.WorkProjectUserStory
+  alias Pelable.WorkProjects.{ProjectVersion, UserStory, WorkProject, WorkProjectUserStory}
   alias Pelable.WorkProjects
 
   @doc """
@@ -191,7 +190,7 @@ defmodule Pelable.WorkProjects do
     |> Repo.insert()
   end
 
-  # %{"name", "user_id", "description" "user_stories"} -> %ProjectVersion{}
+  # %{"name", "user_id", "short"description", "description" "user_stories"} -> %ProjectVersion{}
   #Gets a map and returns a new project version with a new work project with new associated user stories to it
   #This is the function used to create new projects
 
@@ -218,6 +217,7 @@ defmodule Pelable.WorkProjects do
       __meta__: #Ecto.Schema.Metadata<:loaded, "work_projects">,
       creator: #Ecto.Association.NotLoaded<association :creator is not loaded>,
       creator_id: 1,
+      short_description: "shorty"
       description: "description",
       end_date: nil,
       id: 16,

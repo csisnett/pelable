@@ -4,7 +4,7 @@
 
   <li>
     <strong>Description:</strong>
-    <%= @resp.work_project.description %>
+    <%=raw (@resp.work_project.description_html) %>
   </li>
 
   <h4> User stories </h4>
