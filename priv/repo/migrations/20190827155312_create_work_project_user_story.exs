@@ -4,6 +4,7 @@ defmodule Pelable.Repo.Migrations.CreateWorkProjectUserStory do
   def change do
     create table(:work_project_user_story) do
       add :status, :string
+      add :required?, :boolean
       add :work_project_id, references(:work_projects, on_delete: :nothing)
       add :user_story_id, references(:user_stories, on_delete: :nothing)
 
