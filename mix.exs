@@ -43,7 +43,9 @@ defmodule Pelable.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:pow, "~> 1.0.12"}
+      {:pow, "~> 1.0.12"},
+      {:html_sanitize_ex, "~> 1.3.0-rc3"},
+      {:earmark, "~> 1.3"}
     ]
   end
 
