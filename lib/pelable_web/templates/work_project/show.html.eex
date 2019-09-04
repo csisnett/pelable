@@ -7,7 +7,7 @@
     <%= raw (HtmlSanitizeEx.basic_html (@resp.work_project.description_html)) %>
   </li>
 
-  <h4> Required User stories </h4>
+  <h4> User stories </h4>
 
   <%= for user_story <- @resp.user_stories, required_user_story?(user_story)  do %>
     <li>

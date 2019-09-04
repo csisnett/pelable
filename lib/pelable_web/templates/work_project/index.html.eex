@@ -64,6 +64,3 @@ style=" fill:#000000;"><g id="surface1"><path style=" " d="M 31 2 C 21.820313 2 
      </div>
      
 <% end %>
-    
-
-<span><%= link "New Work project", to: Routes.work_project_path(@conn, :new) %></span>
