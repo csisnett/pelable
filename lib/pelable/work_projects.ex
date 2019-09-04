@@ -255,7 +255,7 @@ defmodule Pelable.WorkProjects do
   end
 
   # %{"work_project_id", %{"user_id"}} -> %WorkProject{}
-  # Receives a work_project id and a user id returns a copy of the work_project with the received one as parent
+  # Receives a work_project id and a user id returns a new copy of the work_project with the received one as parent
   def fork_work_project(%{"work_project_id" => work_project_id, "user_id" => user_id} = attrs) do
     work_project = get_work_project!(work_project_id) |> Repo.preload([:user_stories])
     project_version_id = work_project.project_version_id
@@ -373,7 +373,7 @@ defmodule Pelable.WorkProjects do
   end
 
   # {"title", } -> %UserStory{}
-  # Gets a map and returns a user story
+  # Receives a map and returns a new user story
   def create_user_story(attrs \\ %{}) do
     changeset = %UserStory{} |> UserStory.changeset(attrs)
     
@@ -384,7 +384,7 @@ defmodule Pelable.WorkProjects do
   end
 
   # [%{"title", }, ...] -> [%UserStory, ...]
-  # Gets a list of maps with fields from which we return a list of the created user stories 
+  # Receives a list of maps with fields from which we return a list of new user stories 
   def create_user_stories(user_stories) when is_list(user_stories) do
     Enum.map(user_stories, &Pelable.WorkProjects.create_user_story/1)
   end
@@ -451,11 +451,11 @@ defmodule Pelable.WorkProjects do
     Repo.all(WorkProjectUserStory)
   end
 
-  # %WorkProjectUserStory -> %{"title", "work_status"}
+  # %WorkProjectUserStory -> %{"title", "work_status", "required?"}
   #Gets together all the information from the %WorkProjectUserStory{} and its parent %UserStory{} into a map
   def get_user_story_info(%WorkProjectUserStory{} = wu) do
     user_story = Repo.get_by(UserStory, id: wu.user_story_id)
-    %{} |> Map.put(:title, user_story.title) |> Map.put(:work_status, wu.status)
+    %{} |> Map.put(:title, user_story.title) |> Map.put(:work_status, wu.status) |> Map.put(:required?, wu.required?)
   end
 
   # Number(id) -> [%{"title", "work_status"}, ...]
