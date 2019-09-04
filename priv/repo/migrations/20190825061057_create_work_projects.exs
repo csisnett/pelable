@@ -4,6 +4,7 @@ defmodule Pelable.Repo.Migrations.CreateWorkProjects do
   def change do
     create table(:work_projects) do
       add :name, :string
+      add :slug, :string
       add :uuid, :string
       add :repo_url, :string
       add :show_url, :string

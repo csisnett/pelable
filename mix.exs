@@ -45,7 +45,8 @@ defmodule Pelable.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:pow, "~> 1.0.12"},
       {:html_sanitize_ex, "~> 1.3.0-rc3"},
-      {:earmark, "~> 1.3"}
+      {:earmark, "~> 1.3"},
+      {:ecto_autoslug_field, "~> 2.0"}
     ]
   end
 

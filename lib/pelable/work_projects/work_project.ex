@@ -3,11 +3,11 @@ defmodule Pelable.WorkProjects.WorkProject do
   import Ecto.Changeset
   
   alias Pelable.Users.User
-  alias Pelable.WorkProjects.{WorkProject, ProjectVersion, UserStory, WorkProjectUserStory}
+  alias Pelable.WorkProjects.{WorkProject, ProjectVersion, UserStory, WorkProjectUserStory, NameSlug}
 
   schema "work_projects" do
     field :name, :string
-    field :slug, :string
+    field :slug, NameSlug.Type
     field :short_description, :string
     field :description, :string
     field :description_html, :string
@@ -36,7 +36,7 @@ defmodule Pelable.WorkProjects.WorkProject do
     name
   end
 
-  def convert_markdown(changeset) do
+  def markdown_to_html(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{description_markdown: description}} ->
         put_change(changeset, :description_html, Earmark.as_html!(description))
@@ -51,6 +51,8 @@ defmodule Pelable.WorkProjects.WorkProject do
         put_change(changeset, :slug, slugify(name))
       _ ->
         changeset
+      end
+    end
 
   def generate_uuid(changeset) do
     case get_field(changeset, :uuid) do
@@ -66,8 +68,9 @@ defmodule Pelable.WorkProjects.WorkProject do
     |> validate_required([:name, :creator_id, :work_status, :public_status, :start_date, :project_version_id])
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:project_version_id)
-    |> convert_markdown
-    |> generate_uuid
     |> unique_constraint(:uuid)
+    |> markdown_to_html
+    |> generate_uuid
+    |> NameSlug.maybe_generate_slug
   end
 end
