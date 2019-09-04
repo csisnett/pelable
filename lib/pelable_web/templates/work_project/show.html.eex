@@ -3,17 +3,29 @@
 <ul>
 
   <li>
-    <strong>Description:</strong>
+    <strong>Project Description:</strong>
     <%= raw (HtmlSanitizeEx.basic_html (@resp.work_project.description_html)) %>
   </li>
 
-  <h4> User stories </h4>
-  <%= for user_story <- @resp.user_stories do %>
+  <h4> Required User stories </h4>
+
+  <%= for user_story <- @resp.user_stories, required_user_story?(user_story)  do %>
     <li>
     <%= user_story.title %>, status: <%= user_story.work_status%>
     <br> <br>
   </li>
 
   <%= end %>
+  <%= if optional_user_stories?(@resp.user_stories) do %>
+  <h4> Bonus User stories </h4>
+  
+   <%= for user_story <- @resp.user_stories, optional_user_story?(user_story)  do %>
+    <li>
+    <%= user_story.title %>, status: <%= user_story.work_status%>
+    <br> <br>
+  </li>
+
+  <%= end %>
+  <% end%>
 
 </ul>
