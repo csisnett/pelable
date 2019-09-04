@@ -28,7 +28,7 @@ defmodule PelableWeb.Router do
   scope "/", PelableWeb do
     pipe_through [:browser]
 
-    resources "/projects", WorkProjectController
+    resources "/projects", WorkProjectController, except: [:show]
     resources "/user_stories", UserStoryController
     resources "/work_project_user_story", WorkProjectUserStoryController
     resources "/project_versions", ProjectVersionController
