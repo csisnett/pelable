@@ -17,6 +17,7 @@ defmodule Pelable.WorkProjects.WorkProject do
     field :show_url, :string
     field :public_status, :string, default: "public"
     field :work_status, :string, default: "not started"
+    field :uuid, :string
 
     has_many :work_user_stories, WorkProjectUserStory
     belongs_to :creator, User
@@ -25,10 +26,24 @@ defmodule Pelable.WorkProjects.WorkProject do
     timestamps()
   end
 
+
+  def generate_random_uuid(length) do
+    :crypto.strong_rand_bytes(length) |> Base.url_encode64 |> binary_part(0, length)
+  end
+
   def convert_markdown(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{description_markdown: description}} ->
         put_change(changeset, :description_html, Earmark.as_html!(description))
+      _ ->
+        changeset
+    end
+  end
+
+  def generate_uuid(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true} ->
+        put_change(changeset, :uuid, generate_random_uuid(12))
       _ ->
         changeset
     end
@@ -42,5 +57,6 @@ defmodule Pelable.WorkProjects.WorkProject do
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:project_version_id)
     |> convert_markdown
+    |> generate_uuid
   end
 end
