@@ -2,6 +2,7 @@ defmodule Pelable.WorkProjectTest do
   use Pelable.DataCase
 
   alias Pelable.WorkProjects
+  import Pelable.Fixture
 
   describe "work_project" do
   alias Pelable.WorkProjects.WorkProject
@@ -73,8 +74,10 @@ defmodule Pelable.WorkProjectTest do
   end
 
   describe "project_versions" do
-    alias Pelable.WorkProjects.ProjectVersion
+    alias Pelable.WorkProjects.{ProjectVersion, WorkProject}
+    alias Pelable.WorkProjects
 
+    @valid_project_version_work %{"description" => "a project", "name" => "mi prmero", "public_status" => "public", "user_stories" => [%{"title" => "hola"}, %{"title" => "waa"}, %{"title" => "amen"}]}
     @valid_attrs %{description: "some description", name: "some name", public_status: "some public_status", first?: true}
     @update_attrs %{description: "some updated description", name: "some updated name", public_status: "some updated public_status", first?: false}
     @invalid_attrs %{description: nil, name: nil, public_status: nil, first?: nil}
@@ -86,6 +89,15 @@ defmodule Pelable.WorkProjectTest do
         |> WorkProjects.create_project_version()
 
       project_version
+    end
+
+    @tag :current
+    test "create_work_project_version/1 returns a project version and its work_project" do
+      user = fixture(:user)
+      attrs = @valid_project_version_work
+      project_version = Map.put(attrs, "user_id", user.id) |> WorkProjects.create_work_project_version
+      work_projects = project_version.work_projects
+      assert work_projects = [%WorkProject{}]
     end
 
     test "list_project_versions/0 returns all project_versions" do
