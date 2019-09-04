@@ -13,4 +13,4 @@ rm -rf "_build"
 MIX_ENV=prod mix release
 
 #for auto dB migration upon deploy
-MIX_ENV=prod mix ecto.reset
+MIX_ENV=prod mix ecto.migrate
