@@ -7,6 +7,7 @@ defmodule Pelable.WorkProjects.WorkProject do
 
   schema "work_projects" do
     field :name, :string
+    field :slug, :string
     field :short_description, :string
     field :description, :string
     field :description_html, :string
@@ -31,6 +32,10 @@ defmodule Pelable.WorkProjects.WorkProject do
     :crypto.strong_rand_bytes(length) |> Base.url_encode64 |> binary_part(0, length)
   end
 
+  def slugify(name) do
+    name
+  end
+
   def convert_markdown(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{description_markdown: description}} ->
@@ -39,6 +44,13 @@ defmodule Pelable.WorkProjects.WorkProject do
         changeset
     end
   end
+
+  def create_slug(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{name: name}} ->
+        put_change(changeset, :slug, slugify(name))
+      _ ->
+        changeset
 
   def generate_uuid(changeset) do
     case get_field(changeset, :uuid) do
