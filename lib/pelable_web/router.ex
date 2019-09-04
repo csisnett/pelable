@@ -38,6 +38,7 @@ defmodule PelableWeb.Router do
     get "/", PageController, :index
     get "/layout", PageController, :layout
     get "/chat", PageController, :chat
+    get "/p/:slug/:uuid", WorkProjectController, :show
   end
 
   # Other scopes may use custom stacks.

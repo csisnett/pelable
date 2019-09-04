@@ -38,11 +38,13 @@ defmodule Pelable.WorkProjects do
   """
   def get_work_project!(id), do: Repo.get!(WorkProject, id)
 
-  # Number -> Map %{workproject, user_stories}
+  def get_work_project_uuid(uuid), do: Repo.get_by(WorkProject, uuid: uuid)
+
+  # String(uuid) -> Map %{workproject, user_stories}
   # Gets work_project id, returns a map with the work_project and a list of its user stories information
-  def show_work_project(id) do
-    work_project = get_work_project!(id)
-    user_stories = get_user_stories_info_from_project(id)
+  def show_work_project(uuid) do
+    work_project = get_work_project_uuid(uuid)
+    user_stories = get_user_stories_info_from_project(work_project.id)
     %{work_project: work_project, user_stories: user_stories}
   end
   @doc """

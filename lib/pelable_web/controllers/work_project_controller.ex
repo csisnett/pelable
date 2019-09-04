@@ -27,9 +27,8 @@ defmodule PelableWeb.WorkProjectController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    id = String.to_integer(id)
-    resp = WorkProjects.show_work_project(id)
+  def show(conn, %{"uuid" => uuid}) do
+    resp = WorkProjects.show_work_project(uuid)
     render(conn, "show.html", resp: resp)
   end
 
