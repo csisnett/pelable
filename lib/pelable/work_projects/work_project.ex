@@ -41,11 +41,9 @@ defmodule Pelable.WorkProjects.WorkProject do
   end
 
   def generate_uuid(changeset) do
-    case changeset do
-      %Ecto.Changeset{valid?: true} ->
-        put_change(changeset, :uuid, generate_random_uuid(12))
-      _ ->
-        changeset
+    case get_field(changeset, :uuid) do
+      nil -> changeset |> put_change(:uuid, generate_random_uuid(12))
+      _ -> changeset
     end
   end
 
@@ -58,5 +56,6 @@ defmodule Pelable.WorkProjects.WorkProject do
     |> foreign_key_constraint(:project_version_id)
     |> convert_markdown
     |> generate_uuid
+    |> unique_constraint(:uuid)
   end
 end

@@ -4,6 +4,7 @@ defmodule Pelable.Repo.Migrations.CreateWorkProjects do
   def change do
     create table(:work_projects) do
       add :name, :string
+      add :uuid, :string
       add :repo_url, :string
       add :show_url, :string
       add :work_status, :string
@@ -17,6 +18,6 @@ defmodule Pelable.Repo.Migrations.CreateWorkProjects do
       add :project_version_id, references(:project_versions, on_delete: :nothing)
       timestamps()
     end
-
+    create unique_index(:work_projects, [:uuid])
   end
 end
