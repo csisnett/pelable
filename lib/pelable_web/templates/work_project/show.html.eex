@@ -3,11 +3,11 @@
 <ul>
 
   <li>
-    <strong>Project Description:</strong>
+    
     <%= raw (HtmlSanitizeEx.basic_html (@resp.work_project.description_html)) %>
   </li>
 
-  <h4> User stories </h4>
+ 
 
   <%= for user_story <- @resp.user_stories, required_user_story?(user_story)  do %>
     <li>
