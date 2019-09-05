@@ -59,7 +59,7 @@ style=" fill:#000000;"><g id="surface1"><path style=" " d="M 31 2 C 21.820313 2 
 <br>
 </div>
  
-      <p> esto es una description<%= work_project.short_description %></p>
+      <p><%= work_project.short_description %></p>
       
      </div>
      
