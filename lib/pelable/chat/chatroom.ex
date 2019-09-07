@@ -5,9 +5,10 @@ defmodule Pelable.Chat.Chatroom do
   alias Pelable.Users.User
 
   schema "chatrooms" do
-    field :description, :string
     field :name, :string
-    field :topic, :string
+    field :subject, :string
+    field :description, :string
+    
     field :uuid, :string
     belongs_to :creator, User
 
@@ -28,8 +29,8 @@ defmodule Pelable.Chat.Chatroom do
   @doc false
   def changeset(chatroom, attrs) do
     chatroom
-    |> cast(attrs, [:uuid, :description, :name, :topic, :creator_id])
-    |> validate_required([:uuid, :description, :name, :topic, :creator_id])
+    |> cast(attrs, [:uuid, :description, :subject, :name :creator_id])
+    |> validate_required([:name, :creator_id])
     |> generate_uuid
     |> unique_constraint(:uuid)
   end

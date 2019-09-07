@@ -3,11 +3,11 @@ defmodule Pelable.Repo.Migrations.CreateChatrooms do
 
   def change do
     create table(:chatrooms) do
-      add :uuid, :string
+      add :uuid, :string, null: false
       add :description, :text
-      add :name, :string
-      add :topic, :string
-      add :creator_id, references(:users, on_delete: :nothing)
+      add :name, :string, null: false
+      add :subject, :string
+      add :creator_id, references(:users, on_delete: :nothing), null: false
 
       timestamps()
     end
