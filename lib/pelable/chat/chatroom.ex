@@ -29,7 +29,7 @@ defmodule Pelable.Chat.Chatroom do
   @doc false
   def changeset(chatroom, attrs) do
     chatroom
-    |> cast(attrs, [:uuid, :description, :subject, :name :creator_id])
+    |> cast(attrs, [:uuid, :description, :subject, :name, :creator_id])
     |> validate_required([:name, :creator_id])
     |> generate_uuid
     |> unique_constraint(:uuid)
