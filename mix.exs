@@ -46,7 +46,8 @@ defmodule Pelable.MixProject do
       {:pow, "~> 1.0.12"},
       {:html_sanitize_ex, "~> 1.3.0-rc3"},
       {:earmark, "~> 1.3"},
-      {:ecto_autoslug_field, "~> 2.0"}
+      {:ecto_autoslug_field, "~> 2.0"},
+      {:ecto_shortuuid, "~> 0.1.2"},
     ]
   end
 
