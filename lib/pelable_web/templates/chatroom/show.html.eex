@@ -1,0 +1,28 @@
+<h1>Show Chatroom</h1>
+
+<ul>
+
+  <li>
+    <strong>Uuid:</strong>
+    <%= @chatroom.uuid %>
+  </li>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @chatroom.description %>
+  </li>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @chatroom.name %>
+  </li>
+
+  <li>
+    <strong>Topic:</strong>
+    <%= @chatroom.topic %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.chatroom_path(@conn, :edit, @chatroom) %></span>
+<span><%= link "Back", to: Routes.chatroom_path(@conn, :index) %></span>

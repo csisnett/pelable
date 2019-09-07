@@ -1,0 +1,5 @@
+<h1>Edit Chatroom</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.chatroom_path(@conn, :update, @chatroom)) %>
+
+<span><%= link "Back", to: Routes.chatroom_path(@conn, :index) %></span>
