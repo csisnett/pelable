@@ -6,7 +6,7 @@ defmodule Pelable.Chat do
   import Ecto.Query, warn: false
   alias Pelable.Repo
 
-  alias Pelable.Chat.Chatroom
+  alias Pelable.Chat.{Chatroom, Message}
 
   @doc """
   Returns the list of chatrooms.
@@ -36,6 +36,10 @@ defmodule Pelable.Chat do
 
   """
   def get_chatroom!(id), do: Repo.get!(Chatroom, id)
+
+  def get_chatroom_uuid(uuid) do
+    Repo.get_by(Chatroom, uuid: uuid)
+  end
 
   @doc """
   Creates a chatroom.
@@ -102,7 +106,7 @@ defmodule Pelable.Chat do
     Chatroom.changeset(chatroom, %{})
   end
 
-  alias Pelable.Chat.Message
+  
 
   @doc """
   Returns the list of messages.

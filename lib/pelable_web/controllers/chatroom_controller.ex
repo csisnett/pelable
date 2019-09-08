@@ -26,8 +26,8 @@ defmodule PelableWeb.ChatroomController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    chatroom = Chat.get_chatroom!(id)
+  def show(conn, %{"uuid" => uuid}) do
+    chatroom = Chat.get_chatroom_uuid(uuid)
     render(conn, "show.html", chatroom: chatroom)
   end
 

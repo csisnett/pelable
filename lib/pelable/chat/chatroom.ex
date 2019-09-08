@@ -33,5 +33,6 @@ defmodule Pelable.Chat.Chatroom do
     |> validate_required([:name, :creator_id])
     |> generate_uuid
     |> unique_constraint(:uuid)
+    |> foreign_key_constraint(:creator_id)
   end
 end

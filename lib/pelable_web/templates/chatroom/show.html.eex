@@ -18,11 +18,8 @@
   </li>
 
   <li>
-    <strong>Topic:</strong>
-    <%= @chatroom.topic %>
+    <strong>subject:</strong>
+    <%= @chatroom.subject %>
   </li>
 
 </ul>
-
-<span><%= link "Edit", to: Routes.chatroom_path(@conn, :edit, @chatroom) %></span>
-<span><%= link "Back", to: Routes.chatroom_path(@conn, :index) %></span>
