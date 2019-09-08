@@ -32,10 +32,6 @@ defmodule Pelable.WorkProjects.WorkProject do
     :crypto.strong_rand_bytes(length) |> Base.url_encode64 |> binary_part(0, length)
   end
 
-  def slugify(name) do
-    name
-  end
-
   def markdown_to_html(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{description_markdown: description}} ->
@@ -44,15 +40,6 @@ defmodule Pelable.WorkProjects.WorkProject do
         changeset
     end
   end
-
-  def create_slug(changeset) do
-    case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{name: name}} ->
-        put_change(changeset, :slug, slugify(name))
-      _ ->
-        changeset
-      end
-    end
 
   def generate_uuid(changeset) do
     case get_field(changeset, :uuid) do
