@@ -5,7 +5,7 @@ let Chat = {
         let channel = socket.channel('chat:' + uuid, {})
         channel.join()
         .receive("ok", resp => {console.log("Joined successfully")})
-    
+        .receive("error", resp => {console.log("An error connecting to the chat")})
         this.listenForChats(channel)
     },
 
