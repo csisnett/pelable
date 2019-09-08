@@ -6,7 +6,18 @@ defmodule Pelable.Learn do
   import Ecto.Query, warn: false
   alias Pelable.Repo
 
-  alias Pelable.Learn.Goal
+  alias Pelable.Learn.{Goal, Tag}
+  alias Pelable.Users.User
+
+  def create_user(attrs \\ %{}) do
+    %User{}
+    |> User.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def get_user_by_username(username) do
+    Repo.get_by(User, username: username)
+  end
 
   @doc """
   Returns the list of goals.

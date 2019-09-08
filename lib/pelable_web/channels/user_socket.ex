@@ -1,6 +1,8 @@
 defmodule PelableWeb.UserSocket do
   use Phoenix.Socket
 
+
+  channel "chat:*", PelableWeb.ChatChannel
   ## Channels
   # channel "room:*", PelableWeb.RoomChannel
 

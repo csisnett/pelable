@@ -7,6 +7,8 @@ defmodule Pelable.Chat do
   alias Pelable.Repo
 
   alias Pelable.Chat.{Chatroom, Message}
+  alias Pelable.Learn
+  alias Pelable.Users.User
 
   @doc """
   Returns the list of chatrooms.
@@ -121,6 +123,17 @@ defmodule Pelable.Chat do
     Repo.all(Message)
   end
 
+  # Number -> [%{}]
+  #Gets chatroom id, returns a list of messages with its users
+  def list_messages_by_chatroom(id) do
+    query = from m in Message,
+    join: u in assoc(m, :sender),
+    where: m.chatroom_id == ^id,
+    order_by: [asc: m.inserted_at],
+    preload: [sender: u]
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single message.
 
@@ -149,7 +162,11 @@ defmodule Pelable.Chat do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_message(attrs \\ %{}) do
+  
+  def create_message(%{"chatroom_uuid" => uuid, "username" => username} = attrs) do
+    chatroom = get_chatroom_uuid(uuid)
+    user = Learn.get_user_by_username(username)
+    attrs = Map.put(attrs, "chatroom_id", chatroom.id) |> Map.put("sender_id", user.id)
     %Message{}
     |> Message.changeset(attrs)
     |> Repo.insert()
