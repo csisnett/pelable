@@ -12,6 +12,11 @@ p {
   font-family: "Times New Roman", Times, serif;
 }
   </style>
+  <script type="module">
+import socket from "../js/socket.js"
+import Chat from "../js/chat.js"
+Chat.init(socket)
+</script>
   </head>
   <body>
   <!--Start of Tawk.to Script-->
