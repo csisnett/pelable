@@ -12,9 +12,8 @@ import Config
 config :pelable, PelableWeb.Endpoint,
   http: [:inet6, port: System.get_env("PORT") || 4000],
   url: [scheme: "https", host: "pelable.com", port: 443],
-force_ssl: [rewrite_on: [:x_forwarded_proto], hsts: true],
+force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json",
-  check_origin: ["//pelable.com"]
 
 # Do not print debug messages in production
 config :logger, level: :info
