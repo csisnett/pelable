@@ -34,10 +34,9 @@ Chat.init(socket)
   <p><b><%= message.sender.username %>:</b> <%= message.body %></p>
 <% end %>
 </div>
-<%= form_for @conn, "#", [id: "chat-form"], fn f -> %>
-  <%= text_input f, :username, placeholder: "Username", id: "user-name" %>
-  <br>
-  <%= textarea f, :message, placeholder: "Your comment", id: "user-msg" %>
-  <br>
-  <%= submit "Post" %>
-<% end %>
+
+<form id="chat-form">
+<input type="text" placeholder="username" id="user-name" name="username"><br>
+<input type="textarea" placeholder="Your message" id="body" name="message">
+<input type="submit" value="Post">
+</form>

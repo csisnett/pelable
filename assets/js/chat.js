@@ -5,18 +5,17 @@ let Chat = {
         let channel = socket.channel('chat:' + uuid, {})
         channel.join()
         .receive("ok", resp => {console.log("Joined successfully")})
-        .receive("error", resp => {console.log("An error connecting to the chat")})
         this.listenForChats(channel)
     },
 
     listenForChats(channel) {
         function submitForm(){
         let userName = document.getElementById('user-name').value
-        let userMsg = document.getElementById('user-msg').value
+        let userMsg = document.getElementById('body').value
     
         channel.push('shout', {username: userName, body: userMsg})
           document.getElementById('user-name').value = userName
-          document.getElementById('user-msg').value = ''
+          setTimeout(function() {document.getElementById('body').value = ''}, 1700);
         }
     
         document.getElementById('chat-form').addEventListener('submit', function(e){
