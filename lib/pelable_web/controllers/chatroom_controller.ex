@@ -29,9 +29,19 @@ defmodule PelableWeb.ChatroomController do
   def show(conn, %{"uuid" => uuid}) do
     chatroom = Chat.get_chatroom_uuid(uuid)
     messages = Chat.list_messages_by_chatroom(chatroom.id)
-    username = conn.assigns.current_user.username
-    render(conn, "show.html", chatroom: chatroom, messages: messages, user: username)
+    current_user = conn.assigns.current_user
+    chat(conn, chatroom, messages, current_user)
   end
+
+  def chat(conn, chatroom, messages, nil) do
+    redirect(conn, to: Routes.pow_registration_path(conn, :new))
+  end
+
+  def chat(conn, chatroom, messages, current_user) do
+    render(conn, "show.html", chatroom: chatroom, messages: messages, user: current_user.username)
+  end
+
+
 
   def edit(conn, %{"id" => id}) do
     chatroom = Chat.get_chatroom!(id)
