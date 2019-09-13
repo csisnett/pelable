@@ -2,7 +2,7 @@ defmodule PelableWeb.PageController do
   use PelableWeb, :controller
 
   def index(conn, _params) do
-    redirect(conn, to: "/landing")
+    redirect(conn, to: "/projects")
   end
 
   def landing(conn, _params) do
@@ -19,6 +19,6 @@ defmodule PelableWeb.PageController do
   end
 
   def chat(conn, _params) do
-    render(conn, "chat.html")
+    redirect(conn, to: "/chat/AZ3X37GsBebR")
   end
 end
