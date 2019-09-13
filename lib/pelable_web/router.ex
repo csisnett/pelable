@@ -29,6 +29,7 @@ defmodule PelableWeb.Router do
     pipe_through [:browser]
 
     resources "/projects", WorkProjectController, except: [:show]
+    get "/p/:slug/:uuid", WorkProjectController, :show
     resources "/user_stories", UserStoryController
     resources "/work_project_user_story", WorkProjectUserStoryController
     resources "/project_versions", ProjectVersionController
@@ -37,7 +38,6 @@ defmodule PelableWeb.Router do
     get "/home", PageController, :home
     get "/", PageController, :index
     get "/layout", PageController, :layout
-    get "/p/:slug/:uuid", WorkProjectController, :show
     get "/chat/:uuid", ChatroomController, :show
     get "/chat", PageController, :chat
   end

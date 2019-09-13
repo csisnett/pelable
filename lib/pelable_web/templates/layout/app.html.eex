@@ -48,10 +48,17 @@ function myFunction() {
         <nav role="navigation">
           <div class="topnav" id="myTopnav">
   <a href="/projects" class="">Projects</a>
-  <a href="/landing" class="">Sign up</a>
+  <%= if Pow.Plug.current_user(@conn) do %>
+  <a href="/landing" class="">Sign out</a>
+  <% else %>
+  <a href="<%= Routes.pow_registration_path(@conn, :new) %>" class="">Sign up</a>
+  <a href="<%= Routes.pow_session_path(@conn, :new) %>" class="">Login</a>
+  <% end %>
   <a href="/chat">Chat</a>
   <a href="#about">About</a>
+  <%= if Pow.Plug.current_user(@conn) do %>
   <a href="/#dashboard"> My Dashboard </a>
+  <% end %>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
     <i class="fa fa-bars"></i>
   </a>
