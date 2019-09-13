@@ -26,9 +26,12 @@ let Chat = {
         channel.on('shout', payload => {
           let chatBox = document.querySelector('#chat-box')
           let msgBlock = document.createElement('p')
-    
-          msgBlock.insertAdjacentHTML('beforeend', `${payload.username}: ${payload.body}`)
+          
+          msgBlock.insertAdjacentHTML('beforeend', `<b>${payload.username}:</b> ${payload.body}`)
           chatBox.appendChild(msgBlock)
+          /*Moves the chatbox down to scroll to the last message */
+          var topPos = msgBlock.offsetTop
+          chatBox.scrollTop = topPos
         })
       }
 }
