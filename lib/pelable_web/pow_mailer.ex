@@ -8,8 +8,8 @@ defmodule PelableWeb.PowMailer do
   
     def cast(%{user: user, subject: subject, text: text, html: html}) do
       %Swoosh.Email{}
-      |> to({"", user.email})
-      |> from({"My App", "myapp@example.com"})
+      |> to({user.username, user.email})
+      |> from({"Carlos from Pelable", "carlos@pelable.com"})
       |> subject(subject)
       |> html_body(html)
       |> text_body(text)
