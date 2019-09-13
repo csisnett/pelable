@@ -1,4 +1,4 @@
-<h1>Register</h1>
+<h1>Reset password</h1>
 
 <%= form_for @changeset, @action, [as: :user], fn f -> %>
   <%= if @changeset.action do %>
@@ -7,12 +7,6 @@
     </div>
   <% end %>
 
-  <%= label f, Pow.Ecto.Schema.user_id_field(@changeset) %>
-  <%= text_input f, Pow.Ecto.Schema.user_id_field(@changeset) %>
-  <%= error_tag f, Pow.Ecto.Schema.user_id_field(@changeset) %>
-  <%= label f, :username %>
-  <%= text_input f, :username %>
-  <%= error_tag f, :username %>
   <%= label f, :password %>
   <%= password_input f, :password %>
   <%= error_tag f, :password %>
@@ -22,7 +16,7 @@
   <%= error_tag f, :confirm_password %>
 
   <div>
-    <%= submit "Register" %>
+    <%= submit "Submit" %>
   </div>
 <% end %>
 

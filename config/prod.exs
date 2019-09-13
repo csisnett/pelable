@@ -17,6 +17,10 @@ config :pelable, PelableWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
+config :pelable, PelableWeb.Mailer,
+  adapter: Swoosh.Adapters.Mailgun,
+  api_key: System.get_env("MAILGUN_API_KEY")
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key

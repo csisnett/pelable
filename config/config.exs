@@ -27,7 +27,17 @@ config :phoenix, :json_library, Jason
 
 config :pelable, :pow,
   user: Pelable.Users.User,
-  repo: Pelable.Repo
+  repo: Pelable.Repo,
+  web_module: PelableWeb,
+  extensions: [PowResetPassword, PowEmailConfirmation],
+  controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
+  mailer_backend: PelableWeb.PowMailer,
+  web_mailer_module: PelableWeb
+
+  config :pow, PelableWeb.PowMailer,
+  adapter: Swoosh.Adapters.Mailgun,
+  api_key: System.get_env("MAILGUN_API_KEY"),
+  domain: "mail1.pelable.com"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

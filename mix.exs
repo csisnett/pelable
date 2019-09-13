@@ -20,7 +20,7 @@ defmodule Pelable.MixProject do
   def application do
     [
       mod: {Pelable.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :swoosh]
     ]
   end
 
@@ -48,6 +48,7 @@ defmodule Pelable.MixProject do
       {:earmark, "~> 1.3"},
       {:ecto_autoslug_field, "~> 2.0"},
       {:ecto_shortuuid, "~> 0.1.2"},
+      {:swoosh, "~> 0.23.4"},
     ]
   end
 

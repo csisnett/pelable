@@ -1,7 +1,8 @@
 defmodule PelableWeb.Router do
   use PelableWeb, :router
   use Pow.Phoenix.Router
-
+  use Pow.Extension.Phoenix.Router, otp_app: :pelable
+  
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -23,6 +24,7 @@ defmodule PelableWeb.Router do
     pipe_through :browser
 
     pow_routes()
+    pow_extension_routes()
   end
 
   scope "/", PelableWeb do

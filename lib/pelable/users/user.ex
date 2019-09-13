@@ -1,6 +1,7 @@
 defmodule Pelable.Users.User do
   use Ecto.Schema
   use Pow.Ecto.Schema
+  use Pow.Extension.Ecto.Schema, extensions: [PowResetPassword, PowEmailConfirmation]
   import Ecto.Changeset
 
   alias Pelable.Repo
@@ -24,6 +25,8 @@ defmodule Pelable.Users.User do
     user
     |> cast(attrs, [:username, :nickname, :fullname, :email])
     |> validate_required([:username, :email])
+    |> pow_changeset(attrs)
+    |> pow_extension_changeset(attrs)
     |> unique_constraint(:username)
     |> unique_constraint(:email)
   end
