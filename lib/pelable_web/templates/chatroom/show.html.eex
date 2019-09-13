@@ -3,29 +3,16 @@ import socket from "../js/socket.js"
 import Chat from "../js/chat.js"
 Chat.init(socket)
 </script>
-<h1>Show Chatroom</h1>
-
+<h1>The Chatroom</h1>
+You must be logged in to participate in the chat
 <ul>
 
   <li>
-    <strong>Uuid:</strong>
-    <%= @chatroom.uuid %>
-  </li>
-
-  <li>
-    <strong>Description:</strong>
-    <%= @chatroom.description %>
-  </li>
-
-  <li>
-    <strong>Name:</strong>
+    <strong>Channel:</strong>
     <%= @chatroom.name %>
   </li>
 
-  <li>
-    <strong>subject:</strong>
-    <%= @chatroom.subject %>
-  </li>
+
 
 </ul>
 
@@ -36,7 +23,7 @@ Chat.init(socket)
 </div>
 
 <form id="chat-form">
-<input type="text" placeholder="username" id="user-name" name="username"><br>
+<input type="hidden" value="<%= @user %>" placeholder="username" id="user-name" name="username"><br>
 <input type="textarea" placeholder="Your message" id="body" name="message">
 <input type="submit" value="Post">
 </form>
