@@ -25,14 +25,22 @@ defmodule PelableWeb.WorkProjectView do
     true
   end
 
-  def is_user_creator?(user, work_project) do
-    user.id == work_project.creator_id
+  def is_user_creator?(user, creator_id) do
+    user.id == creator_id
   end
 
   #[] -> boolean
   # Returns false if there isn't a single user story with required? = false
   def optional_user_stories?(user_stories) when is_list(user_stories) do
     Enum.reduce(user_stories, false, fn u, acc -> (optional_user_story?(u)) || acc end)
+  end
+
+  def in_progress?(work_project) do
+    if work_project.work_status == "in progress" do
+      true
+    else
+      false
+    end
   end
 
 end

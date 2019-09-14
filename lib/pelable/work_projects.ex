@@ -165,7 +165,7 @@ defmodule Pelable.WorkProjects do
   def start_work_project(%WorkProject{} = work_project, _attrs) do
     
     current_date = DateTime.utc_now
-    params = Map.put(%{}, "start_date", current_date) |> Map.put("work_status", "started")
+    params = Map.put(%{}, "start_date", current_date) |> Map.put("work_status", "in progress")
     {:ok, work_project} = update_work_project(work_project, params)
     work_project
   end

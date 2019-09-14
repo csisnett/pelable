@@ -1,5 +1,11 @@
 <h2><%= @resp.work_project.name %></h2>
-<%= button "Start Project", to: Routes.work_project_path(@conn, :start, @resp.work_project.uuid), method: :post %>
+<b>status: <%= @resp.work_project.work_status%> </b>
+<%= if in_progress? @resp.work_project do %>
+<progress id="file" max="100" value="30"> 70% </progress><br>
+<% end %>
+<%= button "Start Project", to: Routes.work_project_path(@conn, :start, @resp.work_project.uuid), method: :post %> <br>
+
+</div>
 <ul>
 
   <li>
@@ -10,6 +16,7 @@
 <%= if logged_in?(@conn.assigns.current_user) do %>
  <%= if is_user_creator?(@conn.assigns.current_user, @resp.work_project.creator_id) do %>
   <p> Yes it is creator </p>
+  
  <% end %>
  <% end %>
 
