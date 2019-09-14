@@ -15,7 +15,7 @@
 
 <%= if logged_in?(@conn.assigns.current_user) do %>
  <%= if is_user_creator?(@conn.assigns.current_user, @resp.work_project.creator_id) do %>
-  <p> Yes it is creator </p>
+ 
   
  <% end %>
  <% end %>
