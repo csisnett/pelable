@@ -36,11 +36,7 @@ defmodule PelableWeb.WorkProjectView do
   end
 
   def in_progress?(work_project) do
-    if work_project.work_status == "in progress" do
-      true
-    else
-      false
-    end
+  work_project.work_status == "in progress"
   end
 
 end
