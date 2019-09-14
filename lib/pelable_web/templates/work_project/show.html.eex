@@ -7,7 +7,11 @@
     <%= raw (HtmlSanitizeEx.basic_html (@resp.work_project.description_html)) %>
   </li>
 
- 
+<%= if logged_in?(@conn.assigns.current_user) do %>
+ <%= if is_user_creator?(@conn.assigns.current_user, @resp.work_project.creator_id) do %>
+  <p> Yes it is creator </p>
+ <% end %>
+ <% end %>
 
   <%= for user_story <- @resp.user_stories, required_user_story?(user_story)  do %>
     <li>

@@ -17,6 +17,18 @@ defmodule PelableWeb.WorkProjectView do
     required_or_optional?(:optional, user_story)
   end
 
+  def logged_in?(user = nil) do
+    false
+  end
+
+  def logged_in?(user) do
+    true
+  end
+
+  def is_user_creator?(user, work_project) do
+    user.id == work_project.creator_id
+  end
+
   #[] -> boolean
   # Returns false if there isn't a single user story with required? = false
   def optional_user_stories?(user_stories) when is_list(user_stories) do
