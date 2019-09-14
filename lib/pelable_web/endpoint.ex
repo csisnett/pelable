@@ -43,6 +43,7 @@ defmodule PelableWeb.Endpoint do
     signing_salt: "hgkTB4VM"
 
   plug Pow.Plug.Session, otp_app: :pelable
-
+  plug PowPersistentSession.Plug.Cookie
+  
   plug PelableWeb.Router
 end

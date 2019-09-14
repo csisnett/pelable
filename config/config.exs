@@ -29,7 +29,7 @@ config :pelable, :pow,
   user: Pelable.Users.User,
   repo: Pelable.Repo,
   web_module: PelableWeb,
-  extensions: [PowResetPassword, PowEmailConfirmation],
+  extensions: [PowResetPassword, PowEmailConfirmation, PowPersistentSession],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
   mailer_backend: PelableWeb.PowMailer,
   web_mailer_module: PelableWeb
