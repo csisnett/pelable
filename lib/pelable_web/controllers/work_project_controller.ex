@@ -27,6 +27,17 @@ defmodule PelableWeb.WorkProjectController do
     end
   end
 
+  def start(conn, %{"uuid" => uuid, "slug" => _slug} = work_project_params) do
+    case WorkProjects.get_work_project_uuid(uuid) do
+      work_project ->
+        params = %{"work_project_id" => work_project.id, "user_id" => conn.assigns.current_user.id}
+        new_work_project = WorkProjects.fork_and_start_work_project(params)
+        conn
+        |> put_flash(:info, "You started this Project successfully!")
+        |> redirect(to: Routes.work_project_path(conn, :show, new_work_project.slug, new_work_project.uuid))
+      end
+  end
+
   def show(conn, %{"uuid" => uuid}) do
     resp = WorkProjects.show_work_project(uuid)
     render(conn, "show.html", resp: resp)

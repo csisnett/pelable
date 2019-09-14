@@ -83,9 +83,10 @@ defmodule Pelable.WorkProjects do
     |> Repo.update()
   end
 
+  #The user presses start project and this function is ran
   #%{"user_id", "work_project_id"} -> %WorkProject
   # Forks(Copies) the work_project with the id given, creates a new %WorkProject{} and then it starts it
-  def fork_and_start_work_project(%{"user_id" => user_id, "work_project_id" => _old_work_project_id} = attrs) do
+  def fork_and_start_work_project(%{"user_id" => user_id, "work_project_id" => _work_project_id} = attrs) do
     work_project = fork_work_project(attrs)
     attrs = Map.put(attrs, "work_project_id", work_project.id)
     start_work_project(attrs)

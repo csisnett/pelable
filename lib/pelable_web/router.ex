@@ -44,6 +44,12 @@ defmodule PelableWeb.Router do
     get "/chat", PageController, :chat
   end
 
+  scope "/", PelableWeb do
+    pipe_through [:browser, :protected]
+
+    post "/p/:slug/:uuid", WorkProjectController, :start
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", PelableWeb do
   #   pipe_through :api
