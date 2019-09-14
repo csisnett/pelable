@@ -13,8 +13,6 @@ p {
 }
   </style>
   <script type="module">
-import socket from "<%= Routes.static_path(@conn, "/js/socket.js") %>"
-import Chat from "<%= Routes.static_path(@conn, "/js/chat.js") %>"
 import "<%= Routes.static_path(@conn, "/js/phoenix_html.js") %>"
 Chat.init(socket)
 </script>

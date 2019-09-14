@@ -17,8 +17,8 @@
 </style>
 
 <script type="module">
-import socket from "../js/socket.js"
-import Chat from "../js/chat.js"
+import socket from "<%= Routes.static_path(@conn, "/js/socket.js") %>"
+import Chat from "<%= Routes.static_path(@conn, "/js/chat.js") %>"
 Chat.init(socket)
 </script>
 <h1>The Chatroom</h1>
