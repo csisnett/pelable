@@ -263,7 +263,7 @@ defmodule Pelable.WorkProjects do
 
     new_project_version = %{} |> Map.put("first?", false) |> Map.put("parent_id", project_version_id)
     {:ok, new_project_version} = create_project_version(new_project_version)
-    new_work_project = %{} |> Map.put("project_version_id", new_project_version.id) |> Map.put("name", work_project.name) |> Map.put("description", work_project.description) |> Map.put("public_status", work_project.public_status) |> Map.put("creator_id", user_id)
+    new_work_project = %{} |> Map.put("project_version_id", new_project_version.id) |> Map.put("name", work_project.name) |> Map.put("description", work_project.description) |> Map.put("short_description", work_project.short_description) |> Map.put("description_html", work_project.description_html) |> Map.put("public_status", work_project.public_status) |> Map.put("creator_id", user_id)
     {:ok, new_work_project} = create_work_project(new_work_project)
     
     add_user_stories_work_project(user_stories, new_work_project)
