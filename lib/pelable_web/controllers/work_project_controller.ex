@@ -27,7 +27,7 @@ defmodule PelableWeb.WorkProjectController do
     end
   end
 
-  def start(conn, %{"uuid" => uuid, "slug" => _slug} = work_project_params) do
+  def start(conn, %{"uuid" => uuid} = work_project_params) do
     case WorkProjects.get_work_project_uuid(uuid) do
       work_project ->
         params = %{"work_project_id" => work_project.id, "user_id" => conn.assigns.current_user.id}

@@ -47,7 +47,8 @@ defmodule PelableWeb.Router do
   scope "/", PelableWeb do
     pipe_through [:browser, :protected]
 
-    post "/p/:slug/:uuid", WorkProjectController, :start
+    get "/start_project/:uuid", WorkProjectController, :start
+    post "/start_project/:uuid", WorkProjectController, :start
   end
 
   # Other scopes may use custom stacks.
