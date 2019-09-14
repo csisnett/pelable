@@ -30,7 +30,7 @@ defmodule PelableWeb.Router do
   scope "/", PelableWeb do
     pipe_through [:browser]
 
-    resources "/projects", WorkProjectController, except: [:show]
+    resources "/projects", WorkProjectController, except: [:show, :create, :new]
     get "/p/:slug/:uuid", WorkProjectController, :show
     resources "/user_stories", UserStoryController
     resources "/work_project_user_story", WorkProjectUserStoryController
@@ -47,6 +47,8 @@ defmodule PelableWeb.Router do
   scope "/", PelableWeb do
     pipe_through [:browser, :protected]
 
+    get "/projects/new", WorkProjectController, :new
+    post "/projects", WorkProjectController, :create
     get "/start_project/:uuid", WorkProjectController, :start
     post "/start_project/:uuid", WorkProjectController, :start
   end

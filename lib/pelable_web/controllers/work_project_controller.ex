@@ -16,11 +16,12 @@ defmodule PelableWeb.WorkProjectController do
   end
 
   def create(conn, %{"work_project" => work_project_params}) do
-    case WorkProjects.create_work_project(work_project_params) do
+    work_project_params = Map.put(work_project_params, "user_id", conn.assigns.current_user.id)
+    case WorkProjects.create_work_project_assoc(work_project_params) do
       {:ok, work_project} ->
         conn
-        |> put_flash(:info, "Work project created successfully.")
-        |> redirect(to: Routes.work_project_path(conn, :show, work_project))
+        |> put_flash(:info, "Project created successfully.")
+        |> redirect(to: Routes.work_project_path(conn, :show, work_project.slug, work_project.uuid))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
@@ -31,10 +32,10 @@ defmodule PelableWeb.WorkProjectController do
     case WorkProjects.get_work_project_uuid(uuid) do
       work_project ->
         params = %{"work_project_id" => work_project.id, "user_id" => conn.assigns.current_user.id}
-        new_work_project = WorkProjects.fork_and_start_work_project(params)
+        work_project = WorkProjects.start_work_project(params)
         conn
         |> put_flash(:info, "You started this Project successfully!")
-        |> redirect(to: Routes.work_project_path(conn, :show, new_work_project.slug, new_work_project.uuid))
+        |> redirect(to: Routes.work_project_path(conn, :show, work_project.slug, work_project.uuid))
       end
   end
 

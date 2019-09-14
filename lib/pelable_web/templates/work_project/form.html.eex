@@ -1,3 +1,9 @@
+<style>
+ #error{
+   color: red;
+ }
+</style>
+
 <%= form_for @changeset, @action, fn f -> %>
   <%= if @changeset.action do %>
     <div class="alert alert-danger">
@@ -7,28 +13,18 @@
 
 <%= label f, :name %>
   <%= text_input f, :name %>
-  <%= error_tag f, :name %>
+   <%= if message = f.errors[:name] do %>
+    <span id="error"> <%= translate_error(message) %> </span>
+     <% end %>
+<br>
 
-    <%= label f, :description_html %>
-  <%= textarea f, :description_html %>
-  <%= error_tag f, :description_html %>
-
-
-  <%= label f, :short_description %>
-  <%= textarea f, :short_description %>
-  <%= error_tag f, :short_description %>
-
-  <%= label f, :description_markdown %>
-  <%= textarea f, :description_markdown %>
-  <%= error_tag f, :description_markdown %>
-
-  <%= label f, :project_version_id %>
-  <%= number_input f, :project_version_id %>
-  <%= error_tag f, :project_version_id %>
-
-  <%= label f, :creator_id %>
-  <%= number_input f, :creator_id %>
-  <%= error_tag f, :creator_id %>
+  <%= label f, :description %>
+  <%= textarea f, :description %>
+  <%= if message = f.errors[:description] do %>
+    <span id="error"> <%= translate_error(message) %> </span>
+     <% end %>
+<br>
+  <br>
   <div>
     <%= submit "Save" %>
   </div>
