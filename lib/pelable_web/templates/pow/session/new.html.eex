@@ -9,12 +9,16 @@
 
   <%= label f, Pow.Ecto.Schema.user_id_field(@changeset) %>
   <%= text_input f, Pow.Ecto.Schema.user_id_field(@changeset) %>
-  <%= error_tag f, Pow.Ecto.Schema.user_id_field(@changeset) %>
-
+  <%= if message = f.errors[:user_id_field] do %>
+    <span id="error"> <%= translate_error(message) %> </span>
+     <% end %>
+<br><br>
   <%= label f, :password %>
   <%= password_input f, :password %>
-  <%= error_tag f, :password %>
-
+  <%= if message = f.errors[:password] do %>
+    <span id="error"> <%= translate_error(message) %> </span>
+     <% end %>
+<br>
   <div>
     <%= submit "Sign in" %>
   </div>

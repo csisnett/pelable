@@ -9,6 +9,10 @@
     width:430px;
     border:1px solid #ACD8F0;
     overflow:auto; }
+
+  #chat-interface {
+    text-align: center;
+  }
  }
 </style>
 
@@ -18,18 +22,9 @@ import Chat from "../js/chat.js"
 Chat.init(socket)
 </script>
 <h1>The Chatroom</h1>
-You must be logged in to participate in the chat
-<ul>
+Welcome to the chat!
 
-  <li>
-    <strong>Channel:</strong>
-    <%= @chatroom.name %>
-  </li>
-
-
-
-</ul>
-
+<div id="chat-interface">
 <div id="chat-box">
 <%= for message <- @messages do %>
   <p><b><%= message.sender.username %>:</b> <%= message.body %></p>
@@ -41,6 +36,8 @@ You must be logged in to participate in the chat
 <input type="textarea" placeholder="Your message" id="body" name="message">
 <input type="submit" value="Post">
 </form>
+
+</div>
 
 <script>
 let chatBox = document.querySelector('#chat-box')

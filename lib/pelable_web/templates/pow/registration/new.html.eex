@@ -1,27 +1,37 @@
 <h1>Register</h1>
 
-Sign up to join the chat!
+Sign up to join our community!
 <%= form_for @changeset, @action, [as: :user], fn f -> %>
   <%= if @changeset.action do %>
     <div class="alert alert-danger">
       <p>Oops, something went wrong! Please check the errors below.</p>
     </div>
   <% end %>
-
+<br>
   <%= label f, Pow.Ecto.Schema.user_id_field(@changeset) %>
   <%= text_input f, Pow.Ecto.Schema.user_id_field(@changeset) %>
-  <%= error_tag f, Pow.Ecto.Schema.user_id_field(@changeset) %>
+  <%= if message = f.errors[:user_id_field] do %>
+    <span id="error"> <%= translate_error(message) %> </span>
+     <% end %>
+     <br><br>
   <%= label f, :username %>
   <%= text_input f, :username %>
-  <%= error_tag f, :username %>
+  <%= if message = f.errors[:username] do %>
+    <span id="error"> <%= translate_error(message) %> </span>
+     <% end %>
+     <br><br>
   <%= label f, :password %>
   <%= password_input f, :password %>
-  <%= error_tag f, :password %>
-
+  <%= if message = f.errors[:password] do %>
+    <span id="error"> <%= translate_error(message) %> </span>
+     <% end %>
+<br><br>
   <%= label f, :confirm_password %>
   <%= password_input f, :confirm_password %>
-  <%= error_tag f, :confirm_password %>
-
+  <%= if message = f.errors[:confirm_password] do %>
+    <span id="error"> <%= translate_error(message) %> </span>
+     <% end %>
+<br>
   <div>
     <%= submit "Register" %>
   </div>
