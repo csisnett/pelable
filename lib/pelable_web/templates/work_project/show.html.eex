@@ -1,5 +1,5 @@
 <h2><%= @resp.work_project.name %></h2>
-<button> <%= link "Start Project", to: Routes.work_project_path(@conn, :start, @resp.work_project.uuid), method: :post %></button>
+<%= button "Start Project", to: Routes.work_project_path(@conn, :start, @resp.work_project.uuid), method: :post %>
 <ul>
 
   <li>
