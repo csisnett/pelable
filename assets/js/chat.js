@@ -15,7 +15,7 @@ let Chat = {
     
         channel.push('shout', {username: userName, body: userMsg})
           document.getElementById('user-name').value = userName
-          setTimeout(function() {document.getElementById('body').value = ''}, 1700);
+          setTimeout(function() {document.getElementById('body').value = ''}, 1500);
         }
     
         document.getElementById('chat-form').addEventListener('submit', function(e){
@@ -29,9 +29,15 @@ let Chat = {
           
           msgBlock.insertAdjacentHTML('beforeend', `<b>${payload.username}:</b> ${payload.body}`)
           chatBox.appendChild(msgBlock)
-          /*Moves the chatbox down to scroll to the last message */
-          var topPos = msgBlock.offsetTop
-          chatBox.scrollTop = topPos
+          /*Moves the chatbox down for any new message */
+          var top_position = msgBlock.offsetTop
+          window.last_message_position = top_position
+          console.log(top_position)
+            console.log(chatBox.scrollTop)
+          if(top_position - chatBox.scrollTop <= 479){
+            chatBox.scrollTop = top_position
+          
+          }
         })
       }
 }

@@ -44,22 +44,6 @@ function myFunction() {
     x.className = "topnav";
   }
 }
-
-function logout() {
-  var url = "/session";
-  var xhr = new XMLHttpRequest();
-  xhr.open("DELETE", url, true);
-  xhr.onload = function () {
-	var response = JSON.parse(xhr.responseText);
-  console.log(Jason.encode!(Plug.CSRFProtection.get_csrf_token()))
-	if (xhr.readyState == 4 && xhr.status == "200") {
-		console.log(response);
-	} else {
-		console.error(response);
-	}
-}
-xhr.send(null);
-}
     </script>
       <section class="">
         <nav role="navigation">

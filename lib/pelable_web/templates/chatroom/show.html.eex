@@ -41,3 +41,8 @@ You must be logged in to participate in the chat
 <input type="textarea" placeholder="Your message" id="body" name="message">
 <input type="submit" value="Post">
 </form>
+
+<script>
+let chatBox = document.querySelector('#chat-box')
+chatBox.scrollTop = 100000
+</script>
