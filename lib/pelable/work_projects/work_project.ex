@@ -3,7 +3,7 @@ defmodule Pelable.WorkProjects.WorkProject do
   import Ecto.Changeset
   
   alias Pelable.Users.User
-  alias Pelable.WorkProjects.{WorkProject, ProjectVersion, UserStory, WorkProjectUserStory, NameSlug}
+  alias Pelable.WorkProjects.{WorkProject, ProjectVersion, UserStory, NameSlug}
 
   schema "work_projects" do
     field :name, :string
@@ -20,11 +20,19 @@ defmodule Pelable.WorkProjects.WorkProject do
     field :work_status, :string, default: "not started"
     field :uuid, :string
 
-    has_many :work_user_stories, WorkProjectUserStory
+    has_many :user_stories, UserStory
     belongs_to :creator, User
     belongs_to :project_version, ProjectVersion
-    many_to_many :user_stories, UserStory, join_through: "work_project_user_story"
     timestamps()
+  end
+
+  def copy(%WorkProject{} = work_project) do
+    %{}
+    |> Map.put("name", work_project.name) 
+    |> Map.put("description", work_project.description) 
+    |> Map.put("short_description", work_project.short_description) 
+    |> Map.put("description_html", work_project.description_html) 
+    |> Map.put("public_status", work_project.public_status) 
   end
 
 

@@ -15,6 +15,12 @@ defmodule Pelable.WorkProjects.ProjectVersion do
     timestamps()
   end
 
+  def child(project_version_id) when is_number(project_version_id) do
+    %{} 
+    |> Map.put("first?", false) 
+    |> Map.put("parent_id", project_version_id)
+  end
+
   @doc false
   def changeset(project_version, attrs) do
     project_version

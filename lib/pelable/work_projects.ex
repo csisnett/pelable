@@ -6,7 +6,7 @@ defmodule Pelable.WorkProjects do
   import Ecto.Query, warn: false
   alias Pelable.Repo
 
-  alias Pelable.WorkProjects.{ProjectVersion, UserStory, WorkProject, WorkProjectUserStory}
+  alias Pelable.WorkProjects.{ProjectVersion, UserStory, WorkProject}
   alias Pelable.WorkProjects
 
   @doc """
@@ -43,8 +43,8 @@ defmodule Pelable.WorkProjects do
   # String(uuid) -> Map %{workproject, user_stories}
   # Gets work_project id, returns a map with the work_project and a list of its user stories information
   def show_work_project(uuid) do
-    work_project = get_work_project_uuid(uuid)
-    user_stories = get_user_stories_info_from_project(work_project.id)
+    work_project = get_work_project_uuid(uuid) |> Repo.preload([:user_stories])
+    user_stories = work_project.user_stories |> UserStory.get_user_stories_info
     %{work_project: work_project, user_stories: user_stories}
   end
   @doc """
@@ -69,49 +69,7 @@ defmodule Pelable.WorkProjects do
   #Gets a map and returns a new project version with a new work project with new associated user stories to it
   #This is the function used to create new projects
 
-  @doc """
-  Example:
 
-  iex > create_work_project_assoc(%{"user_id" => 1,
-    "description" => "description",
-    "name" => "Quote",
-    "public_status" => "public",
-    "user_stories" => [%{"title" => "hola"}, %{"title" => "waa"}, %{"title" => "amen"}]
-   }) 
-   
-  %Pelable.WorkProjects.ProjectVersion{
-  __meta__: #Ecto.Schema.Metadata<:loaded, "project_versions">,
-  first?: true,
-  id: 18,
-  inserted_at: ~N[2019-09-02 21:49:26],
-  parent: #Ecto.Association.NotLoaded<association :parent is not loaded>,
-  parent_id: nil,
-  updated_at: ~N[2019-09-02 21:49:26],
-  work_projects: [
-    %Pelable.WorkProjects.WorkProject{
-      __meta__: #Ecto.Schema.Metadata<:loaded, "work_projects">,
-      creator: #Ecto.Association.NotLoaded<association :creator is not loaded>,
-      creator_id: 1,
-      short_description: "shorty"
-      description: "description",
-      end_date: nil,
-      id: 16,
-      inserted_at: ~N[2019-09-02 21:49:26],
-      name: "Quote",
-      project_version: #Ecto.Association.NotLoaded<association :project_version is not loaded>,
-      project_version_id: 18,
-      public_status: "public",
-      repo_url: nil,
-      show_url: nil,
-      start_date: ~U[1000-01-01 11:11:00Z],
-      updated_at: ~N[2019-09-02 21:49:26],
-      user_stories: #Ecto.Association.NotLoaded<association :user_stories is not loaded>,
-      work_status: "not started"
-    }
-  ]
-} 
-
-   """
    def create_work_project_assoc(attrs = %{}) do
     user_id = Map.get(attrs, "user_id")
     attrs = Map.put(attrs, "creator_id", user_id)
@@ -137,6 +95,7 @@ defmodule Pelable.WorkProjects do
     |> Repo.update()
   end
 
+
   #The user presses start project and this function is ran
   #%{"user_id", "work_project_id"} -> %WorkProject
   # Forks(Copies) the work_project with the id given, creates a new %WorkProject{} and then it starts it
@@ -145,6 +104,7 @@ defmodule Pelable.WorkProjects do
     attrs = Map.put(attrs, "work_project_id", work_project.id)
     start_work_project(attrs)
   end
+
 
   # %{user_id, id} -> %WorkProject{} || {:error, message}
   # Verifies the user_id can start this project and if so sends data down the pipeline
@@ -159,10 +119,11 @@ defmodule Pelable.WorkProjects do
     end
   end
 
+
   # %WorkProject, %{} -> %WorkProject{}
   # Updates workproject with Id, start_date to utc_now and work_status to "started"
-  # Internal only
-  def start_work_project(%WorkProject{} = work_project, _attrs) do
+
+  defp start_work_project(%WorkProject{} = work_project, _attrs) do
     
     current_date = DateTime.utc_now
     params = Map.put(%{}, "start_date", current_date) |> Map.put("work_status", "in progress")
@@ -254,19 +215,19 @@ defmodule Pelable.WorkProjects do
     |> Repo.insert()
   end
 
+  
+
   # %{"work_project_id", %{"user_id"}} -> %WorkProject{}
   # Receives a work_project id and a user id returns a new copy of the work_project with the received one as parent
   def fork_work_project(%{"work_project_id" => work_project_id, "user_id" => user_id} = attrs) do
     work_project = get_work_project!(work_project_id) |> Repo.preload([:user_stories])
-    project_version_id = work_project.project_version_id
     user_stories = work_project.user_stories
 
-    new_project_version = %{} |> Map.put("first?", false) |> Map.put("parent_id", project_version_id)
-    {:ok, new_project_version} = create_project_version(new_project_version)
-    new_work_project = %{} |> Map.put("project_version_id", new_project_version.id) |> Map.put("name", work_project.name) |> Map.put("description", work_project.description) |> Map.put("short_description", work_project.short_description) |> Map.put("description_html", work_project.description_html) |> Map.put("public_status", work_project.public_status) |> Map.put("creator_id", user_id)
+    {:ok, new_project_version} = work_project.project_version_id |> ProjectVersion.child |> create_project_version
+    new_work_project = work_project |> WorkProject.copy |> Map.put("project_version_id", new_project_version.id) |> Map.put("creator_id", user_id)
     {:ok, new_work_project} = create_work_project(new_work_project)
     
-    add_user_stories_work_project(user_stories, new_work_project)
+    copy_user_stories_to_work_project(user_stories, new_work_project)
     new_work_project |> Repo.preload([:user_stories])
   end
 
@@ -346,7 +307,32 @@ defmodule Pelable.WorkProjects do
   """
   def get_user_story!(id), do: Repo.get!(UserStory, id)
 
-  @doc """
+
+   # %UserStory{}, %WorkProject{} -> %WorkProjectUserStory{}
+  #Gets a %UserStory and a %WorkProject and creates the a new UserStory belonging to the WorkProject
+  def copy_user_story_to_work_project(%UserStory{} = user_story, %WorkProject{} = work_project) do
+    attrs = user_story |> UserStory.copy |> Map.put("work_project_id", work_project.id) 
+    UserStory.changeset(%UserStory{}, attrs) |> Repo.insert
+  end
+
+  # [%UserStory, ...], %WorkProject -> [%WorkProjectUserStory, ...]
+  #Gets a list of user_stories and a %WorkProject{} and create a WorkProjectUserStory for each user story
+  def copy_user_stories_to_work_project(user_stories, %WorkProject{} = work_project) when is_list(user_stories) do
+    Enum.map(user_stories, &Pelable.WorkProjects.copy_user_story_to_work_project(&1, work_project))
+  end
+
+  def create_user_story_for_work_project(%{} = attrs, %WorkProject{} = work_project) do
+    Map.put(attrs, "work_project_id", work_project.id) |> create_user_story
+  end
+
+  # [%{"title" => "Quora", ...}], %WorkProject{} -> [%WorkProjectUserSTory{}, ... || %{:error, changeset}]
+  # Takes a list of user stories and a work project and creates the work_project_user_stories or returns error in same order
+  def create_user_stories_for_work_project(user_stories, work_project = %WorkProject{}) when is_list(user_stories) do
+    Enum.map(user_stories, &Pelable.WorkProjects.create_user_story_for_work_project(&1, work_project))
+  end
+
+
+   @doc """
   Creates a user_story.
 
   ## Examples
@@ -359,95 +345,10 @@ defmodule Pelable.WorkProjects do
 
   """
 
-  defp get_insert_user_story(changeset = %Ecto.Changeset{}) do
-    get_insert_user_story(changeset, changeset.valid?)
-  end
-
-  defp get_insert_user_story(changeset, true) do
-    existing_user_story = Repo.get_by(UserStory, title: changeset.changes.title)
-
-    case existing_user_story do
-      nil -> {:new, Repo.insert(changeset)}
-      user_story -> {:exists, user_story}
-    end
-  end
-
-  defp get_insert_user_story(changeset, false) do
-    {:error, changeset}
-  end
-
-  def convert_user_story({:new, user_story}, %{} = attrs) do
-    user_story
-  end
-
-  def convert_user_story({:exists, user_story}, %{} = attrs) do
-    user_story
-    |> Map.put(:required?, attrs["required?"])
-    |> Map.put(:status, attrs["status"])
-  end
-
-   # %UserStory{}, %WorkProject{} -> %WorkProjectUserStory{}
-  #Gets a %UserStory and a %WorkProject and creates the corresponding WorkProjectUSerStory
-  def add_user_story_work_project(%{} = attrs, %WorkProject{} = work_project) do
-    user_story = 
+  def create_user_story(attrs \\ %{}) do
     %UserStory{} 
     |> UserStory.changeset(attrs)
-    |> get_insert_user_story
-    |> convert_user_story(attrs)
-
-    attrs =  Map.put(%{}, "user_story_id", user_story.id) 
-    |> Map.put("work_project_id", work_project.id) 
-    |> Map.put("status", user_story.status) 
-    |> Map.put("required?", user_story.required?)
-    case create_work_project_user_story(attrs) do
-    {:ok, work_project_user_story} -> work_project_user_story
-    error_tuple -> error_tuple
-    end
-  end
-
-  def add_user_story_work_project({:error, %Ecto.Changeset{}} = whole_error, _work_project) do
-    whole_error
-  end
-
-  # [%UserStory, ...], %WorkProject -> [%WorkProjectUserStory, ...]
-  #Gets a list of user_stories and a %WorkProject{} and create a WorkProjectUserStory for each user story
-  def add_user_stories_work_project(user_stories, %WorkProject{} = work_project) when is_list(user_stories) do
-    Enum.map(user_stories, &Pelable.WorkProjects.add_user_story_work_project(&1, work_project))
-  end
-
-  # [%{"title" => "Quora", ...}], %WorkProject{} -> [%WorkProjectUserSTory{}, ... || %{:error, changeset}]
-  # Takes a list of user stories and a work project and creates the work_project_user_stories or returns error in same order
-  def create_project_user_stories(user_stories, work_project = %WorkProject{}) when is_list(user_stories) do
-    Enum.map(user_stories, &Pelable.WorkProjects.create_user_story/1)
-    |> add_user_stories_work_project(work_project)
-  end
-
-
-  @doc """
-  Receives a map and returns a new user story or an existing user story with the exact title
-
-  iex> create_user_story(%{"title" => "user can click submit", "required?" => true, "status" => "not started"})
-  
-  {:ok,
- %Pelable.WorkProjects.UserStory{
-   __meta__: #Ecto.Schema.Metadata<:loaded, "user_stories">,
-   id: 5,
-   inserted_at: ~N[2019-09-14 21:13:07],
-   required?: true,
-   status: "not started",
-   title: "user can click submit",
-   updated_at: ~N[2019-09-14 21:13:07],
-   work_projects: #Ecto.Association.NotLoaded<association :work_projects is not loaded>
- }}
-  
-  """
-  def create_user_story(attrs \\ %{}) do
-    changeset = %UserStory{} |> UserStory.changeset(attrs)
-    
-    case get_insert_user_story(changeset, changeset.valid?) do
-      {:ok, u} -> u
-      u -> u
-    end
+    |> Repo.insert
   end
 
   # [%{"title", }, ...] -> [%UserStory, ...]
@@ -501,118 +402,5 @@ defmodule Pelable.WorkProjects do
   """
   def change_user_story(%UserStory{} = user_story) do
     UserStory.changeset(user_story, %{})
-  end
-
-  alias Pelable.WorkProjects.WorkProjectUserStory
-
-  @doc """
-  Returns the list of work_project_user_story.
-
-  ## Examples
-
-      iex> list_work_project_user_story()
-      [%WorkProjectUserStory{}, ...]
-
-  """
-  def list_work_project_user_story do
-    Repo.all(WorkProjectUserStory)
-  end
-
-  # %WorkProjectUserStory -> %{"title", "work_status", "required?"}
-  #Gets together all the information from the %WorkProjectUserStory{} and its parent %UserStory{} into a map
-  def get_user_story_info(%WorkProjectUserStory{} = wu) do
-    user_story = Repo.get_by(UserStory, id: wu.user_story_id)
-    %{} |> Map.put(:title, user_story.title) |> Map.put(:work_status, wu.status) |> Map.put(:required?, wu.required?)
-  end
-
-  # Number(id) -> [%{"title", "work_status"}, ...]
-  # Gets all the information from all the user stories of a project with 'id'
-  def get_user_stories_info_from_project(id) when is_number(id) do
-    query = from wu in WorkProjectUserStory, where: wu.work_project_id == ^id, select: wu
-    work_project_user_stories = Repo.all(query)
-    Enum.map(work_project_user_stories, &get_user_story_info/1)
-  end
-
-  @doc """
-  Gets a single work_project_user_story.
-
-  Raises `Ecto.NoResultsError` if the Work project user story does not exist.
-
-  ## Examples
-
-      iex> get_work_project_user_story!(123)
-      %WorkProjectUserStory{}
-
-      iex> get_work_project_user_story!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_work_project_user_story!(id), do: Repo.get!(WorkProjectUserStory, id)
-
-  @doc """
-  Creates a work_project_user_story.
-
-  ## Examples
-
-      iex> create_work_project_user_story(%{field: value})
-      {:ok, %WorkProjectUserStory{}}
-
-      iex> create_work_project_user_story(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_work_project_user_story(attrs \\ %{}) do
-    %WorkProjectUserStory{}
-    |> WorkProjectUserStory.changeset(attrs)
-    |> Repo.insert()
-  end
-
- 
-
-  @doc """
-  Updates a work_project_user_story.
-
-  ## Examples
-
-      iex> update_work_project_user_story(work_project_user_story, %{field: new_value})
-      {:ok, %WorkProjectUserStory{}}
-
-      iex> update_work_project_user_story(work_project_user_story, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_work_project_user_story(%WorkProjectUserStory{} = work_project_user_story, attrs) do
-    work_project_user_story
-    |> WorkProjectUserStory.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a WorkProjectUserStory.
-
-  ## Examples
-
-      iex> delete_work_project_user_story(work_project_user_story)
-      {:ok, %WorkProjectUserStory{}}
-
-      iex> delete_work_project_user_story(work_project_user_story)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_work_project_user_story(%WorkProjectUserStory{} = work_project_user_story) do
-    Repo.delete(work_project_user_story)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking work_project_user_story changes.
-
-  ## Examples
-
-      iex> change_work_project_user_story(work_project_user_story)
-      %Ecto.Changeset{source: %WorkProjectUserStory{}}
-
-  """
-  def change_work_project_user_story(%WorkProjectUserStory{} = work_project_user_story) do
-    WorkProjectUserStory.changeset(work_project_user_story, %{})
   end
 end
