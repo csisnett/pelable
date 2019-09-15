@@ -6,8 +6,8 @@ defmodule Pelable.WorkProjects.UserStory do
 
   schema "user_stories" do
     field :title, :string
-    field :status, :string
-    field :required?, :boolean
+    field :status, :string, default: "not started"
+    field :required?, :boolean, default: true
 
     belongs_to :work_project, WorkProject
     timestamps()
