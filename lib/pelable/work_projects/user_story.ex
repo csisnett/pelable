@@ -6,6 +6,9 @@ defmodule Pelable.WorkProjects.UserStory do
 
   schema "user_stories" do
     field :title, :string
+    field :status, :string, virtual: true
+    field :required?, :boolean, virtual: true
+
     many_to_many :work_projects, WorkProject, join_through: "work_project_user_story"
     timestamps()
   end
@@ -13,8 +16,8 @@ defmodule Pelable.WorkProjects.UserStory do
   @doc false
   def changeset(user_story, attrs) do
     user_story
-    |> cast(attrs, [:title])
-    |> validate_required([:title])
+    |> cast(attrs, [:title, :status, :required?])
+    |> validate_required([:title, :status, :required?])
     |> unique_constraint(:title)
   end
 end

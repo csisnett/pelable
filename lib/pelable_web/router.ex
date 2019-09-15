@@ -13,6 +13,9 @@ defmodule PelableWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
   end
 
   pipeline :protected do
@@ -51,6 +54,15 @@ defmodule PelableWeb.Router do
     post "/projects", WorkProjectController, :create
     get "/start_project/:uuid", WorkProjectController, :start
     post "/start_project/:uuid", WorkProjectController, :start
+  end
+
+  scope "/", PelableWeb do
+    pipe_through [:api, :protected]
+
+    post "/p/slug/:uuid/user_stories", WorkProjectUserStoryController, :create
+    put "/p/slug/:uuid/user_stories/:id", WorkProjectUserStoryController, :update
+    delete "/p/slug/:uuid/user_stories/:id", WorkProjectUserStoryController, :delete
+
   end
 
   # Other scopes may use custom stacks.

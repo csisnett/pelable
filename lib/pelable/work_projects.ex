@@ -359,12 +359,16 @@ defmodule Pelable.WorkProjects do
 
   """
 
+  defp get_insert_user_story(changeset = %Ecto.Changeset{}) do
+    get_insert_user_story(changeset, changeset.valid?)
+  end
+
   defp get_insert_user_story(changeset, true) do
     existing_user_story = Repo.get_by(UserStory, title: changeset.changes.title)
 
     case existing_user_story do
-      nil -> Repo.insert(changeset)
-      user_story -> user_story
+      nil -> {:new, Repo.insert(changeset)}
+      user_story -> {:exists, user_story}
     end
   end
 
@@ -372,8 +376,71 @@ defmodule Pelable.WorkProjects do
     {:error, changeset}
   end
 
-  # {"title", } -> %UserStory{}
-  # Receives a map and returns a new user story
+  def convert_user_story({:new, user_story}, %{} = attrs) do
+    user_story
+  end
+
+  def convert_user_story({:exists, user_story}, %{} = attrs) do
+    user_story
+    |> Map.put(:required?, attrs["required?"])
+    |> Map.put(:status, attrs["status"])
+  end
+
+   # %UserStory{}, %WorkProject{} -> %WorkProjectUserStory{}
+  #Gets a %UserStory and a %WorkProject and creates the corresponding WorkProjectUSerStory
+  def add_user_story_work_project(%{} = attrs, %WorkProject{} = work_project) do
+    user_story = 
+    %UserStory{} 
+    |> UserStory.changeset(attrs)
+    |> get_insert_user_story
+    |> convert_user_story(attrs)
+
+    attrs =  Map.put(%{}, "user_story_id", user_story.id) 
+    |> Map.put("work_project_id", work_project.id) 
+    |> Map.put("status", user_story.status) 
+    |> Map.put("required?", user_story.required?)
+    case create_work_project_user_story(attrs) do
+    {:ok, work_project_user_story} -> work_project_user_story
+    error_tuple -> error_tuple
+    end
+  end
+
+  def add_user_story_work_project({:error, %Ecto.Changeset{}} = whole_error, _work_project) do
+    whole_error
+  end
+
+  # [%UserStory, ...], %WorkProject -> [%WorkProjectUserStory, ...]
+  #Gets a list of user_stories and a %WorkProject{} and create a WorkProjectUserStory for each user story
+  def add_user_stories_work_project(user_stories, %WorkProject{} = work_project) when is_list(user_stories) do
+    Enum.map(user_stories, &Pelable.WorkProjects.add_user_story_work_project(&1, work_project))
+  end
+
+  # [%{"title" => "Quora", ...}], %WorkProject{} -> [%WorkProjectUserSTory{}, ... || %{:error, changeset}]
+  # Takes a list of user stories and a work project and creates the work_project_user_stories or returns error in same order
+  def create_project_user_stories(user_stories, work_project = %WorkProject{}) when is_list(user_stories) do
+    Enum.map(user_stories, &Pelable.WorkProjects.create_user_story/1)
+    |> add_user_stories_work_project(work_project)
+  end
+
+
+  @doc """
+  Receives a map and returns a new user story or an existing user story with the exact title
+
+  iex> create_user_story(%{"title" => "user can click submit", "required?" => true, "status" => "not started"})
+  
+  {:ok,
+ %Pelable.WorkProjects.UserStory{
+   __meta__: #Ecto.Schema.Metadata<:loaded, "user_stories">,
+   id: 5,
+   inserted_at: ~N[2019-09-14 21:13:07],
+   required?: true,
+   status: "not started",
+   title: "user can click submit",
+   updated_at: ~N[2019-09-14 21:13:07],
+   work_projects: #Ecto.Association.NotLoaded<association :work_projects is not loaded>
+ }}
+  
+  """
   def create_user_story(attrs \\ %{}) do
     changeset = %UserStory{} |> UserStory.changeset(attrs)
     
@@ -500,18 +567,7 @@ defmodule Pelable.WorkProjects do
     |> Repo.insert()
   end
 
-  # %UserStory{}, %WorkProject{} -> %WorkProjectUserStory{}
-  #Gets a %UserStory and a %WorkProject and creates the corresponding WorkProjectUSerStory
-  def add_user_story_work_project(%UserStory{} = user_story, %WorkProject{} = work_project) do
-    {:ok, work_project_user_story} = Map.put(%{}, "user_story_id", user_story.id) |> Map.put("work_project_id", work_project.id) |> create_work_project_user_story
-    work_project_user_story
-  end
-
-  # [%UserStory, ...], %WorkProject -> [%WorkProjectUserStory, ...]
-  #Gets a list of user_stories and a %WorkProject{} and create a WorkProjectUserStory for each user story
-  def add_user_stories_work_project(user_stories, %WorkProject{} = work_project) when is_list(user_stories) do
-    Enum.each(user_stories, &Pelable.WorkProjects.add_user_story_work_project(&1, work_project))
-  end
+ 
 
   @doc """
   Updates a work_project_user_story.
