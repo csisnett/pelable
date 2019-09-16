@@ -20,7 +20,7 @@ defmodule Pelable.MixProject do
   def application do
     [
       mod: {Pelable.Application, []},
-      extra_applications: [:logger, :runtime_tools, :swoosh]
+      extra_applications: [:logger, :runtime_tools, :swoosh, :mnesia]
     ]
   end
 

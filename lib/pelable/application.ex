@@ -14,6 +14,11 @@ defmodule Pelable.Application do
       PelableWeb.Endpoint
       # Starts a worker by calling: Pelable.Worker.start_link(arg)
       # {Pelable.Worker, arg},
+
+      Pow.Store.Backend.MnesiaCache
+      # # Or in a distributed system:
+      # {Pow.Store.Backend.MnesiaCache, extra_db_nodes: Node.list()},
+      # Pow.Store.Backend.MnesiaCache.Unsplit # Recover from netsplit
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
