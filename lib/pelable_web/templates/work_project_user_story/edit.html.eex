@@ -1,5 +1,0 @@
-<h1>Edit Work project user story</h1>
-
-<%= render "form.html", Map.put(assigns, :action, Routes.work_project_user_story_path(@conn, :update, @work_project_user_story)) %>
-
-<span><%= link "Back", to: Routes.work_project_user_story_path(@conn, :index) %></span>

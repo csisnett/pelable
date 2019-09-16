@@ -35,8 +35,6 @@ defmodule PelableWeb.Router do
 
     resources "/projects", WorkProjectController, except: [:show, :create, :new]
     get "/p/:slug/:uuid", WorkProjectController, :show
-    resources "/user_stories", UserStoryController
-    resources "/work_project_user_story", WorkProjectUserStoryController
     resources "/project_versions", ProjectVersionController
     resources "/goals", GoalController
     get "/landing", PageController, :landing
