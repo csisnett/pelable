@@ -11,7 +11,7 @@ defmodule Pelable.Application do
       # Start the Ecto repository
       Pelable.Repo,
       # Start the endpoint when the application starts
-      PelableWeb.Endpoint
+      PelableWeb.Endpoint,
       # Starts a worker by calling: Pelable.Worker.start_link(arg)
       # {Pelable.Worker, arg},
 

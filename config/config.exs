@@ -29,7 +29,7 @@ config :pelable, :pow,
   user: Pelable.Users.User,
   repo: Pelable.Repo,
   web_module: PelableWeb,
-  cache_store_backend: Pow.Store.Backend.MnesiaCache
+  cache_store_backend: Pow.Store.Backend.MnesiaCache,
   extensions: [PowResetPassword, PowEmailConfirmation, PowPersistentSession],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
   mailer_backend: PelableWeb.PowMailer,
