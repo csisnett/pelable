@@ -49,6 +49,7 @@ defmodule PelableWeb.Router do
     pipe_through [:browser, :protected]
     get "/p/:slug/:uuid/user-stories/new", UserStoryController, :new
     post "/p/:slug/:uuid/user-stories/new", UserStoryController, :create
+    get "/user-stories/:uuid", UserStoryController, :edit
     resources "/user-stories", UserStoryController, except: [:new, :create, :show]
     get "/projects/new", WorkProjectController, :new
     post "/projects", WorkProjectController, :create

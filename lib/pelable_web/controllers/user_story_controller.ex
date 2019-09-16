@@ -34,8 +34,8 @@ defmodule PelableWeb.UserStoryController do
     |> redirect(to: Routes.work_project_path(conn, :show, slug, uuid))
   end
 
-  def edit(conn, %{"id" => id}) do
-    user_story = WorkProjects.get_user_story!(id)
+  def edit(conn, %{"uuid" => uuid}) do
+    user_story = WorkProjects.get_user_story_uuid(uuid)
     changeset = WorkProjects.change_user_story(user_story)
     render(conn, "edit.html", user_story: user_story, changeset: changeset)
   end

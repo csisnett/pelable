@@ -307,7 +307,9 @@ defmodule Pelable.WorkProjects do
   """
   def get_user_story!(id), do: Repo.get!(UserStory, id)
 
+  def get_user_story_uuid(uuid), do: Repo.get_by(UserStory, uuid: uuid)
 
+  
    # %UserStory{}, %WorkProject{} -> %WorkProjectUserStory{}
   #Gets a %UserStory and a %WorkProject and creates the a new UserStory belonging to the WorkProject
   def copy_user_story_to_work_project(%UserStory{} = user_story, %WorkProject{} = work_project) do
@@ -348,6 +350,7 @@ defmodule Pelable.WorkProjects do
   def create_user_story(attrs \\ %{}) do
     %UserStory{} 
     |> UserStory.changeset(attrs)
+    |> IO.inspect
     |> Repo.insert
   end
 
