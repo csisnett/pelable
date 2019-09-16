@@ -40,8 +40,8 @@ defmodule PelableWeb.WorkProjectController do
   end
 
   def show(conn, %{"uuid" => uuid}) do
-    resp = WorkProjects.show_work_project(uuid)
-    render(conn, "show.html", resp: resp)
+    work_project = WorkProjects.get_work_project_uuid(uuid) |> Repo.preload([:user_stories])
+    render(conn, "show.html", work_project: work_project)
   end
 
   def edit(conn, %{"id" => id}) do

@@ -3,6 +3,7 @@ defmodule PelableWeb.UserStoryController do
 
   alias Pelable.WorkProjects
   alias Pelable.WorkProjects.UserStory
+  alias Pelable.Repo
 
   def index(conn, _params) do
     user_stories = WorkProjects.list_user_stories()
@@ -28,38 +29,40 @@ defmodule PelableWeb.UserStoryController do
         render(conn, "new.html", changeset: changeset)
     end
   end
-
+"""
   def show(conn, %{"slug" => slug, "uuid" => uuid}) do
     conn
     |> redirect(to: Routes.work_project_path(conn, :show, slug, uuid))
   end
 
+  """
+
   def edit(conn, %{"uuid" => uuid}) do
-    user_story = WorkProjects.get_user_story_uuid(uuid)
+    user_story = WorkProjects.get_user_story_uuid(uuid) |> Repo.preload([:work_project])
     changeset = WorkProjects.change_user_story(user_story)
     render(conn, "edit.html", user_story: user_story, changeset: changeset)
   end
 
-  def update(conn, %{"id" => id, "user_story" => user_story_params}) do
-    user_story = WorkProjects.get_user_story!(id)
+  def update(conn, %{"uuid" => uuid, "user_story" => user_story_params}) do
+    user_story = WorkProjects.get_user_story_uuid(uuid) |> Repo.preload([:work_project])
 
     case WorkProjects.update_user_story(user_story, user_story_params) do
       {:ok, user_story} ->
         conn
         |> put_flash(:info, "User story updated successfully.")
-        |> redirect(to: Routes.user_story_path(conn, :show, user_story))
+        |> redirect(to: Routes.work_project_path(conn, :show, user_story.work_project.slug, user_story.work_project.uuid))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", user_story: user_story, changeset: changeset)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    user_story = WorkProjects.get_user_story!(id)
+  def delete(conn, %{"uuid" => uuid}) do
+    user_story = WorkProjects.get_user_story_uuid(uuid) |> Repo.preload([:work_project])
     {:ok, _user_story} = WorkProjects.delete_user_story(user_story)
 
     conn
     |> put_flash(:info, "User story deleted successfully.")
-    |> redirect(to: Routes.user_story_path(conn, :index))
+    |> redirect(to: Routes.work_project_path(conn, :show, user_story.work_project.slug, user_story.work_project.uuid))
   end
 end

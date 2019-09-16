@@ -50,7 +50,8 @@ defmodule PelableWeb.Router do
     get "/p/:slug/:uuid/user-stories/new", UserStoryController, :new
     post "/p/:slug/:uuid/user-stories/new", UserStoryController, :create
     get "/user-stories/:uuid", UserStoryController, :edit
-    resources "/user-stories", UserStoryController, except: [:new, :create, :show]
+    put "/user-stories/:uuid", UserStoryController, :update
+    delete "/user-stories/:uuid", UserStoryController, :delete
     get "/projects/new", WorkProjectController, :new
     post "/projects", WorkProjectController, :create
     get "/start_project/:uuid", WorkProjectController, :start
