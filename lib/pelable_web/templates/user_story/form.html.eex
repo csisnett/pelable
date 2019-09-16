@@ -5,9 +5,13 @@
     </div>
   <% end %>
 
-  <%= label f, :body %>
-  <%= text_input f, :body %>
-  <%= error_tag f, :body %>
+  <%= label f, :title %>
+  <%= textarea f, :title %>
+  <%= error_tag f, :title %>
+
+  <%= label f, humanize(:required_for_completion?) %>
+  <%= checkbox f, :required? %>
+  <%= error_tag f, :required? %>
 
   <div>
     <%= submit "Save" %>
