@@ -8,16 +8,17 @@ defmodule Pelable.WorkProjects.UserStory do
     field :title, :string
     field :status, :string, default: "not started"
     field :required?, :boolean, default: true
-
+    field :uuid, Ecto.ShortUUID, autogenerate: true
+    
     belongs_to :work_project, WorkProject
     timestamps()
   end
 
   def copy(%UserStory{} = user_story) do
     %{}
+    |> Map.put("title", user_story.title)
     |> Map.put("status", user_story.status) 
     |> Map.put("required?", user_story.required?)
-    |> Map.put("title", user_story.title)
   end
 
   # %UserStory{} -> %{"title", "work_status", "required?"}
@@ -27,6 +28,7 @@ defmodule Pelable.WorkProjects.UserStory do
     |> Map.put(:title, user_story.title) 
     |> Map.put(:status, user_story.status) 
     |> Map.put(:required?, user_story.required?)
+    |> Map.put(:uuid, user_story.uuid)
   end
 
   def get_user_stories_info(user_stories) when is_list(user_stories) do
@@ -39,5 +41,6 @@ defmodule Pelable.WorkProjects.UserStory do
     user_story
     |> cast(attrs, [:title, :status, :required?, :work_project_id])
     |> validate_required([:title, :status, :required?, :work_project_id])
+    |> unique_constraint(:uuid)
   end
 end
