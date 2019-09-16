@@ -72,7 +72,7 @@ defmodule Pelable.WorkProjects do
 
    def create_work_project_assoc(attrs = %{}) do
     user_id = Map.get(attrs, "user_id")
-    attrs = Map.put(attrs, "creator_id", user_id)
+    attrs = Map.put_new(attrs, "creator_id", user_id)
     {:ok, project_version} = create_project_version(attrs)
     Map.put(attrs, "project_version_id", project_version.id) |> create_work_project
   end

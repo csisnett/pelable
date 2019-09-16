@@ -78,7 +78,7 @@ defmodule Pelable.WorkProjectTest do
     alias Pelable.WorkProjects
 
     @valid_project_version_work %{"description" => "a project", "name" => "mi prmero", "public_status" => "public", "user_stories" => [%{"title" => "hola"}, %{"title" => "waa"}, %{"title" => "amen"}]}
-    @valid_attrs %{description: "some description", name: "some name", public_status: "some public_status", first?: true}
+    @valid_attrs %{}
     @update_attrs %{description: "some updated description", name: "some updated name", public_status: "some updated public_status", first?: false}
     @invalid_attrs %{description: nil, name: nil, public_status: nil, first?: nil}
 
@@ -203,6 +203,31 @@ defmodule Pelable.WorkProjectTest do
     test "change_user_story/1 returns a user_story changeset" do
       user_story = user_story_fixture()
       assert %Ecto.Changeset{} = WorkProjects.change_user_story(user_story)
+    end
+  end
+
+  describe "work_projects" do
+    alias Pelable.WorkProjects
+    alias Pelable.WorkProjects.WorkProject
+    alias Pelable.Learn
+    def user_fixture do
+      {:ok, user} = %{"username" => "csisnettsa12211", "email" => "carlos1a23141@gmail.com", "password" => "holacomoestas", "confirm_password" => "holacomoestas"} |> Learn.create_user
+      user
+    end
+
+    @valid_attrs %{"name" => "First", "user_stories" => [%{"title" => "first user story"}, %{"title" => "second user story"}]}
+
+    @tag :now
+    test "create_work_project_assoc/1" do
+      user = user_fixture
+      project_version = project_version_fixture
+      {:ok, work_project} = 
+      @valid_attrs 
+      |> Map.put("creator_id", user.id) 
+      |> Map.put("project_version_id", project_version.id)
+      |> WorkProjects.create_work_project_assoc
+
+      assert %WorkProject{} == work_project
     end
   end
 end
