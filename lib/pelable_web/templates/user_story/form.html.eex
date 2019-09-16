@@ -8,7 +8,7 @@
   <%= label f, :title %>
   <%= textarea f, :title %>
   <%= error_tag f, :title %>
-
+<br><br>
   <%= label f, humanize(:required_for_completion?) %>
   <%= checkbox f, :required? %>
   <%= error_tag f, :required? %>

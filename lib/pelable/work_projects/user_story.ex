@@ -30,7 +30,7 @@ defmodule Pelable.WorkProjects.UserStory do
   end
 
   def get_user_stories_info(user_stories) when is_list(user_stories) do
-    Enum.map(user_stories, &WorkProjects.get_user_story_info/1)
+    Enum.map(user_stories, &UserStory.get_user_story_info/1)
   end
 
 

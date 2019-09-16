@@ -4,7 +4,7 @@
 <progress id="file" max="100" value="30"> 70% </progress><br>
 <% end %>
 <%= button "Start Project", to: Routes.work_project_path(@conn, :start, @resp.work_project.uuid), method: :post %> <br>
-
+<br> <%= button "New user story", to: Routes.user_story_path(@conn, :new, @resp.work_project.slug, @resp.work_project.uuid), method: :get %> <br>
 </div>
 <ul>
 
@@ -22,7 +22,7 @@
 
   <%= for user_story <- @resp.user_stories, required_user_story?(user_story)  do %>
     <li>
-    <%= user_story.title %>, status: <%= user_story.work_status%>
+    <%= user_story.title %>, status: <%= user_story.status%>
     <br> <br>
   </li>
 

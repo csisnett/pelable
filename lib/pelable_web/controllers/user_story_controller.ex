@@ -9,26 +9,29 @@ defmodule PelableWeb.UserStoryController do
     render(conn, "index.html", user_stories: user_stories)
   end
 
-  def new(conn, _params) do
-    changeset = WorkProjects.change_user_story(%UserStory{})
-    render(conn, "new.html", changeset: changeset)
+  def new(conn, %{"slug" => slug, "uuid" => uuid} = params) do
+    user_story = %UserStory{}
+    changeset = WorkProjects.change_user_story(user_story)
+    resp = %{"changeset" => changeset, "params" => params}
+    render(conn, "new.html", changeset: changeset, resp: resp)
   end
 
-  def create(conn, %{"user_story" => user_story_params}) do
-    case WorkProjects.create_user_story(user_story_params) do
+  def create(conn, %{"slug" => slug, "uuid" => uuid, "user_story" => user_story_params}) do
+    work_project = WorkProjects.get_work_project_uuid(uuid)
+    case WorkProjects.create_user_story_for_work_project(user_story_params, work_project) do
       {:ok, user_story} ->
         conn
         |> put_flash(:info, "User story created successfully.")
-        |> redirect(to: Routes.user_story_path(conn, :show, user_story))
+        |> redirect(to: Routes.work_project_path(conn, :show, work_project.slug, work_project.uuid))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    user_story = WorkProjects.get_user_story!(id)
-    render(conn, "show.html", user_story: user_story)
+  def show(conn, %{"slug" => slug, "uuid" => uuid}) do
+    conn
+    |> redirect(to: Routes.work_project_path(conn, :show, slug, uuid))
   end
 
   def edit(conn, %{"id" => id}) do
