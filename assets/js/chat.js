@@ -10,11 +10,9 @@ let Chat = {
 
     listenForChats(channel) {
         function submitForm(){
-        let userName = document.getElementById('user-name').value
         let userMsg = document.getElementById('body').value
     
-        channel.push('shout', {username: userName, body: userMsg})
-          document.getElementById('user-name').value = userName
+        channel.push('shout', {body: userMsg})
           setTimeout(function() {document.getElementById('body').value = ''}, 500);
         }
     

@@ -16,7 +16,7 @@ defmodule PelableWeb.ChatChannel do
   # broadcast to everyone in the current topic (chat:lobby).
   def handle_in("shout", payload, socket) do
     "chat:" <> uuid = socket.topic
-    payload = Map.merge(payload, %{"chatroom_uuid" => uuid})
+    payload = Map.merge(payload, %{"chatroom_uuid" => uuid, "username" => socket.assigns.current_user.username})
     Chat.create_message(payload)
     broadcast socket, "shout", payload
     {:noreply, socket}

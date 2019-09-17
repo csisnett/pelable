@@ -21,7 +21,7 @@ defmodule PelableWeb.UserSocket do
   def connect(%{"token" => token}, socket, _connect_info) do
     case Phoenix.Token.verify(socket, "BndIeIG1Y5aZGD534Z0WFpwG+oBWlOkeD/C1lIGvR+mSKF0rNpRWYodPr+0YM2yr", token, max_age: 86400) do
       {:ok, user_id} ->
-        socket = assign(socket, :user, Repo.get!(User, user_id))
+        socket = assign(socket, :current_user, Repo.get!(User, user_id))
         {:ok, socket}
       {:error, _} ->
         :error
