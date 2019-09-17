@@ -15,7 +15,7 @@ let Chat = {
     
         channel.push('shout', {username: userName, body: userMsg})
           document.getElementById('user-name').value = userName
-          setTimeout(function() {document.getElementById('body').value = ''}, 1500);
+          setTimeout(function() {document.getElementById('body').value = ''}, 500);
         }
     
         document.getElementById('chat-form').addEventListener('submit', function(e){
@@ -32,8 +32,7 @@ let Chat = {
           /*Moves the chatbox down for any new message */
           var top_position = msgBlock.offsetTop
           window.last_message_position = top_position
-          console.log(top_position)
-            console.log(chatBox.scrollTop)
+      
           if(top_position - chatBox.scrollTop <= 479){
             chatBox.scrollTop = top_position
           

@@ -13,9 +13,11 @@ li {
 <h2><%= @work_project.name %></h2>
 <b>status: <%= @work_project.work_status%> </b>
 <%= if in_progress? @work_project do %>
-<progress id="file" max="100" value="30"> 70% </progress><br>
-<% end %>
+
+<%= else %>
 <%= button "Start Project", to: Routes.work_project_path(@conn, :start, @work_project.uuid), method: :post %> <br>
+<% end %>
+
 <br> <%= button "New user story", to: Routes.user_story_path(@conn, :new, @work_project.slug, @work_project.uuid), method: :get %> <br>
 </div>
 <%= raw (HtmlSanitizeEx.basic_html (@work_project.description_html)) %>

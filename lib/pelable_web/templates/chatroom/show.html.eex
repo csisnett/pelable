@@ -16,6 +16,20 @@
  }
 </style>
 
+<script>
+function get_user_token() {
+  var x = document.getElementsByTagName("META");
+    var txt = "";
+    var i;
+  for (i = 0; i < x.length; i++) {
+        if (x[i].name=="channel_token")
+        {
+             return x[i].content;
+         }
+
+    }
+}
+</script>
 <script type="module">
 import socket from "<%= Routes.static_path(@conn, "/js/socket.js") %>"
 import Chat from "<%= Routes.static_path(@conn, "/js/chat.js") %>"
@@ -24,6 +38,8 @@ Chat.init(socket)
 <h1>The Chatroom</h1>
 Welcome to the chat!
 
+<%= tag :meta, name: "channel_token",
+               content: Phoenix.Token.sign(@conn, "BndIeIG1Y5aZGD534Z0WFpwG+oBWlOkeD/C1lIGvR+mSKF0rNpRWYodPr+0YM2yr", @current_user.id) %>
 <div id="chat-interface">
 <div id="chat-box">
 <%= for message <- @messages do %>

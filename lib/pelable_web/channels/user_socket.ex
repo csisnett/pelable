@@ -1,6 +1,7 @@
 defmodule PelableWeb.UserSocket do
   use Phoenix.Socket
-
+  alias Pelable.Repo
+  alias Pelable.Users.User
 
   channel "chat:*", PelableWeb.ChatChannel
   ## Channels
@@ -17,8 +18,14 @@ defmodule PelableWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+  def connect(%{"token" => token}, socket, _connect_info) do
+    case Phoenix.Token.verify(socket, "BndIeIG1Y5aZGD534Z0WFpwG+oBWlOkeD/C1lIGvR+mSKF0rNpRWYodPr+0YM2yr", token, max_age: 86400) do
+      {:ok, user_id} ->
+        socket = assign(socket, :user, Repo.get!(User, user_id))
+        {:ok, socket}
+      {:error, _} ->
+        :error
+    end
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
