@@ -14,7 +14,7 @@ defmodule Pelable.Chat.Chatroom do
     field :uuid, :string
     belongs_to :creator, User
     many_to_many :participants, User, join_through: "chatroom_participant"
-    many_to_many :invitations, User, join_through: "chatroom_invitations"
+    many_to_many :invited_users, User, join_through: "chatroom_invitation"
     timestamps()
   end
 

@@ -27,7 +27,7 @@ defmodule PelableWeb.ChatroomController do
   end
 
   def show(conn, %{"uuid" => uuid}) do
-    chatroom = Chat.get_chatroom_uuid(uuid)
+    chatroom = Chat.get_chatroom_by_uuid(uuid)
     messages = Chat.list_messages_by_chatroom(chatroom.id)
     current_user = conn.assigns.current_user
     chat(conn, chatroom, messages, current_user)

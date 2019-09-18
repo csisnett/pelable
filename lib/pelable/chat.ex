@@ -10,6 +10,8 @@ defmodule Pelable.Chat do
   alias Pelable.Learn
   alias Pelable.Users.User
 
+  @chatroom_types ["public", "private conversation", "private group"]
+
   @doc """
   Returns the list of chatrooms.
 
@@ -21,6 +23,43 @@ defmodule Pelable.Chat do
   """
   def list_chatrooms do
     Repo.all(Chatroom)
+  end
+
+  def invite_user(user, uuid) do
+    chatroom = get_chatroom_by_uuid(uuid)
+    chatroom = Repo.preload(chatroom, [:creator, :participants, :invited_users])
+    chatroom_changeset = Ecto.Changeset.change(chatroom)
+    chatroom_users_changeset = chatroom_changeset |> Ecto.Changeset.put_assoc(:invited_users, [user])
+    Repo.update!(chatroom_users_changeset)
+  end
+
+  def join_chatroom(%User{} = user, uuid) do
+    chatroom = get_chatroom_by_uuid(uuid)
+    case chatroom.type do
+      "public" -> join_user_to_chatroom(user, chatroom)
+      _ ->
+        if invited?(user, chatroom) do
+          join_user_to_chatroom(user, chatroom)
+        else
+        {:error, "You can't join, you haven't been invited to this chat"}
+        end
+    end
+  end
+
+  #%User{}, %Chatroom{} -> boolean 
+  # Gets a User, and a preloaded chatroom returns true if user has been invited
+  def invited?(user, chatroom) do
+    case Enum.find(chatroom.invited_users, false, fn u -> u.id == user.id end) do
+      %User{} -> true
+      false -> false
+    end
+  end
+
+  defp join_user_to_chatroom(%User{} = user, %Chatroom{} = chatroom) do
+    chatroom = Repo.preload(chatroom, [:creator, :participants, :invited_users])
+    chatroom_changeset = Ecto.Changeset.change(chatroom)
+    chatroom_users_changeset = chatroom_changeset |> Ecto.Changeset.put_assoc(:participants, [user])
+    Repo.update!(chatroom_users_changeset)
   end
 
   @doc """
@@ -39,7 +78,7 @@ defmodule Pelable.Chat do
   """
   def get_chatroom!(id), do: Repo.get!(Chatroom, id)
 
-  def get_chatroom_uuid(uuid) do
+  def get_chatroom_by_uuid(uuid) do
     Repo.get_by(Chatroom, uuid: uuid)
   end
 
@@ -164,7 +203,7 @@ defmodule Pelable.Chat do
   """
   
   def create_message(%{"chatroom_uuid" => uuid, "username" => username} = attrs) do
-    chatroom = get_chatroom_uuid(uuid)
+    chatroom = get_chatroom_by_uuid(uuid)
     user = Learn.get_user_by_username(username)
     attrs = Map.put(attrs, "chatroom_id", chatroom.id) |> Map.put("sender_id", user.id)
     %Message{}

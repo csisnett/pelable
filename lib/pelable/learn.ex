@@ -19,6 +19,8 @@ defmodule Pelable.Learn do
     Repo.get_by(User, username: username)
   end
 
+  def get_user!(id), do: Repo.get!(User, id)
+
   @doc """
   Returns the list of goals.
 
