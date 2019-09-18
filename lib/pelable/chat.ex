@@ -25,19 +25,41 @@ defmodule Pelable.Chat do
     Repo.all(Chatroom)
   end
 
-  def invite_user(user, uuid) do
-    chatroom = get_chatroom_by_uuid(uuid)
-    chatroom = Repo.preload(chatroom, [:creator, :participants, :invited_users])
+  def invite_to_chatroom(user, uuid) do
+    chatroom = get_chatroom_by_uuid(uuid) |> Repo.preload([:creator, :participants, :invited_users])
+    case chatroom.type do
+      "private conversation" ->
+        if participants(chatroom) >= 2 or invitations(chatroom) >= 1 do
+          {:error, "No more than two people can join a private conversation"}
+        else
+          save_invitation(user, chatroom)
+        end
+        _any_other_type -> save_invitation(user, chatroom)
+      end
+  end
+
+  # preloaded %Chatroom{} -> boolean
+  def participants(chatroom) do
+    Enum.count(chatroom.participants)
+  end
+
+  # preloaded %Chatroom{} -> boolean
+  def invitations(chatroom) do
+    Enum.count(chatroom.invited_users)
+  end
+
+  #Gets a user and a preloaded chatroom, adds user to :invited_users
+  def save_invitation(user, chatroom) do
     chatroom_changeset = Ecto.Changeset.change(chatroom)
     chatroom_users_changeset = chatroom_changeset |> Ecto.Changeset.put_assoc(:invited_users, [user])
     Repo.update!(chatroom_users_changeset)
   end
 
   def join_chatroom(%User{} = user, uuid) do
-    chatroom = get_chatroom_by_uuid(uuid)
+    chatroom = get_chatroom_by_uuid(uuid) |> Repo.preload([:invited_users])
     case chatroom.type do
       "public" -> join_user_to_chatroom(user, chatroom)
-      _ ->
+      _any_other_type ->
         if invited?(user, chatroom) do
           join_user_to_chatroom(user, chatroom)
         else
