@@ -20,7 +20,7 @@ let Chat = {
         //console.log(userMsg);
     
         channel.push('shout', {body: userMsg})
-          setTimeout(function() {document.getElementById('body').value = ""}, 500);
+          setTimeout(function() {document.getElementById('body').value = ""}, 50);
       }
         }
     
