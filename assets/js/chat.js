@@ -11,9 +11,17 @@ let Chat = {
     listenForChats(channel) {
         function submitForm(){
         let userMsg = document.getElementById('body').value
+
+        userMsg = userMsg.trim();
+        if (userMsg === "") {
+        //console.log("empty");
+      }
+      else {
+        //console.log(userMsg);
     
         channel.push('shout', {body: userMsg})
           setTimeout(function() {document.getElementById('body').value = ""}, 500);
+      }
         }
     
         document.getElementById('chat-form').addEventListener('submit', function(e){
@@ -24,19 +32,9 @@ let Chat = {
         document.getElementById("body").addEventListener("keyup", function(event) {
   // Number 13 is the "Enter" key on the keyboard
   if (event.keyCode === 13) {
-    // Cancel the default action, if needed
-  
-    // Trigger the button element with a click
-    let userMsg = document.getElementById('body').value
-    userMsg = userMsg.trim();
-    if (userMsg === "") {
-    //console.log("empty");
-  }
-  else {
-    //console.log(userMsg);
     submitForm();
   }
-}
+
 })
     
         channel.on('shout', payload => {
