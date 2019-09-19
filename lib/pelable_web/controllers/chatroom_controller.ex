@@ -3,6 +3,7 @@ defmodule PelableWeb.ChatroomController do
 
   alias Pelable.Chat
   alias Pelable.Chat.Chatroom
+  alias Pelable.Repo
 
   def index(conn, _params) do
     chatrooms = Chat.list_chatrooms()
@@ -29,7 +30,7 @@ defmodule PelableWeb.ChatroomController do
   def show(conn, %{"uuid" => uuid}) do
     chatroom = Chat.get_chatroom_by_uuid(uuid)
     messages = Chat.list_messages_by_chatroom(chatroom.id)
-    current_user = conn.assigns.current_user
+    current_user = conn.assigns.current_user |> Repo.preload([:joined_chats, :chat_invitations])
     chat(conn, chatroom, messages, current_user)
   end
 
@@ -38,7 +39,7 @@ defmodule PelableWeb.ChatroomController do
   end
 
   def chat(conn, chatroom, messages, current_user) do
-    render(conn, "show.html", chatroom: chatroom, messages: messages, user: current_user.username)
+    render(conn, "show.html", chatroom: chatroom, messages: messages, user: current_user)
   end
 
 
