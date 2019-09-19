@@ -30,8 +30,9 @@ let Chat = {
           /*Moves the chatbox down for any new message */
           var top_position = msgBlock.offsetTop
           window.last_message_position = top_position
-      
-          if(top_position - chatBox.scrollTop <= 479){
+          console.log(top_position);
+          console.log(chatBox.scrollTop);
+          if(top_position - chatBox.scrollTop <= 560){
             chatBox.scrollTop = top_position
           
           }
