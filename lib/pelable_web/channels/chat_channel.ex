@@ -17,9 +17,14 @@ defmodule PelableWeb.ChatChannel do
   def handle_in("shout", payload, socket) do
     "chat:" <> uuid = socket.topic
     payload = Map.merge(payload, %{"chatroom_uuid" => uuid, "username" => socket.assigns.current_user.username})
-    Chat.create_message(payload)
-    broadcast socket, "shout", payload
-    {:noreply, socket}
+    case Chat.create_message(payload) do
+      {:ok, message} ->
+        payload = Map.merge(payload, %{"inserted_at" => message.inserted_at})
+      broadcast socket, "shout", payload
+      {:noreply, socket}
+      {:error, _message} ->
+        {:noreply, socket}
+    end
   end
 
   # Add authorization logic here as required.

@@ -80,7 +80,7 @@ Welcome to the chat!
 <%= for chatroom <- @public_chatrooms do %>
 <%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %>
  <%= end %>
-<a> <b> Your Channels</b> </a>
+<a> <b> Private Channels</b> </a>
 <%= if @user.joined_chats != [] do %>
 <%= for chatroom <- @user.joined_chats do %>
  <%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %>
@@ -88,7 +88,7 @@ Welcome to the chat!
  <%= end %>
 
  <%= if @user.chat_invitations != [] do %>
- <a> <b> Chat invitations </b> </a>
+ <a> <b> Invitations </b> </a>
 <%= for chatroom <- @user.chat_invitations do %>
 <%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %>
  <% end %>
@@ -101,7 +101,7 @@ Welcome to the chat!
 
 <div id="chat-box">
 <%= for message <- @messages do %>
-  <p><b><%= message.sender.username %>:</b> <%= message.body %></p>
+  <p> <datetime> <%= message.inserted_at %></datetime> <b><%= message.sender.username %>:</b> <%= message.body %></p>
 <% end %>
 </div>
 
@@ -117,6 +117,25 @@ Welcome to the chat!
 </div>
 </div>
 <script>
+function convert_to_local_datetime(datetime) {
+  var str = datetime + "Z"
+  let date = new Date(str)
+
+          let local_time = date.toLocaleTimeString()
+          let local_date = date.toLocaleDateString()
+          return `${local_date} ${local_time}`
+}
+function convert_to_local_datetimes() {
+  var x = document.getElementsByTagName("datetime");
+  for (i = 0; i < x.length; i++) {
+          var date_time = convert_to_local_datetime(x[i].innerText)
+         x[i].innerText = date_time
+         
+    }
+}
+window.onload = function() {
+  convert_to_local_datetimes();
+}
 let chatBox = document.querySelector('#chat-box')
 chatBox.scrollTop = 100000 
 </script>
