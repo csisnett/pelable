@@ -26,6 +26,7 @@
   height: 400px;
   overflow-y: auto;
   display: inline-block;
+  margin-bottom:25px;
 }
 
 .vertical-menu a {
@@ -66,7 +67,7 @@ import Chat from "<%= Routes.static_path(@conn, "/js/chat.js") %>"
 Chat.init(socket)
 </script>
 <div id="everything">
-<h1>The Chatroom</h1>
+<h1><%= @chatroom.name %> </h1>
 Welcome to the chat!
 
 <%= tag :meta, name: "channel_token",
@@ -75,8 +76,11 @@ Welcome to the chat!
 
 <br><br>
 <div class="vertical-menu">
-
-<a> <b> Your Chats</b> </a>
+<a> <b> Public Channels </b> </a>
+<%= for chatroom <- @public_chatrooms do %>
+<%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %>
+ <%= end %>
+<a> <b> Your Channels</b> </a>
 <%= if @user.joined_chats != [] do %>
 <%= for chatroom <- @user.joined_chats do %>
  <%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %>
@@ -104,8 +108,8 @@ Welcome to the chat!
 
 
 <form id="chat-form">
-<input type="textarea" placeholder="Your message" id="body" name="message">
-<input type="submit" value="Post">
+<textarea id="body" placeholder="Your message" rows="2" cols="60"> </textarea>
+<input type="submit" id="submit_button" value="Send">
 </form>
 
 
@@ -115,4 +119,18 @@ Welcome to the chat!
 <script>
 let chatBox = document.querySelector('#chat-box')
 chatBox.scrollTop = 100000
+
+// Get the input field
+var input = document.getElementById("body");
+
+// Execute a function when the user releases a key on the keyboard
+input.addEventListener("keyup", function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    // Cancel the default action, if needed
+  
+    // Trigger the button element with a click
+    document.getElementById("submit_button").click();
+  }
+}); 
 </script>
