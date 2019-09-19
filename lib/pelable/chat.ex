@@ -25,6 +25,14 @@ defmodule Pelable.Chat do
     Repo.all(Chatroom)
   end
 
+  def list_public_chatrooms do
+    query = from c in Chatroom,
+            where: c.type == "public",
+            select: c
+
+    Repo.all(query)
+  end
+
   def invite_to_chatroom(user, uuid) do
     chatroom = get_chatroom_by_uuid(uuid) |> Repo.preload([:creator, :participants, :invited_users])
     case chatroom.type do
