@@ -11,13 +11,16 @@ function get_user_token() {
       }
     }
 
-    function move_chatbox_down(msgBlock) {
-        var top_position = msgBlock.offsetTop
-          window.last_message_position = top_position
-          //console.log(chatBox.scrollTop)
-          //console.log(top_position)
-          if(top_position - chatBox.scrollTop <= 560){
-            chatBox.scrollTop = top_position
+    function move_chatbox_down() {
+        let chatBox = document.querySelector('#chat-box')
+        //console.log(chatBox.scrollTop);
+         // console.log(chatBox.clientHeight);
+         // console.log(chatBox.scrollHeight);
+          
+          
+          if( chatBox.scrollTop + chatBox.clientHeight + 70 > chatBox.scrollHeight  ){
+           // console.log("inside")
+            chatBox.scrollTop = chatBox.scrollHeight;
           
           }
     }

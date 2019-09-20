@@ -43,13 +43,7 @@ let Chat = {
           var datetime_string = convert_to_local_datetime(payload.inserted_at);
           msgBlock.insertAdjacentHTML('beforeend', `${datetime_string} <b>${payload.username}:</b> ${payload.body}`)
           chatBox.appendChild(msgBlock)
-          /*Moves the chatbox down for any new message */
-          var top_position = msgBlock.offsetTop
-          window.last_message_position = top_position
-          if(top_position - chatBox.scrollTop <= 560){
-            chatBox.scrollTop = top_position
-          
-          }
+          move_chatbox_down();
         })
       }
 }
