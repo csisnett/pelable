@@ -212,7 +212,8 @@ header nav a {
    height:400px;
    width:1050px;
    border:1px solid #ACD8F0;
-   overflow:auto; 
+   overflow:auto;
+   overflow-x: hidden; 
    display: inline-block;
    }
 
