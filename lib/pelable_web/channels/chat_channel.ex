@@ -44,7 +44,6 @@ defmodule PelableWeb.ChatChannel do
     
     user = Repo.get(User, socket.assigns[:current_user].id)
     {:ok, _} = Presence.track(socket, user.id, %{
-      user_id: user.id,
       username: user.username
     })
     push socket, "presence_state", Presence.list(socket)

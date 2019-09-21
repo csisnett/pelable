@@ -50,7 +50,7 @@ Welcome to the chat!
 
 <div id="user-list">
 <a> <b>Online </b> </a>
-<div id="users-container">
+<div id="user-container">
 </div>
 </div>
 
