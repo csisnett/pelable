@@ -28,6 +28,9 @@ let Chat = {
           setTimeout(function() {document.getElementById('body').value = ""}, 50);
       }
         }
+
+
+        
     
         document.getElementById('chat-form').addEventListener('submit', function(e){
           e.preventDefault()
@@ -72,11 +75,12 @@ let Chat = {
         }
     
         presence.onSync( () => {
-          render_users_typing(presence.list())
+          console.log(presence.list())
         })
 
         channel.on('user:typing', payload => {
-          console.log(payload);
+          //console.log(payload);
+          console.log('from_user_typing')
         })
     
         channel.on('shout', payload => {
