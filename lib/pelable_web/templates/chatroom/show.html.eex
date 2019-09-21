@@ -68,6 +68,11 @@ Welcome to the chat!
 </div>
 
 <script>
+ 
+
+
  let chatBox = document.querySelector('#chat-box')
 chatBox.scrollTop = chatBox.scrollHeight;
+
+
 </script>

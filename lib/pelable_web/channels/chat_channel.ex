@@ -8,7 +8,6 @@ defmodule PelableWeb.ChatChannel do
 
   def join("chat:" <> uuid, payload, socket) do
     if authorized?(payload) do
-      send(self(), :after_join)
       {:ok, socket}
     else
       {:error, %{reason: "unauthorized"}}
@@ -40,11 +39,23 @@ defmodule PelableWeb.ChatChannel do
     end
   end
 
+  def handle_in("user:typing", %{"typing" => typing}, socket) do
+    user = Repo.get(User, socket.assigns[:current_user].id)
+    
+    {:ok, _} = Presence.update(socket, user.id, %{
+      username: user.username,
+      typing: typing
+    })
+    push socket, "presence_state", Presence.list(socket)
+    {:noreply, socket}
+  end
+
   def handle_info(:after_join, socket) do
     
     user = Repo.get(User, socket.assigns[:current_user].id)
     {:ok, _} = Presence.track(socket, user.id, %{
-      username: user.username
+      username: user.username,
+      typing: false
     })
     push socket, "presence_state", Presence.list(socket)
     {:noreply, socket}
