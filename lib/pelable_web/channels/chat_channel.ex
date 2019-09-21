@@ -47,7 +47,7 @@ defmodule PelableWeb.ChatChannel do
       username: user.username,
       typing: false
     })
-    push socket, "user:typing", Presence.list(socket)
+    push socket, "presence_state", Presence.list(socket)
     {:noreply, socket}
   end
 
@@ -58,7 +58,7 @@ defmodule PelableWeb.ChatChannel do
       username: user.username,
       typing: typing
     })
-    push socket, "user:typing", Presence.list(socket)
+    push socket, "presence_state", Presence.list(socket)
     {:noreply, socket}
   end
 
