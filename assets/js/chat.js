@@ -75,14 +75,9 @@ let Chat = {
         }
     
         presence.onSync( () => {
-          console.log(presence.list())
+          render_users_typing(presence.list())
         })
 
-        channel.on('user:typing', payload => {
-          //console.log(payload);
-          console.log('from_user_typing')
-        })
-    
         channel.on('shout', payload => {
           let chatBox = document.querySelector('#chat-box')
           let msgBlock = document.createElement('p')
