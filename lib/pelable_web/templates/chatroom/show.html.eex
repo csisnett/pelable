@@ -70,6 +70,8 @@ users typing:
 </div>
 
 <script>
+
+
 function render_user_typing(user){
   if (user.typing === true) {
 let typing_container = document.getElementById("users-typing");

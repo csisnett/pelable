@@ -4,51 +4,14 @@ let Chat = {
         let path = window.location.pathname.split('/')
         let uuid = path[path.length - 1]
         let channel = socket.channel('chat:' + uuid, {})
-        let channel2 = socket.channel('presence', {typing: false})
-        channel2.join().receive("ok", resp => {console.log("Joined presence channel!")})
-        this.presence(channel2)
+        // let channel2 = socket.channel('presence', {typing: false})
+        // channel2.join().receive("ok", resp => {console.log("Joined presence channel!")})
+        
         channel.join()
         .receive("ok", resp => {console.log("Joined successfully")})
         this.listenForChats(channel)
     },
 
-  
-
-    presence(channel) {
-      let presence = new Presence(channel)
-
-      const typingTimeout = 2000;
-      var typingTimer;
-      let userTyping = false;
-
-document.getElementById("body").addEventListener('keydown', () => {
-  userStartsTyping()
-  clearTimeout(typingTimer);
-})
-
-document.getElementById("body").addEventListener('keyup', () => {
-  clearTimeout(typingTimer);
-  typingTimer = setTimeout(userStopsTyping, typingTimeout);
-})
-
-const userStartsTyping = function() {
-  if (userTyping) { return }
-
-  userTyping = true
-  channel.push('user:typing', { typing: true })
-}
-
-const userStopsTyping = function() {
-  clearTimeout(typingTimer);
-  userTyping = false
-  channel.push('user:typing', { typing: false })
-}
-  
-      presence.onSync( () => {
-        render_online_users(presence.list())
-        render_users_typing(presence.list())
-      })
-    },
 
     listenForChats(channel) {
         function submitForm(){
@@ -72,14 +35,49 @@ const userStopsTyping = function() {
         })
 
         document.getElementById("body").addEventListener("keyup", function(event) {
-  // Number 13 is the "Enter" key on the keyboard
-  if (event.keyCode === 13) {
-    submitForm();
-  }
+          // Number 13 is the "Enter" key on the keyboard
+          if (event.keyCode === 13) {
+            submitForm();
+          }
 
-})
+        })
 
-        
+        let presence = new Presence(channel)
+
+        const typingTimeout = 2000;
+        var typingTimer;
+        let userTyping = false;
+  
+        document.getElementById("body").addEventListener('keydown', () => {
+          userStartsTyping()
+          clearTimeout(typingTimer);
+        })
+  
+          document.getElementById("body").addEventListener('keyup', () => {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(userStopsTyping, typingTimeout);
+          })
+  
+        const userStartsTyping = function() {
+          if (userTyping) { return }
+  
+          userTyping = true
+          channel.push('user:typing', { typing: true })
+        }
+  
+        const userStopsTyping = function() {
+          clearTimeout(typingTimer);
+          userTyping = false
+          channel.push('user:typing', { typing: false })
+        }
+    
+        presence.onSync( () => {
+          render_users_typing(presence.list())
+        })
+
+        channel.on('user:typing', payload => {
+          console.log(payload);
+        })
     
         channel.on('shout', payload => {
           let chatBox = document.querySelector('#chat-box')
