@@ -219,12 +219,39 @@ header nav a {
 
  #chat-interface {
    text-align: center;
+   white-space: nowrap;
  
  }
 
 #everything {
   text-align: center;
 }
+
+#user-list{
+  height: 400px;
+  width: 200px;
+  display: inline-block;
+  overflow-y: auto;
+  margin-bottom: 25px;
+}
+
+
+#user-list a {
+  background-color: #eee;
+  color: black;
+  display: block;
+  padding: 12px;
+  text-decoration: none;
+ }
+ 
+ #user-list a:hover {
+  background-color: #ccc; /* Dark grey background on mouse-over */
+ }
+ 
+ #user-list a.active {
+  background-color: #4CAF50; /* Add a green color to the "active/current" link */
+  color: white;
+ }
 
 .vertical-menu {
  width: 200px;

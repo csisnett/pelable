@@ -1,11 +1,24 @@
+import {Presence} from "./phoenix.js"
 let Chat = {
     init(socket) {
         let path = window.location.pathname.split('/')
         let uuid = path[path.length - 1]
         let channel = socket.channel('chat:' + uuid, {})
+        let channel2 = socket.channel('presence', {})
+        channel2.join().receive("ok", resp => {console.log("Joined presence channel!")})
+        this.hold_presence(channel)
         channel.join()
         .receive("ok", resp => {console.log("Joined successfully")})
         this.listenForChats(channel)
+    },
+
+  
+
+    hold_presence(channel) {
+      let presence = new Presence(channel)
+      presence.onSync( () => {
+        render_online_users(presence.list())
+      })
     },
 
     listenForChats(channel) {
@@ -36,6 +49,10 @@ let Chat = {
   }
 
 })
+
+        channel.on("presence_state", payload => {
+          render_presence(channel, payload)
+        })
     
         channel.on('shout', payload => {
           let chatBox = document.querySelector('#chat-box')

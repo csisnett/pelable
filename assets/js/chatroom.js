@@ -11,6 +11,18 @@ function get_user_token() {
       }
     }
 
+function render_user(user) {
+  let user_list = document.getElementById("user-list");
+  user_element = document.createElement('a')
+  user_element.innerText = user.username
+  user_list.appendChild(user_element)
+}
+
+function render_online_users(presence_list){
+  
+  presence_list[0].metas.forEach(render_user)
+}
+
     function move_chatbox_down() {
         let chatBox = document.querySelector('#chat-box')
         //console.log(chatBox.scrollTop);
@@ -44,4 +56,3 @@ function get_user_token() {
       window.onload = function() {
         convert_to_local_datetimes();
       }
-      

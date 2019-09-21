@@ -1,11 +1,15 @@
  <script src="<%= Routes.static_path(@conn, "/js/chatroom.js") %>"></script> 
 
-
+<script>
+</script>
 <script type="module">
 import socket from "<%= Routes.static_path(@conn, "/js/socket.js") %>"
 import Chat from "<%= Routes.static_path(@conn, "/js/chat.js") %>"
 Chat.init(socket)
+window.socket = socket;
 </script>
+
+
 <div id="everything">
 <h1><%= @chatroom.name %> </h1>
 Welcome to the chat!
@@ -14,18 +18,19 @@ Welcome to the chat!
                content: Phoenix.Token.sign(@conn, "BndIeIG1Y5aZGD534Z0WFpwG+oBWlOkeD/C1lIGvR+mSKF0rNpRWYodPr+0YM2yr", @current_user.id) %>
 
 <div id="chat-interface">
+
 <br><br>
 <div class="vertical-menu">
 <a> <b> Public Channels </b> </a>
 <%= for chatroom <- @public_chatrooms do %>
 <%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %>
- <%= end %>
+ <% end %>
 <a> <b> Private Channels</b> </a>
 <%= if @user.joined_chats != [] do %>
 <%= for chatroom <- @user.joined_chats do %>
  <%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %>
- <%= end %>
- <%= end %>
+ <% end %>
+ <% end %>
 
  <%= if @user.chat_invitations != [] do %>
  <a> <b> Invitations </b> </a>
@@ -37,14 +42,19 @@ Welcome to the chat!
 </div>
 
 
-
-
 <div id="chat-box">
 <%= for message <- @messages do %>
   <p> <datetime> <%= message.inserted_at %></datetime> <b><%= message.sender.username %>:</b> <%= message.body %></p>
 <% end %>
 </div>
 
+<div id="user-list">
+<a> <b>Online </b> </a>
+<div id="users-container">
+</div>
+</div>
+
+</div>
 
 
 <form id="chat-form">
@@ -54,7 +64,7 @@ Welcome to the chat!
 
 
 
-</div>
+
 </div>
 
 <script>

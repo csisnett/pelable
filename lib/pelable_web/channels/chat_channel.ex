@@ -15,6 +15,15 @@ defmodule PelableWeb.ChatChannel do
     end
   end
 
+  def join("presence", payload, socket) do
+    if authorized?(payload) do
+      send(self(), :after_join)
+      {:ok, socket}
+    else
+      {:error, %{reason: "unauthorized"}}
+    end
+  end
+
 
   # It is also common to receive messages from the client and
   # broadcast to everyone in the current topic (chat:lobby).
@@ -32,13 +41,13 @@ defmodule PelableWeb.ChatChannel do
   end
 
   def handle_info(:after_join, socket) do
-    push socket, "presence_state", Presence.list(socket)
+    
     user = Repo.get(User, socket.assigns[:current_user].id)
-    {:ok, _} = Presence.track(socket, "user:#{user.id}", %{
+    {:ok, _} = Presence.track(socket, user.id, %{
       user_id: user.id,
       username: user.username
     })
-    
+    push socket, "presence_state", Presence.list(socket)
     {:noreply, socket}
   end
 
