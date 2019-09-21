@@ -6,7 +6,7 @@ let Chat = {
         let channel = socket.channel('chat:' + uuid, {})
         let channel2 = socket.channel('presence', {})
         channel2.join().receive("ok", resp => {console.log("Joined presence channel!")})
-        this.hold_presence(channel)
+        this.presence(channel)
         channel.join()
         .receive("ok", resp => {console.log("Joined successfully")})
         this.listenForChats(channel)
@@ -14,7 +14,7 @@ let Chat = {
 
   
 
-    hold_presence(channel) {
+    presence(channel) {
       let presence = new Presence(channel)
       presence.onSync( () => {
         render_online_users(presence.list())
@@ -50,9 +50,7 @@ let Chat = {
 
 })
 
-        channel.on("presence_state", payload => {
-          render_presence(channel, payload)
-        })
+        
     
         channel.on('shout', payload => {
           let chatBox = document.querySelector('#chat-box')

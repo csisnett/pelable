@@ -12,14 +12,18 @@ function get_user_token() {
     }
 
 function render_user(user) {
-  let user_list = document.getElementById("user-list");
+  user_container = document.getElementById("user-container");
+  
   user_element = document.createElement('a')
   user_element.innerText = user.username
-  user_list.appendChild(user_element)
+  user_container.appendChild(user_element)
 }
 
 function render_online_users(presence_list){
-  
+  let user_container = document.getElementById("user-container");
+  while (user_container.firstChild) {
+    user_container.removeChild(user_container.firstChild);
+  }
   presence_list[0].metas.forEach(render_user)
 }
 
