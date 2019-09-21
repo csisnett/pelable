@@ -1,77 +1,22 @@
-<style>
- #chat-box{
-   text-align:left;
-    margin:0 auto;
-    margin-bottom:25px;
-    padding:10px;
-    background:#fff;
-    height:400px;
-    width:1050px;
-    border:1px solid #ACD8F0;
-    overflow:auto; 
-    display: inline-block;
-    }
-
-  #chat-interface {
-    text-align: center;
-  
-  }
- 
- #everything {
-   text-align: center;
- }
-
- .vertical-menu {
-  width: 200px;
-  height: 400px;
-  overflow-y: auto;
-  display: inline-block;
-  margin-bottom:25px;
-}
-
-.vertical-menu a {
-  background-color: #eee;
-  color: black;
-  display: block;
-  padding: 12px;
-  text-decoration: none;
-}
-
-.vertical-menu a:hover {
-  background-color: #ccc; /* Dark grey background on mouse-over */
-}
-
-.vertical-menu a.active {
-  background-color: #4CAF50; /* Add a green color to the "active/current" link */
-  color: white;
-}
-</style>
+ <script src="<%= Routes.static_path(@conn, "/js/chatroom.js") %>"></script> 
 
 <script>
-function get_user_token() {
-  var x = document.getElementsByTagName("META");
-    var txt = "";
-    var i;
-  for (i = 0; i < x.length; i++) {
-        if (x[i].name=="channel_token")
-        {
-             return x[i].content;
-         }
-
-    }
-}
 </script>
 <script type="module">
 import socket from "<%= Routes.static_path(@conn, "/js/socket.js") %>"
 import Chat from "<%= Routes.static_path(@conn, "/js/chat.js") %>"
 Chat.init(socket)
+window.socket = socket;
 </script>
+
+
 <div id="everything">
 <h1><%= @chatroom.name %> </h1>
 Welcome to the chat!
 
 <%= tag :meta, name: "channel_token",
                content: Phoenix.Token.sign(@conn, "BndIeIG1Y5aZGD534Z0WFpwG+oBWlOkeD/C1lIGvR+mSKF0rNpRWYodPr+0YM2yr", @current_user.id) %>
+
 <div id="chat-interface">
 
 <br><br>
@@ -79,13 +24,13 @@ Welcome to the chat!
 <a> <b> Public Channels </b> </a>
 <%= for chatroom <- @public_chatrooms do %>
 <%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %>
- <%= end %>
+ <% end %>
 <a> <b> Private Channels</b> </a>
 <%= if @user.joined_chats != [] do %>
 <%= for chatroom <- @user.joined_chats do %>
  <%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %>
- <%= end %>
- <%= end %>
+ <% end %>
+ <% end %>
 
  <%= if @user.chat_invitations != [] do %>
  <a> <b> Invitations </b> </a>
@@ -97,14 +42,19 @@ Welcome to the chat!
 </div>
 
 
-
-
 <div id="chat-box">
 <%= for message <- @messages do %>
   <p> <datetime> <%= message.inserted_at %></datetime> <b><%= message.sender.username %>:</b> <%= message.body %></p>
 <% end %>
 </div>
 
+<div id="user-list">
+<a> <b>Online </b> </a>
+<div id="user-container">
+</div>
+</div>
+
+</div>
 
 
 <form id="chat-form">
@@ -114,28 +64,10 @@ Welcome to the chat!
 
 
 
-</div>
-</div>
-<script>
-function convert_to_local_datetime(datetime) {
-  var str = datetime + "Z"
-  let date = new Date(str)
 
-          let local_time = date.toLocaleTimeString()
-          let local_date = date.toLocaleDateString()
-          return `${local_date} ${local_time}`
-}
-function convert_to_local_datetimes() {
-  var x = document.getElementsByTagName("datetime");
-  for (i = 0; i < x.length; i++) {
-          var date_time = convert_to_local_datetime(x[i].innerText)
-         x[i].innerText = date_time
-         
-    }
-}
-window.onload = function() {
-  convert_to_local_datetimes();
-}
-let chatBox = document.querySelector('#chat-box')
-chatBox.scrollTop = 100000 
+</div>
+
+<script>
+ let chatBox = document.querySelector('#chat-box')
+chatBox.scrollTop = chatBox.scrollHeight;
 </script>

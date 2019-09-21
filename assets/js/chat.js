@@ -1,11 +1,24 @@
+import {Presence} from "./phoenix.js"
 let Chat = {
     init(socket) {
         let path = window.location.pathname.split('/')
         let uuid = path[path.length - 1]
         let channel = socket.channel('chat:' + uuid, {})
+        let channel2 = socket.channel('presence', {})
+        channel2.join().receive("ok", resp => {console.log("Joined presence channel!")})
+        this.presence(channel)
         channel.join()
         .receive("ok", resp => {console.log("Joined successfully")})
         this.listenForChats(channel)
+    },
+
+  
+
+    presence(channel) {
+      let presence = new Presence(channel)
+      presence.onSync( () => {
+        render_online_users(presence.list())
+      })
     },
 
     listenForChats(channel) {
@@ -36,6 +49,8 @@ let Chat = {
   }
 
 })
+
+        
     
         channel.on('shout', payload => {
           let chatBox = document.querySelector('#chat-box')
@@ -43,13 +58,7 @@ let Chat = {
           var datetime_string = convert_to_local_datetime(payload.inserted_at);
           msgBlock.insertAdjacentHTML('beforeend', `${datetime_string} <b>${payload.username}:</b> ${payload.body}`)
           chatBox.appendChild(msgBlock)
-          /*Moves the chatbox down for any new message */
-          var top_position = msgBlock.offsetTop
-          window.last_message_position = top_position
-          if(top_position - chatBox.scrollTop <= 560){
-            chatBox.scrollTop = top_position
-          
-          }
+          move_chatbox_down();
         })
       }
 }

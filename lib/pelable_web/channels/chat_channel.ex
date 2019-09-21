@@ -2,9 +2,22 @@ defmodule PelableWeb.ChatChannel do
   use PelableWeb, :channel
 
   alias Pelable.Chat
+  alias PelableWeb.Presence
+  alias Pelable.Repo
+  alias Pelable.Users.User
 
   def join("chat:" <> uuid, payload, socket) do
     if authorized?(payload) do
+      send(self(), :after_join)
+      {:ok, socket}
+    else
+      {:error, %{reason: "unauthorized"}}
+    end
+  end
+
+  def join("presence", payload, socket) do
+    if authorized?(payload) do
+      send(self(), :after_join)
       {:ok, socket}
     else
       {:error, %{reason: "unauthorized"}}
@@ -25,6 +38,16 @@ defmodule PelableWeb.ChatChannel do
       {:error, _message} ->
         {:noreply, socket}
     end
+  end
+
+  def handle_info(:after_join, socket) do
+    
+    user = Repo.get(User, socket.assigns[:current_user].id)
+    {:ok, _} = Presence.track(socket, user.id, %{
+      username: user.username
+    })
+    push socket, "presence_state", Presence.list(socket)
+    {:noreply, socket}
   end
 
   # Add authorization logic here as required.

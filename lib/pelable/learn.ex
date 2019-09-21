@@ -9,6 +9,10 @@ defmodule Pelable.Learn do
   alias Pelable.Learn.{Goal, Tag}
   alias Pelable.Users.User
 
+  def list_users do
+    Repo.all(User)
+  end
+
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
