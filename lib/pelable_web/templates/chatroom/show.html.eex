@@ -55,8 +55,10 @@ Welcome to the chat!
 </div>
 
 </div>
+users typing: 
+<div id="users-typing">
 
-
+</div>
 <form id="chat-form">
 <textarea id="body" placeholder="Your message" rows="2" cols="60"> </textarea>
 <input type="submit" id="submit_button" value="Send">
@@ -68,7 +70,24 @@ Welcome to the chat!
 </div>
 
 <script>
- 
+function render_user_typing(user){
+  if (user.typing === true) {
+let typing_container = document.getElementById("users-typing");
+console.log(user)
+user_element = document.createElement('p')
+  user_element.innerText = user.username
+  typing_container.appendChild(user_element)
+  }
+}
+
+ function render_users_typing(user_list){
+   
+   let typing_container = document.getElementById("users-typing");
+   while (typing_container.firstChild) {
+    typing_container.removeChild(typing_container.firstChild);
+  }
+  user_list[0].metas.forEach(render_user_typing)
+ }
 
 
  let chatBox = document.querySelector('#chat-box')

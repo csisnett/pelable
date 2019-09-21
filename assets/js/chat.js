@@ -46,7 +46,7 @@ const userStopsTyping = function() {
   
       presence.onSync( () => {
         render_online_users(presence.list())
-        console.log(presence.list())
+        render_users_typing(presence.list())
       })
     },
 
