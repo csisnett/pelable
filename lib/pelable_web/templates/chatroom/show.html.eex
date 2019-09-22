@@ -1,4 +1,4 @@
- <script src="<%= Routes.static_path(@conn, "/js/chatroom.js") %>"></script> 
+<script src="<%= Routes.static_path(@conn, "/js/chatroom.js") %>"></script> 
 
 <script>
 </script>
@@ -55,8 +55,7 @@ Welcome to the chat!
 </div>
 
 </div>
-users typing: 
-<p id="typing"> </p>
+<p id="typing" style="inline-block"> </p>
 
 <form id="chat-form">
 <textarea id="body" placeholder="Your message" rows="2" cols="60"> </textarea>
@@ -71,21 +70,19 @@ users typing:
 <script>
 
 
-function render_user_typing(user){
+function render_user_typing(users_string){
   //console.log(user)
   
-  if (user.metas[0].typing === true) {
-let typing_container = document.getElementById("users-typing");
+  
+let typing_container = document.getElementById("typing");
 // console.log(user)
-user_element = document.createElement('p')
-  user_element.innerText = user.metas[0].username
-  typing_container.appendChild(user_element)
-  }
+typing_container.innerText = users_string + "...";
+  
   
 }
 
  function render_users_typing(user_list){
-   let typing_container = document.getElementById("users-typing");
+   let typing_container = document.getElementById("typing");
    /*while (typing_container.firstChild) {
     typing_container.removeChild(typing_container.firstChild);
   }*/
@@ -94,15 +91,23 @@ user_element = document.createElement('p')
     if(user.metas[0].typing){
       return user
     }
-  })
-  
-  var user_string = typing_users.reduce((accumulator, user) => {
-    return accumulator + " " user.metas[0].username
-  }, " ")
-  console.log(user_string)
-  
+  });
 
-  user_list.forEach( (user) => {render_user_typing(user)})
+  console.log(typing_users.length);
+  
+  if (typing_users.length == 0) {
+    typing_container.setAttribute("style", "visibility: hidden;")
+  } else{
+    typing_container.setAttribute("style", "display: inline-block")
+    var users_string = typing_users.reduce((accumulator, user) => {
+    return accumulator + " " + user.metas[0].username
+  }, " ");
+    render_user_typing(users_string)
+
+    
+  }
+
+  //user_list.forEach( (user) => {render_user_typing(user)})
  };
 
 
