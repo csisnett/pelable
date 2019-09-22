@@ -56,9 +56,8 @@ Welcome to the chat!
 
 </div>
 users typing: 
-<div id="users-typing">
+<p id="typing"> </p>
 
-</div>
 <form id="chat-form">
 <textarea id="body" placeholder="Your message" rows="2" cols="60"> </textarea>
 <input type="submit" id="submit_button" value="Send">
@@ -73,23 +72,38 @@ users typing:
 
 
 function render_user_typing(user){
-  if (user.typing === true) {
+  //console.log(user)
+  
+  if (user.metas[0].typing === true) {
 let typing_container = document.getElementById("users-typing");
-console.log(user)
+// console.log(user)
 user_element = document.createElement('p')
-  user_element.innerText = user.username
+  user_element.innerText = user.metas[0].username
   typing_container.appendChild(user_element)
   }
+  
 }
 
  function render_users_typing(user_list){
-   
    let typing_container = document.getElementById("users-typing");
-   while (typing_container.firstChild) {
+   /*while (typing_container.firstChild) {
     typing_container.removeChild(typing_container.firstChild);
-  }
-  user_list[0].metas.forEach(render_user_typing)
- }
+  }*/
+
+  var typing_users = user_list.filter((user) => {
+    if(user.metas[0].typing){
+      return user
+    }
+  })
+  
+  var user_string = typing_users.reduce((accumulator, user) => {
+    return accumulator + " " user.metas[0].username
+  }, " ")
+  console.log(user_string)
+  
+
+  user_list.forEach( (user) => {render_user_typing(user)})
+ };
 
 
  let chatBox = document.querySelector('#chat-box')

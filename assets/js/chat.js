@@ -76,6 +76,7 @@ let Chat = {
     
         presence.onSync( () => {
           render_users_typing(presence.list())
+          
         })
 
         channel.on('shout', payload => {
