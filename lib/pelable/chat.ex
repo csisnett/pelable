@@ -6,7 +6,7 @@ defmodule Pelable.Chat do
   import Ecto.Query, warn: false
   alias Pelable.Repo
 
-  alias Pelable.Chat.{Chatroom, Message}
+  alias Pelable.Chat.{Chatroom, Message, LastConnection}
   alias Pelable.Learn
   alias Pelable.Users.User
 
@@ -61,6 +61,34 @@ defmodule Pelable.Chat do
     chatroom_changeset = Ecto.Changeset.change(chatroom)
     chatroom_users_changeset = chatroom_changeset |> Ecto.Changeset.put_assoc(:invited_users, [user])
     Repo.update!(chatroom_users_changeset)
+  end
+  
+
+  def seen_last_message?(%User{} = user, %Chatroom{} =  chatroom) do
+    last_connection = get_last_connection(user, chatroom)
+    query = from m in Message, where: m.inserted_at > ^last_connection.updated_at, select: m.id
+    messages = Repo.all(query)
+    length(messages) == 0
+  end
+
+  def get_last_connection(%User{} = user, %Chatroom{} = chatroom) do
+    query = from lc in LastConnection, where: lc.user_id == ^user.id and lc.chatroom_id == ^chatroom.id, select: lc
+    Repo.one(query)
+  end
+
+  def update_last_connection(%User{} = user, %Chatroom{} = chatroom) do
+    case get_last_connection(user, chatroom) do
+      nil -> create_last_connection(user, chatroom)
+      last_connection ->
+        now = DateTime.utc_now
+        LastConnection.changeset(last_connection, %{"updated_at" => now}) |> Repo.update
+    end
+  end
+
+  def create_last_connection(%User{} = user, %Chatroom{} =  chatroom) do
+    attrs = %{} |> Map.put("user_id", user.id) |> Map.put("chatroom_id", chatroom.id)
+    LastConnection.changeset(%LastConnection{}, attrs)
+    |> Repo.insert
   end
 
   def join_chatroom(%User{} = user, uuid) do

@@ -15,6 +15,7 @@ defmodule Pelable.Chat.Chatroom do
     belongs_to :creator, User
     many_to_many :participants, User, join_through: "chatroom_participant"
     many_to_many :invited_users, User, join_through: "chatroom_invitation"
+    many_to_many :connected_users, User, join_through: "last_connection"
     timestamps()
   end
 
