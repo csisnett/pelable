@@ -46,23 +46,23 @@ defmodule Pelable.Chat do
       end
   end
 
-  # preloaded %Chatroom{} -> boolean
+  # preloaded %Chatroom{} -> Integer
   def participants(chatroom) do
     Enum.count(chatroom.participants)
   end
 
-  # preloaded %Chatroom{} -> boolean
+  # preloaded %Chatroom{} -> Integer
   def invitations(chatroom) do
     Enum.count(chatroom.invited_users)
   end
 
-  #Gets a user and a preloaded chatroom, adds user to :invited_users
+  #Gets a user and a preloaded chatroom, adds user_id,chatroom_id to chatroom_invitation table
   def save_invitation(user, chatroom) do
     chatroom_changeset = Ecto.Changeset.change(chatroom)
     chatroom_users_changeset = chatroom_changeset |> Ecto.Changeset.put_assoc(:invited_users, [user])
     Repo.update!(chatroom_users_changeset)
   end
-  
+
 
   def seen_last_message?(%User{} = user, %Chatroom{} =  chatroom) do
     last_connection = get_last_connection(user, chatroom)
