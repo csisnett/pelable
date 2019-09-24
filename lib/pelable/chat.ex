@@ -63,12 +63,16 @@ defmodule Pelable.Chat do
     Repo.update!(chatroom_users_changeset)
   end
 
+  def get_last_message(%Chatroom{} = chatroom) do
+    Repo.one(from m in Message, where: m.chatroom_id == ^chatroom.id, order_by: [desc: m.id], limit: 1)
+  end
+
 
   def seen_last_message?(%User{} = user, %Chatroom{} =  chatroom) do
     last_connection = get_last_connection(user, chatroom)
-    query = from m in Message, where: m.inserted_at > ^last_connection.updated_at, select: m.id
-    messages = Repo.all(query)
-    length(messages) == 0
+    last_message = get_last_message(chatroom)
+    
+    last_connection.updated_at > last_message.inserted_at
   end
 
   def get_last_connection(%User{} = user, %Chatroom{} = chatroom) do
