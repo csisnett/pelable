@@ -9,6 +9,16 @@ Chat.init(socket)
 window.socket = socket;
 </script>
 
+<style>
+#circle {
+    background: blue;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    float: right;
+}
+
+</style>
 
 <div id="everything">
 <h1><%= @chatroom.name %> </h1>
@@ -23,8 +33,10 @@ Welcome to the chat!
 <div class="vertical-menu">
 <a> <b> Public Channels </b> </a>
 <%= for chatroom <- @public_chatrooms do %>
-<%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %>
+<%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %> <span class="dot"> </span>
+ 
  <% end %>
+ <a href="/chat/HMl8DJHV18wO"> General for u<div id="circle"></div></a>
 <a> <b> Private Channels</b> </a>
 <%= if @user.joined_chats != [] do %>
 <%= for chatroom <- @user.joined_chats do %>
@@ -33,7 +45,7 @@ Welcome to the chat!
  <% end %>
 
  <%= if @user.chat_invitations != [] do %>
- <a> <b> Invitations </b> </a>
+ <div> <b> Invitations </b> </div>
 <%= for chatroom <- @user.chat_invitations do %>
 <%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %>
  <% end %>
