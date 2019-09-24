@@ -259,6 +259,7 @@ header nav a {
  overflow-y: auto;
  display: inline-block;
  margin-bottom:25px;
+ overflow-x: hidden;
 }
 
 .vertical-menu a {
