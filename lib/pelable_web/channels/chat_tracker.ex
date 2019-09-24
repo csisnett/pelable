@@ -13,11 +13,6 @@ defmodule PelableWeb.ChatTracker do
     {:ok, state}
   end
 
-  @impl true
-  def handle_info({:exit, _reason}, msg) do
-    IO.puts(msg)
-  end
-
   ## Callbacks
 
   @impl true
