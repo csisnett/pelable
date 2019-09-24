@@ -1,6 +1,6 @@
 defmodule PelableWeb.ChatChannel do
   use PelableWeb, :channel
-
+  alias PelableWeb.ChatTracker
   alias Pelable.Chat
   alias PelableWeb.Presence
   alias Pelable.Repo
@@ -29,6 +29,7 @@ defmodule PelableWeb.ChatChannel do
   # broadcast to everyone in the current topic (chat:lobby).
   def handle_in("shout", payload, socket) do
     "chat:" <> uuid = socket.topic
+    
     payload = Map.merge(payload, %{"chatroom_uuid" => uuid, "username" => socket.assigns.current_user.username})
     case Chat.create_message(payload) do
       {:ok, message} ->
@@ -41,8 +42,11 @@ defmodule PelableWeb.ChatChannel do
   end
 
   def handle_info(:entered_chat, socket) do
-
-    user = Repo.get(User, socket.assigns[:current_user].id)
+    "chat:" <> uuid = socket.topic
+    chatroom = Chat.get_chatroom_by_uuid(uuid)
+    user = socket.assigns[:current_user]
+    state = %{"user" => user, "chatroom" => chatroom, "pid" => self()}
+    ChatTracker.start(state)
     {:ok, _} = Presence.track(socket, user.id, %{
       username: user.username,
       typing: false
@@ -57,17 +61,6 @@ defmodule PelableWeb.ChatChannel do
     {:ok, _} = Presence.update(socket, user.id, %{
       username: user.username,
       typing: typing
-    })
-    push socket, "presence_state", Presence.list(socket)
-    {:noreply, socket}
-  end
-
-  def handle_info(:after_join, socket) do
-    
-    user = Repo.get(User, socket.assigns[:current_user].id)
-    {:ok, _} = Presence.track(socket, user.id, %{
-      username: user.username,
-      typing: false
     })
     push socket, "presence_state", Presence.list(socket)
     {:noreply, socket}

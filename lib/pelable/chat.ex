@@ -33,7 +33,7 @@ defmodule Pelable.Chat do
     Repo.all(query)
   end
 
-  def invite_to_chatroom(user, uuid) do
+  def invite_to_chatroom(%User{} = user, uuid) do
     chatroom = get_chatroom_by_uuid(uuid) |> Repo.preload([:creator, :participants, :invited_users])
     case chatroom.type do
       "private conversation" ->
@@ -47,17 +47,17 @@ defmodule Pelable.Chat do
   end
 
   # preloaded %Chatroom{} -> Integer
-  def participants(chatroom) do
+  def participants(%Chatroom{} = chatroom) do
     Enum.count(chatroom.participants)
   end
 
   # preloaded %Chatroom{} -> Integer
-  def invitations(chatroom) do
+  def invitations(%Chatroom{} = chatroom) do
     Enum.count(chatroom.invited_users)
   end
 
   #Gets a user and a preloaded chatroom, adds user_id,chatroom_id to chatroom_invitation table
-  def save_invitation(user, chatroom) do
+  def save_invitation(%User{} = user, %Chatroom{} =  chatroom) do
     chatroom_changeset = Ecto.Changeset.change(chatroom)
     chatroom_users_changeset = chatroom_changeset |> Ecto.Changeset.put_assoc(:invited_users, [user])
     Repo.update!(chatroom_users_changeset)
@@ -110,7 +110,7 @@ defmodule Pelable.Chat do
 
   #%User{}, %Chatroom{} -> boolean 
   # Gets a User, and a preloaded chatroom returns true if user has been invited
-  def invited?(user, chatroom) do
+  def invited?(%User{} = user, %Chatroom{} = chatroom) do
     case Enum.find(chatroom.invited_users, false, fn u -> u.id == user.id end) do
       %User{} -> true
       false -> false
