@@ -5,8 +5,10 @@
 <script type="module">
 import socket from "<%= Routes.static_path(@conn, "/js/socket.js") %>"
 import Chat from "<%= Routes.static_path(@conn, "/js/chat.js") %>"
+import ChatNotification from "<%= Routes.static_path(@conn, "/js/chatnotification.js") %>"
 Chat.init(socket)
-window.socket = socket;
+ChatNotification.init(socket)
+window.socket = socket
 </script>
 
 <style>
@@ -33,19 +35,19 @@ Welcome to the chat!
 <div class="vertical-menu">
 <a> <b> Public Channels </b> </a>
 <%= for chatroom <- @public_chatrooms do %>
-<%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %> <span class="dot"> </span>
- 
+<div id="chatroom-container">
+<%= content_tag(:a, chatroom.name, chatroom_uuid: chatroom.uuid, href: Routes.chatroom_path(@conn, :show, chatroom.uuid)) %>
+</div> 
  <% end %>
- <a href="/chat/HMl8DJHV18wO"> General for u<div id="circle"></div></a>
 <a> <b> Private Channels</b> </a>
 <%= if @user.joined_chats != [] do %>
 <%= for chatroom <- @user.joined_chats do %>
- <%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %>
+<%= content_tag(:a, chatroom.name, chatroom_uuid: chatroom.uuid, href: Routes.chatroom_path(@conn, :show, chatroom.uuid)) %>
  <% end %>
  <% end %>
 
  <%= if @user.chat_invitations != [] do %>
- <div> <b> Invitations </b> </div>
+ <a> <b> Invitations </b> </a>
 <%= for chatroom <- @user.chat_invitations do %>
 <%= link chatroom.name, to: Routes.chatroom_path(@conn, :show, chatroom.uuid) %>
  <% end %>
@@ -78,6 +80,7 @@ Welcome to the chat!
 
 
 </div>
+
 
 <script>
 
