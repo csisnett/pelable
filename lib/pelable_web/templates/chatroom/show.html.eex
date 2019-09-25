@@ -34,11 +34,11 @@ Welcome to the chat!
 <br><br>
 <div class="vertical-menu">
 <a> <b> Public Channels </b> </a>
-<%= for chatroom <- @public_chatrooms do %>
 <div id="chatroom-container">
+<%= for chatroom <- @public_chatrooms do %>
 <%= content_tag(:a, chatroom.name, chatroom_uuid: chatroom.uuid, href: Routes.chatroom_path(@conn, :show, chatroom.uuid)) %>
-</div> 
  <% end %>
+ </div> 
 <a> <b> Private Channels</b> </a>
 <%= if @user.joined_chats != [] do %>
 <%= for chatroom <- @user.joined_chats do %>

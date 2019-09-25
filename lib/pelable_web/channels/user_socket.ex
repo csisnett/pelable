@@ -4,6 +4,8 @@ defmodule PelableWeb.UserSocket do
   alias Pelable.Users.User
 
   channel "chat:*", PelableWeb.ChatChannel
+  channel "chat_notification:*", PelableWeb.ChatNotificationChannel
+  
   ## Channels
   # channel "room:*", PelableWeb.RoomChannel
 

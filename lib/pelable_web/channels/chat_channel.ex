@@ -5,6 +5,7 @@ defmodule PelableWeb.ChatChannel do
   alias PelableWeb.Presence
   alias Pelable.Repo
   alias Pelable.Users.User
+  alias PelableWeb.Endpoint
 
   def join("chat:" <> uuid, payload, socket) do
     if authorized?(payload) do
@@ -14,6 +15,8 @@ defmodule PelableWeb.ChatChannel do
       {:error, %{reason: "unauthorized"}}
     end
   end
+
+  
 
   def join("presence", payload, socket) do
     if authorized?(payload) do
@@ -29,10 +32,10 @@ defmodule PelableWeb.ChatChannel do
   # broadcast to everyone in the current topic (chat:lobby).
   def handle_in("shout", payload, socket) do
     "chat:" <> uuid = socket.topic
-    
     payload = Map.merge(payload, %{"chatroom_uuid" => uuid, "username" => socket.assigns.current_user.username})
     case Chat.create_message(payload) do
       {:ok, message} ->
+        Endpoint.broadcast("chat_notification:" <> uuid, "new_message", %{"new_message" => true})
         payload = Map.merge(payload, %{"inserted_at" => message.inserted_at})
       broadcast socket, "shout", payload
       {:noreply, socket}

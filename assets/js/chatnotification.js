@@ -21,7 +21,7 @@ let ChatNotification = {
 
     join_channel(chatroom_element, socket) {
         let chat_uuid = chatroom_element.getAttribute('chatroom-uuid')
-        let channel = socket.channel('chat:' + chat_uuid, {})
+        let channel = socket.channel('chat_notification:' + chat_uuid, {})
         channel.join()
         .receive("ok", resp => {console.log("Joined " + chat_uuid)})
 
@@ -45,12 +45,13 @@ let ChatNotification = {
         console.log("inside render_notification")
         var parent_container = chatroom_element.parentElement
         var circle = document.createElement('div')
-        parent_container.appendChild(circle)
+        circle.id = "circle"
+        chatroom_element.after(circle)
     },
 
     listenForChats(channel, chatroom_element) {
 
-        channel.on('shout', payload => {
+        channel.on('new_message', payload => {
           this.render_notification(chatroom_element)
           console.log(payload)
         })
