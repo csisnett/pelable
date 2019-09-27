@@ -42,11 +42,11 @@ let ChatNotification = {
       },
 
     render_notification(chatroom_element) {
+        console.log(chatroom_element)
+        let b = document.createElement('b')
+        chatroom_element.parentNode.insertBefore(b, chatroom_element)
+        b.appendChild(chatroom_element)
         console.log("inside render_notification")
-        var parent_container = chatroom_element.parentElement
-        var circle = document.createElement('div')
-        circle.id = "circle"
-        chatroom_element.after(circle)
     },
 
     listenForChats(channel, chatroom_element) {
