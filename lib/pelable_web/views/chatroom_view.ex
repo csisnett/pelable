@@ -9,9 +9,11 @@ defmodule PelableWeb.ChatroomView do
 
   def render_message(%Message{} = message) do
     {:safe, datetime} = content_tag(:datetime, message.inserted_at)
-    {:safe, username} = content_tag(:b, " #{message.sender.username}" <> ": ")
+    username_raw = message.sender.username <> ": "
+    username_escaped = username_raw |> html_escape |> safe_to_string
+    {:safe, username} = content_tag(:b, username_escaped)
     {:safe, body} = html_escape(message.body)
-    {:safe, [60, "p", [], 62, datetime, username, body, 60, 47, "p", 62]}
+    {:safe, [60, "p", [], 62, datetime, " ", username, body, 60, 47, "p", 62]}
     
   end
 end
