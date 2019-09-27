@@ -36,13 +36,25 @@ Welcome to the chat!
 <a> <b> Public Channels </b> </a>
 <div id="chatroom-container">
 <%= for chatroom <- @public_chatrooms do %>
+<%= if seen_last_message?(@user, chatroom) do %>
 <%= content_tag(:a, chatroom.name, chatroom_uuid: chatroom.uuid, href: Routes.chatroom_path(@conn, :show, chatroom.uuid)) %>
+ <% else %>
+ <b>
+ <%= content_tag(:a, chatroom.name, chatroom_uuid: chatroom.uuid, href: Routes.chatroom_path(@conn, :show, chatroom.uuid)) %>
+ </b>
+ <% end %>
  <% end %>
  </div> 
 <a> <b> Private Channels</b> </a>
 <%= if @user.joined_chats != [] do %>
 <%= for chatroom <- @user.joined_chats do %>
+<%= if seen_last_message?(@user, chatroom) do %>
 <%= content_tag(:a, chatroom.name, chatroom_uuid: chatroom.uuid, href: Routes.chatroom_path(@conn, :show, chatroom.uuid)) %>
+ <% else %>
+ <b>
+ <%= content_tag(:a, chatroom.name, chatroom_uuid: chatroom.uuid, href: Routes.chatroom_path(@conn, :show, chatroom.uuid)) %>
+ </b>
+ <% end %>
  <% end %>
  <% end %>
 
