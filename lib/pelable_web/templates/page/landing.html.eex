@@ -20,6 +20,9 @@ s1.charset='UTF-8';
 s1.setAttribute('crossorigin','*');
 s0.parentNode.insertBefore(s1,s0);
 })();
+ 
+
+</script> 
 </script>
     <div class="body-wrap boxed-container">
         <header class="site-header">
@@ -43,10 +46,10 @@ s0.parentNode.insertBefore(s1,s0);
                 <div class="container">
                     <div class="hero-inner">
 						<div class="hero-copy">
-	                        <h1 class="hero-title mt-0 is-revealing">Stuck in Tutorial Purgatory?</h1>
+	                        <h1 class="hero-title mt-0 is-revealing">Stuck in tutorial purgatory?</h1>
 	                        <p class="hero-paragraph is-revealing"> Level up your coding skills.</p>
 	                        <p class="hero-cta mb-0 is-revealing">
-								<a class="button button-primary button-shadow" href="https://forms.gle/zeGzWMYR76EG4CwP6"> Join the waiting list</a>
+								<a class="button button-primary button-shadow" href="https://forms.gle/zeGzWMYR76EG4CwP6"> Apply</a>
 							</p>
 						</div>
 						<div class="hero-illustration">
@@ -82,7 +85,7 @@ s0.parentNode.insertBefore(s1,s0);
 						<div class="features-header text-center">
 							<div class="container-sm">
 								<h2 class="section-title mt-0">Meet Pelable</h2>
-								<p class="section-paragraph mb-0">Pelable is a community of passionate programmers who are developing projects and getting real experience.</p>
+								<p class="section-paragraph mb-0">Pelable is a 6-week intensive program where you'll focus on building a project with a remote team</p>
 							</div>
 						</div>
                         <div class="features-wrap">
@@ -91,8 +94,8 @@ s0.parentNode.insertBefore(s1,s0);
                                     <div class="feature-icon">
                                         <img src="<%= Routes.static_path(@conn, "/images/feature-icon-01.svg") %>" alt="Feature 01">
                                     </div>
-                                    <h4 class="feature-title">Choose a Project</h4>
-                                    <p class="text-sm">Select your first project from our catalog</p>
+                                    <h4 class="feature-title">Apply</h4>
+                                    <p class="text-sm">Fill out the application</p>
                                 </div>
                             </div>
                             <div class="feature is-revealing">
@@ -100,8 +103,8 @@ s0.parentNode.insertBefore(s1,s0);
                                     <div class="feature-icon">
                                         <img src="<%= Routes.static_path(@conn, "/images/feature-icon-02.svg") %>" alt="Feature 02">
                                     </div>
-                                    <h4 class="feature-title">Start Working</h4>
-                                    <p class="text-sm">Set up your git repository and start developing</p>
+                                    <h4 class="feature-title">Meet your new Team</h4>
+                                    <p class="text-sm">During the 1st week you'll choose a project and get to know each other </p>
                                 </div>
                             </div>
                             <div class="feature is-revealing">
@@ -109,8 +112,8 @@ s0.parentNode.insertBefore(s1,s0);
                                     <div class="feature-icon">
                                         <img src="<%= Routes.static_path(@conn, "/images/feature-icon-03.svg") %>" alt="Feature 03">
                                     </div>
-                                    <h4 class="feature-title">Track your Progress</h4>
-                                    <p class="text-sm">Checkmark your completed user stories</p>
+                                    <h4 class="feature-title">Start Working</h4>
+                                    <p class="text-sm">The next 5 weeks you'll work on the user stories to complete your MVP</p>
                                 </div>
                             </div>
                             <div class="feature is-revealing">
@@ -127,58 +130,73 @@ s0.parentNode.insertBefore(s1,s0);
                 </div>
             </section>
 
-			<section class="features-tabs section">
-                <div class="container">
-                    <div class="features-tabs-inner section-inner has-top-divider">
-						<div class="tabs-container">
-							<ul class="tabs-links">
-								<li class="is-revealing">
-									<a href="#tab-1" class="tab-link is-active">
-										<img src="<%= Routes.static_path(@conn, "/images/tabs-icon-01.svg") %>" alt="Tabs icon 01">
-										<span class="h4 m-0">Get Inspired</span>
-									</a>
-								</li>
-								<li class="is-revealing">
-									<a href="#tab-2" class="tab-link">
-										<img src="<%= Routes.static_path(@conn, "/images/tabs-icon-02.svg") %>" alt="Tabs icon 02">
-										<span class="h4 m-0">Create a Project</span>
-									</a>
-								</li>
-								<li class="is-revealing">
-									<a href="#tab-3" class="tab-link">
-										<img src="<%= Routes.static_path(@conn, "/images/tabs-icon-03.svg") %>" alt="Tabs icon 03">
-										<span class="h4 m-0">Join the Conversation</span>
-									</a>
-								</li>
-							</ul>
-							<div class="tabs-content">
-								<div id="tab-1" class="tab-panel is-active">
-									<h2>Fork it</h2>
-									<p>Fork the projects you like and make them your own by adding and developing the user stories you want</p>
-									<p class="mb-0"> </p>
-								</div>
-								<div id="tab-2" class="tab-panel">
-									<h2>You are the Captain</h2>
-									<p> Name your project and define its user stories. Start working immediately or...</p>
-									<p class="mb-0">...Get to the chat and build a team to work together</p>
-								</div>
-								<div id="tab-3" class="tab-panel">
-									<h2>We have chat</h2>
-									<p> Exclusive for our members, the chat is the place where we can ask for help, cool off, or just enjoy casual conversation</p>
-									<p class="mb-0">  </p>
-								</div>
-							</div>
-						</div>
-                    </div>
-                </div>
-            </section>
+			
 
+            <div class="pricing-faqs container-sm is-revealing">
+							<h4 class="mt-40 mb-32">FAQs</h4>
+	                        <ul class="accordion">
+	                            <li>
+                                    <div class="accordion-title">
+										<span>When does the program start?</span>
+										<div class="accordion-icon"></div>
+									</div>
+									<div class="accordion-body">
+										<p>The program starts on Friday the 11th of October, and finalizes on the 22nd of November</p>
+									</div>
+
+	                                
+	                            </li>
+
+                                <li>
+									<div class="accordion-title">
+										<span>When is the deadline for the application?</span>
+										<div class="accordion-icon"></div>
+									</div>
+									<div class="accordion-body">
+										<p> October 9th at 11:55 PM, or more precisely in: </p> <p id="deadline"> </p>
+									</div>
+								</li>
+
+								<li>
+									<div class="accordion-title">
+										<span>What is the cost of Pelable?</span>
+										<div class="accordion-icon"></div>
+									</div>
+	                                <div class="accordion-body">
+	                                    <p>Pelable has no monetary cost, that being said we expect learners to invest part-time (20 hours per week) or full-time (30 to 40 hours per week) </p>
+	                                </div>
+								</li>
+								
+								<li>
+									<div class="accordion-title">
+										<span>What are the prerequisites?</span>
+										<div class="accordion-icon"></div>
+									</div>
+									<div class="accordion-body">
+										<p> The only prerequisite is to know the basics of a programming language (You have taken an introductory course)</p>
+									</div>
+								</li>
+
+                                <li>
+									<div class="accordion-title">
+										<span>How will you form my team?</span>
+										<div class="accordion-icon"></div>
+									</div>
+									<div class="accordion-body">
+										<p> We take several factors into account to make up your team like: programming skills, timezone, and time availability (part-time or full-time). </p>
+									</div>
+								</li>
+	                        </ul>
+						</div>
+            
 			<section class="cta section">
 				<div class="container">
+                
 					<div class="cta-inner section-inner is-revealing">
-						<h3 class="section-title mt-0">Be part of our community (It's free) </h3>
+                    
+						<h3 class="section-title mt-0">Join the community</h3>
 						<div class="cta-cta">
-							<a class="button button-primary button-shadow" href="https://forms.gle/zeGzWMYR76EG4CwP6">Join the waiting list</a>
+							<a class="button button-primary button-shadow" href="https://forms.gle/zeGzWMYR76EG4CwP6">Apply now</a>
 						</div>
 						
 					</div>
@@ -218,7 +236,23 @@ s0.parentNode.insertBefore(s1,s0);
             </div>
         </footer>
     </div>
-
+    <script>
+    var deadline = new Date("Oct 9, 2019 23:55:00").getTime(); 
+var x = setInterval(function() { 
+var now = new Date().getTime(); 
+var t = deadline - now; 
+var days = Math.floor(t / (1000 * 60 * 60 * 24)); 
+var hours = Math.floor((t%(1000 * 60 * 60 * 24))/(1000 * 60 * 60)); 
+var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60)); 
+var seconds = Math.floor((t % (1000 * 60)) / 1000); 
+document.getElementById("deadline").innerHTML = days + " days "  
++ hours + " hours " + minutes + " minutes and " + seconds + " seconds "; 
+    if (t < 0) { 
+        clearInterval(x); 
+        document.getElementById("deadline").innerHTML = "The deadline has passed! For late applications please contact Carlos our program coordinator: carlos@pelable.com";
+    } 
+}, 1000); 
+    </script>
     <script src="<%= Routes.static_path(@conn, "/js/main.min.js") %>"></script>
 </body>
 </html>
