@@ -37,7 +37,7 @@ defmodule PelableWeb.Router do
     get "/p/:slug/:uuid", WorkProjectController, :show
     resources "/project_versions", ProjectVersionController
     resources "/goals", GoalController
-    get "/landing", PageController, :landing
+    get "/program", PageController, :landing
     get "/home", PageController, :home
     get "/", PageController, :index
     get "/layout", PageController, :layout
