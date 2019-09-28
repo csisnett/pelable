@@ -36,6 +36,7 @@ function myFunction() {
           <div class="topnav" id="myTopnav">
   
    <a href="/apply">Apply</a>
+   <a href="/program"> The Program </a>
   <a href="/chat/AZ3X37GsBebR">Chat</a>
   <%= if Pow.Plug.current_user(@conn) do %>
   <% else %>
