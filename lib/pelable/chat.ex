@@ -70,9 +70,14 @@ defmodule Pelable.Chat do
 
   def seen_last_message?(%User{} = user, %Chatroom{} =  chatroom) do
     last_connection = get_last_connection(user, chatroom)
-    last_message = get_last_message(chatroom)
+    case last_connection do
+      nil -> false
+      last_connection ->
+
+        last_message = get_last_message(chatroom)
     
-    last_connection.updated_at > last_message.inserted_at
+        last_connection.updated_at > last_message.inserted_at
+      end
   end
 
   def get_last_connection(%User{} = user, %Chatroom{} = chatroom) do
@@ -156,10 +161,18 @@ defmodule Pelable.Chat do
       {:error, %Ecto.Changeset{}}
 
   """
+  #Always use create_chatroom_assoc to create chatrooms to have at least one message in the chat(otherwise seen_last_message? doesn't work for new users)
   def create_chatroom(attrs \\ %{}) do
     %Chatroom{}
     |> Chatroom.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def create_chatroom_assoc(%{"name" => _name, "creator_id" => _id, "type" => _type} = attrs) do
+    {:ok, chatroom} = create_chatroom(attrs)
+    initial_message = %{"chatroom_uuid" => chatroom.uuid, "username" => "pelable_bot", "body" => "Hello there, this is the start of this channel say hi!"}
+    {:ok, message} = create_message(initial_message)
+    chatroom
   end
 
   @doc """
