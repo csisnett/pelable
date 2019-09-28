@@ -10,6 +10,10 @@ defmodule PelableWeb.PageController do
     render(conn, "landing.html")
   end
 
+  def apply(conn, _params) do
+    render(conn, "application.html")
+  end
+
   def home(conn, _params) do
     render(conn, "home.html")
   end

@@ -49,7 +49,7 @@ s0.parentNode.insertBefore(s1,s0);
 	                        <h1 class="hero-title mt-0 is-revealing">Stuck in tutorial purgatory?</h1>
 	                        <p class="hero-paragraph is-revealing"> Level up your coding skills.</p>
 	                        <p class="hero-cta mb-0 is-revealing">
-								<a class="button button-primary button-shadow" href="https://forms.gle/zeGzWMYR76EG4CwP6"> Apply</a>
+								<a class="button button-primary button-shadow" href="/apply"> Apply</a>
 							</p>
 						</div>
 						<div class="hero-illustration">
@@ -196,7 +196,7 @@ s0.parentNode.insertBefore(s1,s0);
                     
 						<h3 class="section-title mt-0">Join the community</h3>
 						<div class="cta-cta">
-							<a class="button button-primary button-shadow" href="https://forms.gle/zeGzWMYR76EG4CwP6">Apply now</a>
+							<a class="button button-primary button-shadow" href="/apply">Apply now</a>
 						</div>
 						
 					</div>
