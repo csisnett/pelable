@@ -6,21 +6,13 @@
 import socket from "<%= Routes.static_path(@conn, "/js/socket.js") %>"
 import Chat from "<%= Routes.static_path(@conn, "/js/chat.js") %>"
 import ChatNotification from "<%= Routes.static_path(@conn, "/js/chatnotification.js") %>"
+import ChatPresence from "<%= Routes.static_path(@conn, "/js/chatpresence.js") %>"
+
 Chat.init(socket)
 ChatNotification.init(socket)
+ChatPresence.init(socket)
 window.socket = socket
 </script>
-
-<style>
-#circle {
-    background: blue;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    float: right;
-}
-
-</style>
 
 <div id="everything">
 <h1><%= @chatroom.name %> </h1>
@@ -96,6 +88,22 @@ Welcome to the chat!
 
 <script>
 
+function render_online_user(user){
+  let user_container = document.getElementById("user-container")
+  let a = document.createElement("a")
+  let username = document.createTextNode(user.username)
+  a.appendChild(username)
+  user_container.appendChild(a)
+}
+
+function render_online_users(list_users){
+  let user_container = document.getElementById("user-container")
+  while (user_container.firstChild) {
+    user_container.removeChild(user_container.firstChild);
+  }
+  let user_array = list_users[0].metas
+  user_array.forEach(render_online_user)
+}
 
 function render_user_typing(users_string){
   //console.log(user)
@@ -120,7 +128,7 @@ typing_container.innerText = users_string + "...";
     }
   });
 
-  console.log(typing_users.length);
+  //console.log(typing_users.length);
   
   if (typing_users.length == 0) {
     typing_container.setAttribute("style", "visibility: hidden;")

@@ -5,6 +5,7 @@ defmodule PelableWeb.UserSocket do
 
   channel "chat:*", PelableWeb.ChatChannel
   channel "chat_notification:*", PelableWeb.ChatNotificationChannel
+  channel "chat_presence", PelableWeb.PresenceChannel
   
   ## Channels
   # channel "room:*", PelableWeb.RoomChannel
