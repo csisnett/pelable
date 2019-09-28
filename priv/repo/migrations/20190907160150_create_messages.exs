@@ -6,7 +6,7 @@ defmodule Pelable.Repo.Migrations.CreateMessages do
       add :body, :text, null: false
       add :uuid, :uuid, null: false
       add :sender_id, references(:users, on_delete: :nothing), null: false
-      add :chatroom_id, references(:chatrooms, on_delete: :nothing), null: false
+      add :chatroom_id, references(:chatrooms, on_delete: :delete_all), null: false
       add :parent_id, references(:messages, on_delete: :nothing)
 
       timestamps()
