@@ -194,7 +194,7 @@ s0.parentNode.insertBefore(s1,s0);
                 
 					<div class="cta-inner section-inner is-revealing">
                     
-						<h3 class="section-title mt-0">Join the community</h3>
+						<h3 class="section-title mt-0">Join the Community</h3>
 						<div class="cta-cta">
 							<a class="button button-primary button-shadow" href="/apply">Apply now</a>
 						</div>
