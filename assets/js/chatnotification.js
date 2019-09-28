@@ -42,18 +42,18 @@ let ChatNotification = {
       },
 
     render_notification(chatroom_element) {
-        console.log(chatroom_element)
+        //console.log(chatroom_element)
         let b = document.createElement('b')
         chatroom_element.parentNode.insertBefore(b, chatroom_element)
         b.appendChild(chatroom_element)
-        console.log("inside render_notification")
+        //console.log("inside render_notification")
     },
 
     listenForChats(channel, chatroom_element) {
 
         channel.on('new_message', payload => {
           this.render_notification(chatroom_element)
-          console.log(payload)
+          //console.log(payload)
         })
       }
 }
