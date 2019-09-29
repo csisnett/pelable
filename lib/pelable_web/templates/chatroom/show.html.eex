@@ -16,7 +16,9 @@ window.socket = socket
 
 <div id="everything">
 <h1><%= @chatroom.name %> </h1>
-Welcome to the chat!
+<%= if description?(@chatroom.description) do %>
+<%= @chatroom.description %>
+<% end %>
 
 <%= tag :meta, name: "channel_token",
                content: Phoenix.Token.sign(@conn, "BndIeIG1Y5aZGD534Z0WFpwG+oBWlOkeD/C1lIGvR+mSKF0rNpRWYodPr+0YM2yr", @current_user.id) %>

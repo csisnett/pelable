@@ -16,4 +16,14 @@ defmodule PelableWeb.ChatroomView do
     {:safe, [60, "p", [], 62, datetime, " ", username, body, 60, 47, "p", 62]}
     
   end
+
+  
+
+  def description?(nil) do
+    false
+  end
+
+  def description?(description) do
+    true
+  end
 end
