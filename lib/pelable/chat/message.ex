@@ -11,7 +11,6 @@ defmodule Pelable.Chat.Message do
 
     belongs_to :sender, User
     belongs_to :chatroom, Chatroom
-    belongs_to :parent, Message
 
     timestamps()
   end
@@ -19,7 +18,7 @@ defmodule Pelable.Chat.Message do
   @doc false
   def changeset(message, attrs) do
     message
-    |> cast(attrs, [:body, :sender_id, :chatroom_id, :parent_id])
+    |> cast(attrs, [:body, :sender_id, :chatroom_id])
     |> validate_required([:body, :sender_id, :chatroom_id])
     |> unique_constraint(:uuid)
     |> foreign_key_constraint(:chatroom_id)
