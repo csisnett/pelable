@@ -7,6 +7,10 @@ defmodule Pelable.PlugAttack do
         allow conn.remote_ip == {127, 0, 0, 1}
     end
 
+    rule "block annoying bot", conn do
+        block {0, 0, 0, 0, 0, 65535, 2660, x} == conn.remote_ip
+    end
+
     rule "throttle by ip", conn do
         throttle conn.remote_ip,
           period: 60_000, limit: 10,
