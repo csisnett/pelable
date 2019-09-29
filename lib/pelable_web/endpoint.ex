@@ -9,6 +9,7 @@ defmodule PelableWeb.Endpoint do
   #
   # You should set gzip to true if you are running phx.digest
   # when deploying your static files in production.
+  plug RemoteIp
   plug Plug.Static,
     at: "/",
     from: :pelable,
@@ -45,6 +46,6 @@ defmodule PelableWeb.Endpoint do
   plug Pow.Plug.Session, otp_app: :pelable
   plug PowPersistentSession.Plug.Cookie
   
-  plug RemoteIp
+  
   plug PelableWeb.Router
 end
