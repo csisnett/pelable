@@ -8,7 +8,7 @@ defmodule Pelable.PlugAttack do
     end
 
     rule "block annoying bot", conn do
-        block {0, 0, 0, 0, 0, 65535, 2660, x} == conn.remote_ip
+        block {0, 0, 0, 0, 0, 65535, 2660, _} == conn.remote_ip
     end
 
     rule "throttle by ip", conn do
