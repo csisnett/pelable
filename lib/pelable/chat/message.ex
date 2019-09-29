@@ -22,5 +22,7 @@ defmodule Pelable.Chat.Message do
     |> cast(attrs, [:body, :sender_id, :chatroom_id, :parent_id])
     |> validate_required([:body, :sender_id, :chatroom_id])
     |> unique_constraint(:uuid)
+    |> foreign_key_constraint(:chatroom_id)
+    |> foreign_key_constraint(:sender_id)
   end
 end
