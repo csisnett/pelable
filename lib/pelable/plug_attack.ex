@@ -17,6 +17,7 @@ defmodule Pelable.PlugAttack do
 
     rule "allow local", conn do
         Logger.warn("#{inspect conn.remote_ip}")
+        allow conn.remote_ip == {127, 0, 0, 1}
     end
 
     rule "throttle by ip", conn do
