@@ -20,7 +20,9 @@ defmodule Pelable.Application do
       # {Pow.Store.Backend.MnesiaCache, extra_db_nodes: Node.list()},
       # Pow.Store.Backend.MnesiaCache.Unsplit # Recover from netsplit
 
-      PelableWeb.Presence
+      PelableWeb.Presence,
+      
+      {PlugAttack.Storage.Ets, name: Pelable.PlugAttack.Storage, clean_period: 60_000}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

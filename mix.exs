@@ -49,6 +49,7 @@ defmodule Pelable.MixProject do
       {:ecto_autoslug_field, "~> 2.0"},
       {:ecto_shortuuid, "~> 0.1.2"},
       {:swoosh, "~> 0.23.4"},
+      {:plug_attack, "~> 0.4.2"}
     ]
   end
 
