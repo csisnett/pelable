@@ -5,6 +5,7 @@ defmodule PelableWeb.Router do
   
   pipeline :browser do
     plug :accepts, ["html"]
+    plug Pelable.PlugAttack
     plug :fetch_session
     plug :fetch_flash
     plug :protect_from_forgery
@@ -13,6 +14,7 @@ defmodule PelableWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug Pelable.PlugAttack
     plug :fetch_session
     plug :protect_from_forgery
     plug :put_secure_browser_headers
