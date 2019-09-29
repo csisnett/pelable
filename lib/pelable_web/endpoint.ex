@@ -45,5 +45,6 @@ defmodule PelableWeb.Endpoint do
   plug Pow.Plug.Session, otp_app: :pelable
   plug PowPersistentSession.Plug.Cookie
   
+  plug RemoteIp
   plug PelableWeb.Router
 end

@@ -4,7 +4,6 @@ defmodule PelableWeb.Router do
   use Pow.Extension.Phoenix.Router, otp_app: :pelable
   
   pipeline :browser do
-    plug RemoteIp
     plug :accepts, ["html"]
     plug Pelable.PlugAttack
     plug :fetch_session
@@ -15,7 +14,6 @@ defmodule PelableWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug RemoteIp
     plug Pelable.PlugAttack
     plug :fetch_session
     plug :protect_from_forgery
