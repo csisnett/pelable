@@ -10,7 +10,7 @@ defmodule Pelable.PlugAttack do
     rule "block bot", conn do
         case conn.remote_ip do
             {0, 0, 0, 0, 0, 65535, 2660, _x} -> block true
-            _anything_else -> 
+            _anything_else -> block false
         end
         
     end
