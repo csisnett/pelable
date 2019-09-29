@@ -2,9 +2,14 @@ defmodule Pelable.PlugAttack do
     use PlugAttack
     require Logger
 
+    rule "allow health check", conn do
+        allow conn.request_path == "/check39432"
+    end
+
     rule "block bot", conn do
         case conn.remote_ip do
-            {0, 0, 0, 0, 0, 65535, 2660, x} -> block true
+            {0, 0, 0, 0, 0, 65535, 2660, _x} -> block true
+            _anything_else -> 
         end
         
     end

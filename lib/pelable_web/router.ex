@@ -46,6 +46,7 @@ defmodule PelableWeb.Router do
     get "/layout", PageController, :layout
     get "/chat/:uuid", ChatroomController, :show
     get "/chat", PageController, :chat
+    get "/check39432", PageController, :healthcheck
   end
 
   scope "/", PelableWeb do

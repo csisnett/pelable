@@ -25,4 +25,8 @@ defmodule PelableWeb.PageController do
   def chat(conn, _params) do
     redirect(conn, to: "/chat/c3EMBSqNzdRo")
   end
+
+  def healthcheck(conn, _params) do
+    text(conn, "ok")
+  end
 end
