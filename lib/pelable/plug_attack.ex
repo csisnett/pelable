@@ -1,7 +1,9 @@
 defmodule Pelable.PlugAttack do
     use PlugAttack
+    require Logger
 
     rule "allow local", conn do
+        Logger.warn("#{inspect conn.remote_ip}")
         allow conn.remote_ip == {127, 0, 0, 1}
     end
 
