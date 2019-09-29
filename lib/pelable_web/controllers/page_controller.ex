@@ -2,7 +2,7 @@ defmodule PelableWeb.PageController do
   use PelableWeb, :controller
 
   def index(conn, _params) do
-    redirect(conn, to: "/landing")
+    redirect(conn, to: "/program")
   end
 
   def landing(conn, _params) do
