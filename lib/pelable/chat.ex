@@ -162,7 +162,7 @@ defmodule Pelable.Chat do
 
   """
   #Always use create_chatroom_assoc to create chatrooms to have at least one message in the chat(otherwise seen_last_message? doesn't work for new users)
-  def create_chatroom(attrs \\ %{}) do
+  defp create_chatroom(attrs \\ %{}) do
     %Chatroom{}
     |> Chatroom.changeset(attrs)
     |> Repo.insert()

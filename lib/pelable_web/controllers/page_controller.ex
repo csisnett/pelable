@@ -23,6 +23,6 @@ defmodule PelableWeb.PageController do
   end
 
   def chat(conn, _params) do
-    redirect(conn, to: "/chat/AZ3X37GsBebR")
+    redirect(conn, to: "/chat/c3EMBSqNzdRo")
   end
 end

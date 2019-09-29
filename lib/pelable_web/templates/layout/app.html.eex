@@ -37,7 +37,7 @@ function myFunction() {
   
    <a href="/apply">Apply</a>
    <a href="/program"> The Program </a>
-  <a href="/chat/AZ3X37GsBebR">Chat</a>
+  <a href="/chat">Chat</a>
   <%= if Pow.Plug.current_user(@conn) do %>
   <% else %>
   <a href="<%= Routes.pow_registration_path(@conn, :new) %>" class="">Sign up</a>
