@@ -93,7 +93,7 @@ window.socket = socket
 function render_online_user(user){
   let user_container = document.getElementById("user-container")
   let a = document.createElement("a")
-  let username = document.createTextNode(user.username)
+  let username = document.createTextNode(user.metas[0].username)
   a.appendChild(username)
   user_container.appendChild(a)
 }
@@ -103,8 +103,7 @@ function render_online_users(list_users){
   while (user_container.firstChild) {
     user_container.removeChild(user_container.firstChild);
   }
-  let user_array = list_users[0].metas
-  user_array.forEach(render_online_user)
+  list_users.forEach(render_online_user)
 }
 
 function render_user_typing(users_string){
