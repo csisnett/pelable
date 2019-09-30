@@ -171,7 +171,7 @@ defmodule Pelable.Chat do
 
   def create_chatroom_assoc(%{"name" => _name, "creator_id" => _id, "type" => _type} = attrs) do
     {:ok, chatroom} = create_chatroom(attrs)
-    initial_message = %{"chatroom_uuid" => chatroom.uuid, "username" => "pelable_bot", "body" => "Hello there, this is the start of this channel say hi!"}
+    initial_message = %{"chatroom_uuid" => chatroom.uuid, "username" => "pelable_bot", "body" => "Hello there, this is the start of this chat!"}
     {:ok, message} = create_message(initial_message)
     chatroom
   end
