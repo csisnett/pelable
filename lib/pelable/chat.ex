@@ -9,6 +9,7 @@ defmodule Pelable.Chat do
   alias Pelable.Chat.{Chatroom, Message, LastConnection}
   alias Pelable.Learn
   alias Pelable.Users.User
+  alias Pelable.Chat
 
   @chatroom_types ["public", "private conversation", "private group"]
 
@@ -175,6 +176,13 @@ defmodule Pelable.Chat do
     chatroom
   end
 
+  #Deletes all messages except the first one(which is needed so that seen_last_message? works)
+  def clear_chatroom(%Chatroom{} = chatroom) do
+    messages = list_messages_by_chatroom(chatroom.id)
+    [first | to_be_deleted] = messages
+    Enum.each(to_be_deleted, fn m -> delete_message(m) end)
+  end
+
   @doc """
   Updates a chatroom.
 
@@ -239,6 +247,7 @@ defmodule Pelable.Chat do
 
   # Number -> [%{}]
   #Gets chatroom id, returns a list of messages with its users
+  # Chatroom's show.html.eex and clear_chatroom depend on this
   def list_messages_by_chatroom(id) do
     query = from m in Message,
     join: u in assoc(m, :sender),
