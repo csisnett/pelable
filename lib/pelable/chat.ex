@@ -77,7 +77,7 @@ defmodule Pelable.Chat do
 
         last_message = get_last_message(chatroom)
     
-        last_connection.updated_at > last_message.inserted_at
+        NaiveDateTime.compare(last_connection.updated_at, last_message.inserted_at) == :gt
       end
   end
 
