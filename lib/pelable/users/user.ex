@@ -26,10 +26,24 @@ defmodule Pelable.Users.User do
     timestamps()
   end
 
+  def lowercase_username(changeset) do
+    case get_field(changeset, :username) do
+      nil -> changeset
+      username ->
+        if username == String.downcase(username) do
+          changeset
+        else
+          changeset |> put_change(:username, String.downcase(username))
+      end
+      
+    end
+  end
+
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:username, :nickname, :fullname, :email])
     |> validate_required([:username, :email])
+    |> lowercase_username
     |> pow_changeset(attrs)
     |> pow_extension_changeset(attrs)
     |> unique_constraint(:username)
