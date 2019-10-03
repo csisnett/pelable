@@ -212,13 +212,13 @@ header nav a {
    height:400px;
    width:850px;
    border:1px solid #ACD8F0;
-   overflow:auto;
+   overflow-y:auto;
    overflow-x: hidden; 
    display: inline-block;
+   white-space: pre-wrap;
    }
 
  #chat-interface {
-   text-align: center;
    white-space: nowrap;
  
  }
