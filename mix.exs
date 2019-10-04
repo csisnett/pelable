@@ -50,7 +50,8 @@ defmodule Pelable.MixProject do
       {:ecto_shortuuid, "~> 0.1.2"},
       {:swoosh, "~> 0.23.4"},
       {:plug_attack, "~> 0.4.2"},
-      {:remote_ip, "~> 0.1.5"}
+      {:remote_ip, "~> 0.1.5"},
+      {:libcluster, "~> 3.1"}
     ]
   end
 
