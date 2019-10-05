@@ -27,7 +27,7 @@ function render_online_users(presence_list){
   presence_list[0].metas.forEach(render_user)
 }
 
-    function move_chatbox_down() {
+function move_chatbox_down() {
         let chatBox = document.querySelector('#chat-box')
         //console.log(chatBox.scrollTop);
          // console.log(chatBox.clientHeight);
@@ -39,9 +39,9 @@ function render_online_users(presence_list){
             chatBox.scrollTop = chatBox.scrollHeight;
           
           }
-    }
+}
 
-    function convert_to_local_datetime(datetime) {
+function convert_to_local_datetime(datetime) {
         var str = datetime + "Z"
         let date = new Date(str)
       
@@ -49,14 +49,30 @@ function render_online_users(presence_list){
                 let local_date = date.toLocaleDateString()
                 return `${local_date} ${local_time}`
       }
-      function convert_to_local_datetimes() {
+function convert_to_local_datetimes() {
         var x = document.getElementsByTagName("datetime");
         for (i = 0; i < x.length; i++) {
                 var date_time = convert_to_local_datetime(x[i].innerText)
                x[i].innerText = date_time
                
           }
-      }
+}
+
+function prepare_message(message){
+  return linkifyStr(message)
+}
+
+
+
+function prepare_rendered_messages() {
+  var x = document.getElementsByTagName("message");
+  for (i = 0; i < x.length; i++) {
+          var message = prepare_message(x[i].innerText)
+         x[i].innerHTML = message
+         
+    }
+}
       window.onload = function() {
         convert_to_local_datetimes();
+        prepare_rendered_messages();
       }
