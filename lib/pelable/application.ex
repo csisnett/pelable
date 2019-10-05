@@ -21,8 +21,8 @@ defmodule Pelable.Application do
 
       Pow.Store.Backend.MnesiaCache,
       # # Or in a distributed system:
-      {Pow.Store.Backend.MnesiaCache, extra_db_nodes: Node.list()},
-      Pow.Store.Backend.MnesiaCache.Unsplit, # Recover from netsplit
+      # {Pow.Store.Backend.MnesiaCache, extra_db_nodes: Node.list()},
+      # Pow.Store.Backend.MnesiaCache.Unsplit # Recover from netsplit
 
       PelableWeb.Presence,
       
