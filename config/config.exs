@@ -37,9 +37,8 @@ config :pelable, :pow,
   routes_backend: PelableWeb.Pow.Routes
 
   config :pow, PelableWeb.PowMailer,
-  adapter: Swoosh.Adapters.Mailgun,
-  api_key: System.get_env("MAILGUN_API_KEY"),
-  domain: "mail1.pelable.com"
+  adapter: Swoosh.Adapters.Sendgrid,
+  api_key: "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"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
