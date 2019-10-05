@@ -8,11 +8,15 @@ import Chat from "<%= Routes.static_path(@conn, "/js/chat.js") %>"
 import ChatNotification from "<%= Routes.static_path(@conn, "/js/chatnotification.js") %>"
 import ChatPresence from "<%= Routes.static_path(@conn, "/js/chatpresence.js") %>"
 
+
 Chat.init(socket)
 ChatNotification.init(socket)
 ChatPresence.init(socket)
 window.socket = socket
 </script>
+
+<script src="<%= Routes.static_path(@conn, "/js/linkify.min.js") %>" ></script>
+<script src="<%= Routes.static_path(@conn, "/js/linkify-string.min.js") %>" ></script>
 
 <div id="everything">
 <h1><%= @chatroom.name %> </h1>
@@ -64,7 +68,7 @@ window.socket = socket
 
 <div id="chat-box">
 <%= for message <- @messages do %>
-  <%= render_message message %>
+   <%= render_message message %>
 <% end %>
 </div>
 
