@@ -7,13 +7,9 @@ defmodule Pelable.Application do
 
   def start(_type, _args) do
     # List all child processes to be supervised
-    topologies = Application.get_env(:libcluster, :topologies) || []
     children = [
       # Start the Ecto repository
       Pelable.Repo,
-      
-      #start libcluster
-      {Cluster.Supervisor, [topologies, [name: Pelable.ClusterSupervisor]]},
       # Start the endpoint when the application starts
       PelableWeb.Endpoint,
       # Starts a worker by calling: Pelable.Worker.start_link(arg)
