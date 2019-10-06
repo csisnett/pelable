@@ -5,6 +5,8 @@ defmodule Pelable.Application do
 
   use Application
 
+  @redis_url System.get_env("REDIS_URL")
+
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
@@ -15,7 +17,7 @@ defmodule Pelable.Application do
       # Starts a worker by calling: Pelable.Worker.start_link(arg)
       # {Pelable.Worker, arg},
 
-      Pow.Store.Backend.MnesiaCache,
+      {Redix, {@redis_url, [name: :redix]}},
       # # Or in a distributed system:
       # {Pow.Store.Backend.MnesiaCache, extra_db_nodes: Node.list()},
       # Pow.Store.Backend.MnesiaCache.Unsplit # Recover from netsplit

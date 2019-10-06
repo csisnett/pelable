@@ -37,8 +37,6 @@ defmodule PelableWeb.ChatChannel do
       {:ok, message} ->
         Endpoint.broadcast("chat_notification:" <> uuid, "new_message", %{"new_message" => true})
         payload = Map.merge(payload, %{"inserted_at" => message.inserted_at})
-        sanitized_body = Phoenix.HTML.html_escape(payload["body"]) |> Phoenix.HTML.safe_to_string
-        payload = Map.put(payload, "body", sanitized_body)
       broadcast socket, "shout", payload
       {:noreply, socket}
       {:error, _message} ->
