@@ -9,7 +9,7 @@ defmodule Pelable.PlugAttack do
 
     rule "throttle by ip", conn do
         throttle conn.remote_ip,
-          period: 60_000, limit: 10,
+          period: 60_000, limit: 15,
           storage: {PlugAttack.Storage.Ets, Pelable.PlugAttack.Storage}
     end
 
