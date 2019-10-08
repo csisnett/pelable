@@ -80,13 +80,15 @@ let Chat = {
         })
 
         channel.on('shout', payload => {
-          let message = prepare_message(payload.body)
+          let message = payload.body
           let chatBox = document.querySelector('#chat-box')
           let msgBlock = document.createElement('p')
           var datetime_string = convert_to_local_datetime(payload.inserted_at);
-          msgBlock.insertAdjacentHTML('beforeend', `${datetime_string} <b>${payload.username}:</b> ${message}`)
-          chatBox.appendChild(msgBlock)
+          msgBlock.insertAdjacentHTML('beforeend', `<message> ${datetime_string} <b>${payload.username}:</b> ${message} </message>`)
+          let message_element = chatBox.appendChild(msgBlock)
           move_chatbox_down();
+          let new_message = prepare_message(message_element.innerHTML)
+          message_element.innerHTML = new_message
         })
       }
 }

@@ -59,7 +59,8 @@ function convert_to_local_datetimes() {
 }
 
 function prepare_message(message){
-  return linkifyStr(message)
+  console.log(message)
+  return linkifyHtml(message, {})
 }
 
 
