@@ -208,6 +208,26 @@ s0.parentNode.insertBefore(s1,s0);
 										<p> We take several factors into account to make up your team like: programming skills, timezone, and time availability (part-time or full-time). </p>
 									</div>
 								</li>
+
+                                <li>
+									<div class="accordion-title">
+										<span>When does the next batch starts?</span>
+										<div class="accordion-icon"></div>
+									</div>
+									<div class="accordion-body">
+										<p> The next batch is scheduled to start the first day of November and ends on the 13th of December </p>
+									</div>
+								</li>
+
+                                <li>
+									<div class="accordion-title">
+										<span> Where can I see future batch starting dates?</span>
+										<div class="accordion-icon"></div>
+									</div>
+									<div class="accordion-body">
+										<p> Fill out this <a href="https://forms.gle/BvX5QwcNXE2obyqr6">form </a> to get updates to your email </p>
+									</div>
+								</li>
 	                        </ul>
 						</div>
             
@@ -271,7 +291,7 @@ document.getElementById("deadline").innerHTML = days + " days "
 + hours + " hours " + minutes + " minutes and " + seconds + " seconds "; 
     if (t < 0) { 
         clearInterval(x); 
-        document.getElementById("deadline").innerHTML = "The deadline has passed! For late applications please contact Carlos our program coordinator: carlos@pelable.com";
+        document.getElementById("deadline").innerHTML = "The deadline has passed! For late applications please contact Carlos our program coordinator: carlos@pelable.com or in the chat in the bottom-right corner";
     } 
 }, 1000); 
     </script>
