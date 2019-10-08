@@ -16,7 +16,7 @@ window.socket = socket
 </script>
 
 <script src="<%= Routes.static_path(@conn, "/js/linkify.min.js") %>" ></script>
-<script src="<%= Routes.static_path(@conn, "/js/linkify-string.min.js") %>" ></script>
+<script src="<%= Routes.static_path(@conn, "/js/linkify-html.js") %>" ></script>
 
 <div id="everything">
 <h1><%= @chatroom.name %> </h1>
