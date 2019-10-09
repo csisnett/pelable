@@ -79,6 +79,7 @@ window.socket = socket
 </div>
 
 </div>
+<a id="new_message" style="inline-block" href="#" onclick="return false;"></a> <br>
 <p id="typing" style="inline-block"> </p>
 
 <form id="chat-form">
@@ -149,6 +150,8 @@ typing_container.innerText = users_string + "...";
 
   //user_list.forEach( (user) => {render_user_typing(user)})
  };
+
+
 
 
  let chatBox = document.querySelector('#chat-box')

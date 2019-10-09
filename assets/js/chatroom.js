@@ -28,6 +28,18 @@ function render_online_users(presence_list){
 }
 
 function move_chatbox_down() {
+  let new_message_container = document.getElementById("new_message");
+  new_message_container.innerText = ""
+  let chatBox = document.querySelector('#chat-box')
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function new_message(){
+  let new_message_container = document.getElementById("new_message");
+  new_message_container.innerText = "new message"
+}
+
+function move_chatbox_down_or_not() {
         let chatBox = document.querySelector('#chat-box')
         //console.log(chatBox.scrollTop);
          // console.log(chatBox.clientHeight);
@@ -36,8 +48,11 @@ function move_chatbox_down() {
           
           if( chatBox.scrollTop + chatBox.clientHeight + 70 > chatBox.scrollHeight  ){
            // console.log("inside")
-            chatBox.scrollTop = chatBox.scrollHeight;
+            move_chatbox_down();
           
+          }
+          else {
+            new_message();
           }
 }
 
@@ -59,7 +74,7 @@ function convert_to_local_datetimes() {
 }
 
 function prepare_message(message){
-  console.log(message)
+  //console.log(message)
   return linkifyHtml(message, {})
 }
 

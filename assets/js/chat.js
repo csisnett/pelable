@@ -37,6 +37,8 @@ let Chat = {
           submitForm();
         })
 
+        document.getElementById("new_message").addEventListener("click", move_chatbox_down);
+
         document.getElementById("body").addEventListener("keydown", function(event) {
           let messagebox = document.getElementById("body")
 
@@ -106,7 +108,7 @@ let Chat = {
           var datetime_string = convert_to_local_datetime(payload.inserted_at);
           msgBlock.insertAdjacentHTML('beforeend', `<message> ${datetime_string} <b>${payload.username}:</b> ${message} </message>`)
           let message_element = chatBox.appendChild(msgBlock)
-          move_chatbox_down();
+          move_chatbox_down_or_not();
           let new_message = prepare_message(message_element.innerHTML)
           message_element.innerHTML = new_message
         })
