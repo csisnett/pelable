@@ -37,11 +37,31 @@ let Chat = {
           submitForm();
         })
 
+        document.getElementById("body").addEventListener("keydown", function(event) {
+          let messagebox = document.getElementById("body")
+
+          if(event.which === 16 && !messagebox.classList.contains("shift")) {
+          messagebox.classList.add("shift");
+          }
+        })
+
         document.getElementById("body").addEventListener("keyup", function(event) {
           // Number 13 is the "Enter" key on the keyboard
-          if (event.keyCode === 13) {
+
+          let messagebox = document.getElementById("body")
+          console.log(event.which)
+
+          if (event.which === 16) {
+            
+            messagebox.classList.remove("shift");
+          }
+
+          if (event.keyCode === 13 && !messagebox.classList.contains("shift")) {
+
             submitForm();
           }
+
+        
 
         })
 
