@@ -279,7 +279,7 @@ s0.parentNode.insertBefore(s1,s0);
         </footer>
     </div>
     <script>
-    var deadline = new Date("Oct 9, 2019 23:55:00").getTime(); 
+    var deadline = new Date("Oct 11, 2019 23:55:00").getTime(); 
 var x = setInterval(function() { 
 var now = new Date().getTime(); 
 var t = deadline - now; 
