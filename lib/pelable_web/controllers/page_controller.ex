@@ -1,8 +1,14 @@
 defmodule PelableWeb.PageController do
   use PelableWeb, :controller
 
+  @chat_url "/chat/c3EMBSqNzdRo"
+
   def index(conn, _params) do
-    redirect(conn, to: "/program")
+    if conn.assigns.current_user == nil do
+      redirect(conn, to: "/program")
+      else
+        redirect(conn, to: @chat_url)
+      end
   end
 
   def landing(conn, _params) do
