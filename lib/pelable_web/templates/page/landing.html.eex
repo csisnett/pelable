@@ -211,6 +211,22 @@ s0.parentNode.insertBefore(s1,s0);
 
                                 <li>
 									<div class="accordion-title">
+										<span> Is Pelable an internship program?</span>
+										<div class="accordion-icon"></div>
+									</div>
+									<div class="accordion-body">
+										<p> No, we are not. We're a peer-to-peer learning program. Unlike an internship: </p>
+                                        <ul>
+                                        <li> You won't be working for a company</li>
+                                        <li> You have the freedom to choose the project you work on and all of your team members are your peers </li>
+                                        <li> You have full ownership over your project </li>
+                                        
+                                        </ul>
+									</div>
+								</li>
+
+                                <li>
+									<div class="accordion-title">
 										<span>When does the next batch starts?</span>
 										<div class="accordion-icon"></div>
 									</div>
