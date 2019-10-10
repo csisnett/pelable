@@ -175,7 +175,7 @@ s0.parentNode.insertBefore(s1,s0);
 										<div class="accordion-icon"></div>
 									</div>
 									<div class="accordion-body">
-										<p> October 9th at 11:55 PM, or more precisely in: </p> <p id="deadline"> </p>
+										<p> October 10th at 11:55 PM, or more precisely in: </p> <p id="deadline"> </p>
 									</div>
 								</li>
 
@@ -295,7 +295,7 @@ s0.parentNode.insertBefore(s1,s0);
         </footer>
     </div>
     <script>
-    var deadline = new Date("Oct 11, 2019 23:55:00").getTime(); 
+    var deadline = new Date("Oct 10, 2019 23:55:00").getTime(); 
 var x = setInterval(function() { 
 var now = new Date().getTime(); 
 var t = deadline - now; 
