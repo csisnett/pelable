@@ -47,6 +47,7 @@ defmodule PelableWeb.Router do
     get "/chat/:uuid", ChatroomController, :show
     get "/chat", PageController, :chat
     get "/check39432", PageController, :healthcheck
+    get "/guide", PageController, :guide
   end
 
   scope "/", PelableWeb do
@@ -60,6 +61,7 @@ defmodule PelableWeb.Router do
     post "/projects", WorkProjectController, :create
     get "/start_project/:uuid", WorkProjectController, :start
     post "/start_project/:uuid", WorkProjectController, :start
+    
   end
 
   scope "/", PelableWeb do
