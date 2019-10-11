@@ -10,6 +10,7 @@ defmodule Pelable.Chat do
   alias Pelable.Learn
   alias Pelable.Users.User
   alias Pelable.Chat
+  alias PelableWeb.PowMailer
 
   @chatroom_types ["public", "private conversation", "private group"]
 
@@ -346,5 +347,11 @@ defmodule Pelable.Chat do
   """
   def change_message(%Message{} = message) do
     Message.changeset(message, %{})
+  end
+
+  def send_email_blast(%{user: user, subject: subject, text: text, html: html} = attrs) do
+    attrs
+    |> PowMailer.cast
+    |> PowMailer.process
   end
 end
