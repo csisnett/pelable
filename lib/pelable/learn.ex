@@ -25,6 +25,41 @@ defmodule Pelable.Learn do
 
   def get_user!(id), do: Repo.get!(User, id)
 
+
+  def update_user(%User{} = user, attrs) do
+    user
+    |> User.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a user.
+
+  ## Examples
+
+      iex> delete_user(user)
+      {:ok, %user{}}
+
+      iex> delete_user(user)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_chatroom(%User{} = user) do
+    Repo.delete(user)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking user changes.
+
+  ## Examples
+
+      iex> change_user(user)
+      %Ecto.Changeset{source: %User}}
+
+  """
+  def change_user(%User{} = user) do
+    User.changeset(user, %{})
+  end
   @doc """
   Returns the list of goals.
 
