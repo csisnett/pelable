@@ -52,7 +52,8 @@ defmodule Pelable.MixProject do
       {:plug_attack, "~> 0.4.2"},
       {:remote_ip, "~> 0.1.5"},
       {:redix, "~> 0.10.2"},
-      {:castore, "~> 0.1.3"}
+      {:castore, "~> 0.1.3"},
+      {:cors_plug, "~> 2.0"}
     ]
   end
 
