@@ -6,7 +6,7 @@ defmodule Pelable.Chat do
   import Ecto.Query, warn: false
   alias Pelable.Repo
 
-  alias Pelable.Chat.{Chatroom, Message, LastConnection}
+  alias Pelable.Chat.{Chatroom, Message, LastConnection, Invitation}
   alias Pelable.Learn
   alias Pelable.Users.User
   alias Pelable.Chat
@@ -127,7 +127,13 @@ defmodule Pelable.Chat do
     chatroom = Repo.preload(chatroom, [:creator, :participants, :invited_users])
     chatroom_changeset = Ecto.Changeset.change(chatroom)
     chatroom_users_changeset = chatroom_changeset |> Ecto.Changeset.put_assoc(:participants, [user])
+    delete_invitation(user, chatroom)
     Repo.update!(chatroom_users_changeset)
+  end
+
+  def delete_invitation(user = %User{}, chatroom = %Chatroom{}) do
+    from(i in Invitation, where: i.user_id == ^user.id and i.chatroom_id == ^chatroom.id)
+    |> Repo.delete_all
   end
 
   @doc """

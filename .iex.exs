@@ -8,3 +8,4 @@ alias Pelable.Learn
 alias Learn.Goal
 alias Pelable.Chat
 alias Pelable.Chat.{Chatroom, Message}
+alias Pelable.Chat.Invitation
