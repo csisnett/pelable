@@ -3,7 +3,8 @@ defmodule PelableWeb.Endpoint do
 
   socket "/socket", PelableWeb.UserSocket,
     websocket: true,
-    longpoll: false
+    longpoll: false,
+    check_origin: ["//locahost", "//pelable.com"],
 
   # Serve at "/" the static files from "priv/static" directory.
   #
