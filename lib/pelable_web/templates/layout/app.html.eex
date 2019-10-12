@@ -84,7 +84,6 @@ function myFunction() {
   <% end %>
   
   <%= if Pow.Plug.current_user(@conn) do %>
-  <a href="/#dashboard"> My Dashboard </a>
   <span><%= link "Sign out", to: Routes.pow_session_path(@conn, :delete), method: :delete %></span>
   <% end %>
   <a href="javascript:void(0);" class="icon" onclick="myFunction()">
