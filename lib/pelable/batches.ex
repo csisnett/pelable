@@ -15,7 +15,7 @@ defmodule Pelable.Batches do
 
     def list_users_in_batch(id) do
         Chat.list_messages_by_chatroom(id)
-        |> Emum.map(fn m -> get_user_from_message(m))
+        |> Emum.map(fn m -> get_user_from_message(m) end)
         |> Enum.uniq
     end
 
