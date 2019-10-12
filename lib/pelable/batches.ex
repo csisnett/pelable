@@ -19,7 +19,8 @@ defmodule Pelable.Batches do
         |> Enum.uniq
     end
 
-    def get_all_messages(%User{} = user, chatroom_id) do
+    def get_all_messages(username, chatroom_id) do
+        user = Repo.get_by(User, username: username)
         query = from m in Message, where: m.sender_id == ^user.id and m.chatroom_id == ^chatroom_id
         Repo.all(query) 
     end
