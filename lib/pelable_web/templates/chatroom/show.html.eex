@@ -1,4 +1,4 @@
-<script async type="module" src="<%= Routes.static_path(@conn, "/js/chatroom.js") %>"></script> 
+
 
 <script src="<%= Routes.static_path(@conn, "/js/dochat.js") %>"> </script>
 
@@ -147,3 +147,4 @@ chatBox.scrollTop = chatBox.scrollHeight;
 
 
 </script>
+<script async type="module" src="<%= Routes.static_path(@conn, "/js/chatroom.js") %>"></script> 
