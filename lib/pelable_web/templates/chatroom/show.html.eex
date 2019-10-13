@@ -1,11 +1,3 @@
-
-
-<script src="<%= Routes.static_path(@conn, "/js/dochat.js") %>"> </script>
-
-
-<script src="<%= Routes.static_path(@conn, "/js/linkify.min.js") %>" ></script>
-<script src="<%= Routes.static_path(@conn, "/js/linkify-html.js") %>" ></script>
-
 <div id="everything">
 <h1><%= @chatroom.name %> </h1>
 <%= if description?(@chatroom.description) do %>
@@ -102,6 +94,14 @@
 </div>
 
 
+<script src="<%= Routes.static_path(@conn, "/js/linkify.min.js") %>" ></script>
+<script src="<%= Routes.static_path(@conn, "/js/linkify-html.js") %>" ></script>
+
+<script src="<%= Routes.static_path(@conn, "/js/dochat.js") %>"> </script>
+
+<script type="module" src="<%= Routes.static_path(@conn, "/js/chatroom.js") %>"></script> 
+
+
 <script>
 
 function render_online_user(user){
@@ -168,4 +168,3 @@ chatBox.scrollTop = chatBox.scrollHeight;
 
 
 </script>
-<script async type="module" src="<%= Routes.static_path(@conn, "/js/chatroom.js") %>"></script> 
