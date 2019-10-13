@@ -75,7 +75,3 @@ function prepare_rendered_messages() {
          
     }
 }
-      window.onload = function() {
-        convert_to_local_datetimes();
-        prepare_rendered_messages();
-      }

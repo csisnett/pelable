@@ -87,20 +87,7 @@
 <textarea id="body" placeholder="Your message" rows="2" cols="60"> </textarea>
 <input type="submit" id="submit_button" value="Send">
 </form>
-
-
-
-
 </div>
-
-
-<script src="<%= Routes.static_path(@conn, "/js/linkify.min.js") %>" ></script>
-<script src="<%= Routes.static_path(@conn, "/js/linkify-html.js") %>" ></script>
-
-<script src="<%= Routes.static_path(@conn, "/js/dochat.js") %>"> </script>
-
-<script type="module" src="<%= Routes.static_path(@conn, "/js/chatroom.js") %>"></script> 
-
 
 <script>
 
@@ -159,12 +146,15 @@ typing_container.innerText = users_string + "...";
 
   //user_list.forEach( (user) => {render_user_typing(user)})
  };
-
-
-
-
- let chatBox = document.querySelector('#chat-box')
+let chatBox = document.querySelector('#chat-box')
 chatBox.scrollTop = chatBox.scrollHeight;
 
+ </script>
 
-</script>
+
+<script src="<%= Routes.static_path(@conn, "/js/linkify.min.js") %>" ></script>
+<script src="<%= Routes.static_path(@conn, "/js/linkify-html.js") %>" ></script>
+
+<script src="<%= Routes.static_path(@conn, "/js/dochat.js") %>"> </script>
+
+<script type="module" src="<%= Routes.static_path(@conn, "/js/chatroom.js") %>"></script> 
