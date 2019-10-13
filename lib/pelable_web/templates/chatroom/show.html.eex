@@ -64,10 +64,10 @@
 <a> <b>Online </b> </a>
 <div id="user-container">
 </div>
-<a> <b> Participants </b> <a>
+
+<a> <b> Participants </b> </a>
 <%= for participant <- @chatroom.participants do %>
 <a> <%=  participant.username  %></a>
-
 <% end%>
 
 </div>
