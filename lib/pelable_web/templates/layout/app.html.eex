@@ -53,6 +53,21 @@ mixpanel.init("e30d26ba45355dc945ffad90034459c3");</script><!-- end Mixpanel -->
     })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
 </script>
 
+<script>
+function get_user_token() {
+    var x = document.getElementsByTagName("META");
+      var txt = "";
+      var i;
+    for (i = 0; i < x.length; i++) {
+          if (x[i].name=="channel_token")
+          {
+               return x[i].content;
+           }
+  
+      }
+    }
+</script>
+
   </head>
   <body>
   

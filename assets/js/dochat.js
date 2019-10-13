@@ -1,17 +1,3 @@
-function get_user_token() {
-    var x = document.getElementsByTagName("META");
-      var txt = "";
-      var i;
-    for (i = 0; i < x.length; i++) {
-          if (x[i].name=="channel_token")
-          {
-               return x[i].content;
-           }
-  
-      }
-    }
-
-
 function render_user(user) {
   user_container = document.getElementById("user-container");
   
