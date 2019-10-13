@@ -28,19 +28,23 @@ defmodule PelableWeb.ChatroomController do
   end
 
   def show(conn, %{"uuid" => uuid}) do
+    case conn.assigns.current_user do
+      nil -> redirect(conn, to: Routes.pow_registration_path(conn, :new))
+      current_user ->
     chatroom = Chat.get_chatroom_by_uuid(uuid)
     messages = Chat.list_messages_by_chatroom(chatroom.id)
-    current_user = conn.assigns.current_user |> Repo.preload([:joined_chats, :chat_invitations])
+    current_user = current_user |> Repo.preload([:joined_chats, :chat_invitations])
     public_chatrooms = Chat.list_public_chatrooms
-    chat(conn, chatroom, messages, current_user, public_chatrooms)
+    private_groups = Chat.filter_private_groups(current_user.joined_chats)
+    private_conversations = Chat.filter_private_conversations(current_user.joined_chats)
+    chat(conn, chatroom, messages, current_user, public_chatrooms, private_groups, private_conversations)
+    end
   end
 
-  def chat(conn, chatroom, messages, nil, public_chatrooms) do
-    redirect(conn, to: Routes.pow_registration_path(conn, :new))
-  end
-
-  def chat(conn, chatroom, messages, current_user, public_chatrooms) do
-    render(conn, "show.html", chatroom: chatroom, messages: messages, user: current_user, public_chatrooms: public_chatrooms)
+  def chat(conn, chatroom, messages, current_user, public_chatrooms, private_groups, private_conversations) do
+    render(conn, "show.html", chatroom: chatroom, messages:
+     messages, user: current_user, public_chatrooms: public_chatrooms,
+      private_groups: private_groups, private_conversations: private_conversations)
   end
 
 
