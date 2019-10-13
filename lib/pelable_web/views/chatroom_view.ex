@@ -2,9 +2,33 @@ defmodule PelableWeb.ChatroomView do
   alias Pelable.Chat
   use PelableWeb, :view
   alias Pelable.Chat.Message
+  alias Pelable.Users.User
+  alias Pelable.Chat.Chatroom
 
   def seen_last_message?(user, chatroom) do
     Chat.seen_last_message?(user, chatroom)
+  end
+
+  def filter_other_than(%User{} = user, users) do
+    [first_user | rest] = users
+    if first_user == user do
+      [other_user | empty] = rest
+      other_user.username
+    else
+      first_user.username
+    end
+  end
+
+  def render_private_conversation(%User{} = user, %Chatroom{} = chatroom, path) do
+    content_tag(:a, filter_other_than(user, chatroom.participants), chatroom_uuid: chatroom.uuid, href: path)
+  end
+
+  def get_private_conversations(user) do
+    Chat.get_private_conversations(user, "private conversation")
+  end
+
+  def get_private_groups(user) do
+    Chat.get_conversations(user, "private group")
   end
 
   def render_message(%Message{} = message) do
@@ -16,7 +40,6 @@ defmodule PelableWeb.ChatroomView do
     {safe, body} = content_tag(:message, escaped_body)
     # <p <datetime> datetime </datetime> username <message> body </message> </p>
     {:safe, [60, "p", [], 62, datetime, " ", username, body, 60, 47, "p", 62]}
-    
   end
 
   

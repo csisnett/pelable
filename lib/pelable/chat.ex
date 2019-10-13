@@ -124,7 +124,7 @@ defmodule Pelable.Chat do
     end
   end
 
-  defp join_user_to_chatroom(%User{} = user, %Chatroom{} = chatroom) do
+  def join_user_to_chatroom(%User{} = user, %Chatroom{} = chatroom) do
     chatroom = Repo.preload(chatroom, [:creator, :participants, :invited_users])
     chatroom_changeset = Ecto.Changeset.change(chatroom)
     chatroom_users_changeset = chatroom_changeset |> Ecto.Changeset.put_assoc(:participants, [user])
@@ -135,6 +135,26 @@ defmodule Pelable.Chat do
   def delete_invitation(user = %User{}, chatroom = %Chatroom{}) do
     from(i in Invitation, where: i.user_id == ^user.id and i.chatroom_id == ^chatroom.id)
     |> Repo.delete_all
+  end
+
+  def private_conversations(%User{} = user, "private conversations" = type) do
+    get_conversations(user, type)
+    |> Enum.map(fn c -> Repo.preload(c, [:participants]) end)
+  end
+
+  def filter_private_conversations(chatrooms) when is_list(chatrooms) do
+    chatrooms |> Enum.filter(fn chatroom -> chatroom.type == "private conversation" end)
+  end
+
+  def filter_private_groups(chatrooms) do
+    chatrooms |> Enum.filter(fn chatroom -> chatroom.type == "private group" end)
+  end
+
+
+  def get_conversations(%User{} = user, type) do
+    user = Repo.preload(user, [:joined_chats])
+    user.joined_chats
+    |> Enum.filter(fn chatroom -> chatroom.type == type end)
   end
 
   @doc """

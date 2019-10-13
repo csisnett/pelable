@@ -31,12 +31,12 @@ defmodule PelableWeb.ChatroomController do
     case conn.assigns.current_user do
       nil -> redirect(conn, to: Routes.pow_registration_path(conn, :new))
       current_user ->
-    chatroom = Chat.get_chatroom_by_uuid(uuid)
+    chatroom = Chat.get_chatroom_by_uuid(uuid) |> Repo.preload([:participants])
     messages = Chat.list_messages_by_chatroom(chatroom.id)
     current_user = current_user |> Repo.preload([:joined_chats, :chat_invitations])
     public_chatrooms = Chat.list_public_chatrooms
     private_groups = Chat.filter_private_groups(current_user.joined_chats)
-    private_conversations = Chat.filter_private_conversations(current_user.joined_chats)
+    private_conversations = Chat.filter_private_conversations(current_user.joined_chats) |> Repo.preload([:participants])
     chat(conn, chatroom, messages, current_user, public_chatrooms, private_groups, private_conversations)
     end
   end

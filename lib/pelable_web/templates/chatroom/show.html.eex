@@ -33,7 +33,7 @@
  </div> 
 <a> <b> Private Channels</b> </a>
 <%= if @user.joined_chats != [] do %>
-<%= for chatroom <- @user.joined_chats do %>
+<%= for chatroom <- @private_groups do %>
 <%= if seen_last_message?(@user, chatroom) do %>
 <%= content_tag(:a, chatroom.name, chatroom_uuid: chatroom.uuid, href: Routes.chatroom_path(@conn, :show, chatroom.uuid)) %>
  <% else %>
@@ -41,7 +41,20 @@
  <%= content_tag(:a, chatroom.name, chatroom_uuid: chatroom.uuid, href: Routes.chatroom_path(@conn, :show, chatroom.uuid)) %>
  </b>
  <% end %>
+
  <% end %>
+
+ <%= for chatroom <- @private_conversations do %>
+<%= if seen_last_message?(@user, chatroom) do %>
+<%= render_private_conversation(@user, chatroom, Routes.chatroom_path(@conn, :show, chatroom.uuid)) %>
+ <% else %>
+ <b>
+ <%= content_tag(:a, chatroom.name, chatroom_uuid: chatroom.uuid, href: Routes.chatroom_path(@conn, :show, chatroom.uuid)) %>
+ </b>
+ <% end %>
+
+ <% end %>
+
  <% end %>
 
  <%= if @user.chat_invitations != [] do %>
@@ -64,11 +77,13 @@
 <a> <b>Online </b> </a>
 <div id="user-container">
 </div>
-
+<%= if @chatroom.type != "public" do %>
 <a> <b> Participants </b> </a>
 <%= for participant <- @chatroom.participants do %>
 <a> <%=  participant.username  %></a>
-<% end%>
+<% end %>
+<% end %>
+
 
 </div>
 
