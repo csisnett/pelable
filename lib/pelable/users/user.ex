@@ -39,11 +39,22 @@ defmodule Pelable.Users.User do
     end
   end
 
+  def replace_white_space(changeset) do
+    case get_field(changeset, :username) do
+      nil -> changeset
+      username ->
+        changeset |> put_change(:username, String.replace(username, ~r/ +/, ""))
+    end
+  end
+
+
+
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:username, :nickname, :fullname, :email])
     |> validate_required([:username, :email])
     |> lowercase_username
+    |> replace_white_space
     |> pow_changeset(attrs)
     |> pow_extension_changeset(attrs)
     |> unique_constraint(:username)
