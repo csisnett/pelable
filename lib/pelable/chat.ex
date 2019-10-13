@@ -28,12 +28,41 @@ defmodule Pelable.Chat do
   end
 
   def list_public_chatrooms do
-    query = from c in Chatroom,
-            where: c.type == "public",
-            select: c
-
+    query = from c in Chatroom, where: c.type == "public", select: c
     Repo.all(query)
   end
+
+  # preloaded %Chatroom{} -> Integer
+  def participants(%Chatroom{} = chatroom) do
+    Enum.count(chatroom.participants)
+  end
+
+  # preloaded %Chatroom{} -> Integer
+  def invitations(%Chatroom{} = chatroom) do
+    Enum.count(chatroom.invited_users)
+  end
+
+    def join_chatroom(%User{} = user, uuid) do
+      chatroom = get_chatroom_by_uuid(uuid) |> Repo.preload([:invited_users])
+      case chatroom.type do
+        "public" -> join_user_to_chatroom(user, chatroom)
+        _any_other_type ->
+          if invited?(user, chatroom) do
+            join_user_to_chatroom(user, chatroom)
+          else
+          {:error, "You can't join, you haven't been invited to this chat"}
+          end
+      end
+    end
+
+    def join_user_to_chatroom(%User{} = user, %Chatroom{} = chatroom) do
+      chatroom = Repo.preload(chatroom, [:creator, :participants, :invited_users])
+      chatroom_changeset = Ecto.Changeset.change(chatroom)
+      chatroom_users_changeset = chatroom_changeset |> Ecto.Changeset.put_assoc(:participants, [user])
+      delete_invitation(user, chatroom)
+      Repo.update!(chatroom_users_changeset)
+    end
+  
 
   def invite_to_chatroom(%User{} = user, uuid) do
     chatroom = get_chatroom_by_uuid(uuid) |> Repo.preload([:creator, :participants, :invited_users])
@@ -48,22 +77,27 @@ defmodule Pelable.Chat do
       end
   end
 
-  # preloaded %Chatroom{} -> Integer
-  def participants(%Chatroom{} = chatroom) do
-    Enum.count(chatroom.participants)
-  end
-
-  # preloaded %Chatroom{} -> Integer
-  def invitations(%Chatroom{} = chatroom) do
-    Enum.count(chatroom.invited_users)
-  end
-
-  #Gets a user and a preloaded chatroom, adds user_id,chatroom_id to chatroom_invitation table
-  def save_invitation(%User{} = user, %Chatroom{} =  chatroom) do
+   #Gets a user and a preloaded chatroom, adds user_id,chatroom_id to chatroom_invitation table
+   def save_invitation(%User{} = user, %Chatroom{} =  chatroom) do
     chatroom_changeset = Ecto.Changeset.change(chatroom)
     chatroom_users_changeset = chatroom_changeset |> Ecto.Changeset.put_assoc(:invited_users, [user])
     Repo.update!(chatroom_users_changeset)
   end
+
+  def delete_invitation(user = %User{}, chatroom = %Chatroom{}) do
+    from(i in Invitation, where: i.user_id == ^user.id and i.chatroom_id == ^chatroom.id)
+    |> Repo.delete_all
+  end
+
+    #%User{}, %Chatroom{} -> boolean 
+    # Gets a User, and a preloaded chatroom returns true if user has been invited
+    def invited?(%User{} = user, %Chatroom{} = chatroom) do
+      case Enum.find(chatroom.invited_users, false, fn u -> u.id == user.id end) do
+        %User{} -> true
+        false -> false
+      end
+    end
+
 
   def get_last_message(%Chatroom{} = chatroom) do
     Repo.one(from m in Message, where: m.chatroom_id == ^chatroom.id, order_by: [desc: m.id], limit: 1)
@@ -100,41 +134,6 @@ defmodule Pelable.Chat do
     attrs = %{} |> Map.put("user_id", user.id) |> Map.put("chatroom_id", chatroom.id)
     LastConnection.changeset(%LastConnection{}, attrs)
     |> Repo.insert
-  end
-
-  def join_chatroom(%User{} = user, uuid) do
-    chatroom = get_chatroom_by_uuid(uuid) |> Repo.preload([:invited_users])
-    case chatroom.type do
-      "public" -> join_user_to_chatroom(user, chatroom)
-      _any_other_type ->
-        if invited?(user, chatroom) do
-          join_user_to_chatroom(user, chatroom)
-        else
-        {:error, "You can't join, you haven't been invited to this chat"}
-        end
-    end
-  end
-
-  #%User{}, %Chatroom{} -> boolean 
-  # Gets a User, and a preloaded chatroom returns true if user has been invited
-  def invited?(%User{} = user, %Chatroom{} = chatroom) do
-    case Enum.find(chatroom.invited_users, false, fn u -> u.id == user.id end) do
-      %User{} -> true
-      false -> false
-    end
-  end
-
-  def join_user_to_chatroom(%User{} = user, %Chatroom{} = chatroom) do
-    chatroom = Repo.preload(chatroom, [:creator, :participants, :invited_users])
-    chatroom_changeset = Ecto.Changeset.change(chatroom)
-    chatroom_users_changeset = chatroom_changeset |> Ecto.Changeset.put_assoc(:participants, [user])
-    delete_invitation(user, chatroom)
-    Repo.update!(chatroom_users_changeset)
-  end
-
-  def delete_invitation(user = %User{}, chatroom = %Chatroom{}) do
-    from(i in Invitation, where: i.user_id == ^user.id and i.chatroom_id == ^chatroom.id)
-    |> Repo.delete_all
   end
 
   def private_conversations(%User{} = user, "private conversations" = type) do
