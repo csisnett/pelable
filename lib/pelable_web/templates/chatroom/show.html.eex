@@ -89,6 +89,15 @@
 </form>
 </div>
 
+
+<script src="<%= Routes.static_path(@conn, "/js/linkify.min.js") %>" ></script>
+<script src="<%= Routes.static_path(@conn, "/js/linkify-html.js") %>" ></script>
+
+<script src="<%= Routes.static_path(@conn, "/js/dochat.js") %>"> </script>
+
+<script type="module" src="<%= Routes.static_path(@conn, "/js/chatroom.js") %>"></script> 
+
+
 <script>
 
 function render_online_user(user){
@@ -150,11 +159,3 @@ let chatBox = document.querySelector('#chat-box')
 chatBox.scrollTop = chatBox.scrollHeight;
 
  </script>
-
-
-<script src="<%= Routes.static_path(@conn, "/js/linkify.min.js") %>" ></script>
-<script src="<%= Routes.static_path(@conn, "/js/linkify-html.js") %>" ></script>
-
-<script src="<%= Routes.static_path(@conn, "/js/dochat.js") %>"> </script>
-
-<script type="module" src="<%= Routes.static_path(@conn, "/js/chatroom.js") %>"></script> 
