@@ -6,7 +6,7 @@ defmodule Pelable.Chat do
   import Ecto.Query, warn: false
   alias Pelable.Repo
 
-  alias Pelable.Chat.{Chatroom, Message, LastConnection, Invitation}
+  alias Pelable.Chat.{Chatroom, Message, LastConnection, Invitation, Participant}
   alias Pelable.Learn
   alias Pelable.Users.User
   alias Pelable.Chat
@@ -53,6 +53,12 @@ defmodule Pelable.Chat do
           {:error, "You can't join, you haven't been invited to this chat"}
           end
       end
+    end
+
+    def add_participant(%User{} = user, %Chatroom{} = chatroom) do
+      %Participant{}
+      |> Participant.changeset(%{"user_id" => user.id, "chatroom_id" => chatroom.id})
+      |> Repo.insert
     end
 
     def join_user_to_chatroom(%User{} = user, %Chatroom{} = chatroom) do
