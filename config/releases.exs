@@ -73,6 +73,7 @@ config :logger, level: :info
 # kept out of version control and might be hard to recover
 # or recreate for your teammates (or yourself later on).
 config :pelable, PelableWeb.Endpoint,
+  http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
   secret_key_base: System.get_env("SECRET_KEY_BASE")
 
 # Configure your database
