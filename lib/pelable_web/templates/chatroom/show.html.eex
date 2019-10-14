@@ -41,7 +41,7 @@
 <%= render_private_conversation(@user, chatroom, Routes.chatroom_path(@conn, :show, chatroom.uuid)) %>
  <% else %>
  <b>
- <%= content_tag(:a, chatroom.name, chatroom_uuid: chatroom.uuid, href: Routes.chatroom_path(@conn, :show, chatroom.uuid)) %>
+ <%= render_private_conversation(@user, chatroom, Routes.chatroom_path(@conn, :show, chatroom.uuid)) %>
  </b>
  <% end %>
 
