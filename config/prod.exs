@@ -10,7 +10,6 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :pelable, PelableWeb.Endpoint,
-  http: [:inet6, port: System.get_env("PORT") || 4000],
   url: [host: System.get_env("RENDER_EXTERNAL_HOSTNAME") || "localhost", port: 80],
   check_origin: ["//locahost", "//pelable.com"],
   cache_static_manifest: "priv/static/cache_manifest.json"
