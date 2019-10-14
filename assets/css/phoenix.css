@@ -278,3 +278,7 @@ header nav a {
  background-color: #4CAF50; /* Add a green color to the "active/current" link */
  color: white;
 }
+
+.vertical-menu a.current-chatroom {
+  background-color: #ccc; /* Dark grey background on mouse-over */
+ }

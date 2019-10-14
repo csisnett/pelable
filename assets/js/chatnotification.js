@@ -4,8 +4,16 @@ let ChatNotification = {
         let filtered_chatrooms = this.remove_current_chatroom(chatrooms)
         filtered_chatrooms.forEach((chatroom_element) => {
         this.join_channel(chatroom_element, socket)
-        })        
+        })
+        this.current_chatroom_window(chatrooms)        
         
+    },
+
+    current_chatroom_window(chatrooms){
+      let path = window.location.pathname.split('/')
+      let current_chatroom_uuid = path[path.length - 1]
+      let array = document.querySelectorAll('[chatroom-uuid=' +current_chatroom_uuid+']');
+      array[0].className = 'current-chatroom'
     },
 
     remove_current_chatroom(chatrooms){
