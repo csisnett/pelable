@@ -1,5 +1,5 @@
 defmodule PelableWeb.UserSocket do
-  use Phoenix.Socket
+  use Phoenix.Socket, log: :debug
   alias Pelable.Repo
   alias Pelable.Users.User
 
