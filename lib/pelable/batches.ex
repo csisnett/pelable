@@ -76,4 +76,12 @@ defmodule Pelable.Batches do
         Enum.filter(users, fn s ->  Chat.get_last_connection(s, ch) == nil end)
     end
 
+    # To Monitor Team's healthy levels
+
+    def delete_participants(%Chatroom{} = chatroom) do
+        chatroom = chatroom |> Repo.preload([:participants])
+        chatroom.participants
+        |> Enum.each(fn user -> Chat.delete_participant(chatroom, user) end)
+    end
+
 end
