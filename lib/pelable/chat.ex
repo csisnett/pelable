@@ -38,7 +38,8 @@ defmodule Pelable.Chat do
   end
 
   def get_participant(%Chatroom{} = chatroom,%User{} = user) do
-    query = from p in Participant, where: p.chatroom_id == ^chatroom
+    query = from p in Participant, where: p.chatroom_id == ^chatroom.id and p.user_id == ^user.id, select: p
+    Repo.one(query)
   end
 
   # preloaded %Chatroom{} -> Integer
@@ -95,8 +96,11 @@ defmodule Pelable.Chat do
   end
 
   def delete_invitation(user = %User{}, chatroom = %Chatroom{}) do
-    from(i in Invitation, where: i.user_id == ^user.id and i.chatroom_id == ^chatroom.id)
-    |> Repo.delete_all
+    from(i in Invitation, where: i.user_id == ^user.id and i.chatroom_id == ^chatroom.id) |> Repo.delete_all
+  end
+
+  def delete_participant(%Chatroom{} = chatroom, %User{} = user) do
+      get_participant(chatroom, user) |> Repo.delete
   end
 
     #%User{}, %Chatroom{} -> boolean 
