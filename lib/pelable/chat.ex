@@ -37,6 +37,10 @@ defmodule Pelable.Chat do
     Enum.count(chatroom.participants)
   end
 
+  def get_participant(%Chatroom{} = chatroom,%User{} = user) do
+    query = from p in Participant, where: p.chatroom_id == ^chatroom
+  end
+
   # preloaded %Chatroom{} -> Integer
   def invitations(%Chatroom{} = chatroom) do
     Enum.count(chatroom.invited_users)
