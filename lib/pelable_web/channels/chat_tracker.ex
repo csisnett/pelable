@@ -18,6 +18,6 @@ defmodule PelableWeb.ChatTracker do
   @impl true
   def handle_info({:DOWN, _ref, :process, _object, _reason}, state) do
     Chat.update_last_connection(state["user"], state["chatroom"])
-    #This thing crashes because we don't return a valid value (I guess)
+    {:stop, :normal, state}
   end
 end
