@@ -72,7 +72,9 @@ function get_user_token() {
   <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
 <script>
   var OneSignal = window.OneSignal || [];
+  var external_id = <%= @current_user.id%>;
   OneSignal.push(function() {
+    OneSignal.setExternalUserId(external_id);
     OneSignal.init({
       appId: "277bc59b-8037-4702-8a45-66cb485da805",
       notifyButton: {
