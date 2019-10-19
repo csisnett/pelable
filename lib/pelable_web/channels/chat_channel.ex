@@ -7,6 +7,10 @@ defmodule PelableWeb.ChatChannel do
   alias Pelable.Users.User
   alias PelableWeb.Endpoint
 
+  def convert_ids(ids) when is_list(ids) do
+    ids |> Enum.map(fn id -> Integer.to_string(id) end)
+  end
+
   def join("chat:" <> uuid, payload, socket) do
     if authorized?(payload) do
       send(self(), :entered_chat)
@@ -40,9 +44,23 @@ defmodule PelableWeb.ChatChannel do
         sanitized_body = Phoenix.HTML.html_escape(payload["body"]) |> Phoenix.HTML.safe_to_string
         payload = Map.put(payload, "body", sanitized_body)
       broadcast socket, "shout", payload
+      push_notification(message, payload)
       {:noreply, socket}
       {:error, _message} ->
         {:noreply, socket}
+    end
+  end
+
+  def push_notification(message, payload) do
+    chatroom = Chat.get_chatroom!(message.chatroom_id)
+    case chatroom.type do
+    "private" <> something ->
+    recipients = Chat.get_recipients(message) |> convert_ids
+    json = %{"app_id" => "277bc59b-8037-4702-8a45-66cb485da805", "include_external_user_ids" => recipients, "data" => %{"foo" => "bar"}, "contents" => %{"en" => payload["username"] <> ": " <> payload["body"]}}
+    encoded_json = Jason.encode!(json)
+    HTTPoison.post("https://onesignal.com/api/v1/notifications", encoded_json, [{"Content-Type", "application/json"}, {"charset", "utf-8"}])
+    
+    anything_else -> :nothing
     end
   end
 

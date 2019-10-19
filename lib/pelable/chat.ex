@@ -285,6 +285,13 @@ defmodule Pelable.Chat do
     Repo.all(Message)
   end
 
+  def get_recipients(%Message{} = message) do
+    query = from p in Participant,
+    where: p.chatroom_id == ^message.chatroom_id and p.user_id != ^message.sender_id,
+    select: p.user_id
+    Repo.all(query)
+  end
+
   # Number -> [%{}]
   #Gets chatroom id, returns a list of messages with its users
   # Chatroom's show.html.eex and clear_chatroom depend on this
