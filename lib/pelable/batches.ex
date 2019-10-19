@@ -78,10 +78,23 @@ defmodule Pelable.Batches do
 
     # To Monitor Team's healthy levels
 
-    def delete_participants(%Chatroom{} = chatroom) do
+    def delete_all_participants(%Chatroom{} = chatroom) do
         chatroom = chatroom |> Repo.preload([:participants])
         chatroom.participants
         |> Enum.each(fn user -> Chat.delete_participant(chatroom, user) end)
     end
+
+    def delete_participants(participants, %Chatroom{} = chatroom) when is_list(participants) do
+        participants
+        |> Enum.each(fn user -> Chat.delete_participant(chatroom, user) end)
+    end
+
+    def get_emails(%Chatroom{} = chatroom) do
+      chatroom = chatroom |> Repo.preload([:participants])
+      chatroom.participants
+      |> Enum.map(fn user -> user.email end)
+    end
+
+    
 
 end
