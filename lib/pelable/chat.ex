@@ -66,6 +66,12 @@ defmodule Pelable.Chat do
       |> Repo.insert
     end
 
+    def add_participant(username, chatroom_uuid) do
+      user = Repo.get_by(User, username: username)
+      chatroom = Repo.get_by(Chatroom, uuid: chatroom_uuid)
+      add_participant(user, chatroom)
+    end
+
     def join_user_to_chatroom(%User{} = user, %Chatroom{} = chatroom) do
       chatroom = Repo.preload(chatroom, [:creator, :participants, :invited_users])
       chatroom_changeset = Ecto.Changeset.change(chatroom)
