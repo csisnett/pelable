@@ -56,7 +56,7 @@ defmodule PelableWeb.ChatChannel do
     case chatroom.type do
     "private" <> something ->
     recipients = Chat.get_recipients(message) |> convert_ids
-    json = %{"app_id" => "277bc59b-8037-4702-8a45-66cb485da805", "url" => "https://pelable.com/chat/" <> chatroom.uuid, "include_external_user_ids" => recipients, "data" => %{"foo" => "bar"}, "contents" => %{"en" => payload["username"] <> ": " <> payload["body"]}}
+    json = %{"app_id" => "277bc59b-8037-4702-8a45-66cb485da805", "url" => "https://pelable.com/chat/" <> chatroom.uuid, "include_external_user_ids" => recipients, "data" => %{"foo" => "bar"}, "headings" => %{"en" => chatroom.name}, "contents" => %{"en" => payload["username"] <> ": " <> message.body}}
     encoded_json = Jason.encode!(json)
     HTTPoison.post("https://onesignal.com/api/v1/notifications", encoded_json, [{"Content-Type", "application/json"}, {"charset", "utf-8"}])
 
