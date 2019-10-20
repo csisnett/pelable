@@ -59,6 +59,12 @@ defmodule Pelable.Batches do
         end
     end
 
+    def create_directs_for_me(username) do
+        user = Repo.get_by(User, username: username)
+        me = Learn.get_user!(1)
+        create_directs_for_user(user, [me])
+    end
+
     def create_direct_chats(user_list) when is_list(user_list) do
         case length(user_list) do
            1 -> :ok
@@ -84,6 +90,11 @@ defmodule Pelable.Batches do
         |> Enum.each(fn user -> Chat.delete_participant(chatroom, user) end)
     end
 
+    def delete_all_participants(uuid) do
+        chatroom = Repo.get_by(Chatroom, uuid: uuid)
+        delete_all_participants(chatroom)
+    end
+
     def delete_participants(participants, %Chatroom{} = chatroom) when is_list(participants) do
         participants
         |> Enum.each(fn user -> Chat.delete_participant(chatroom, user) end)
@@ -95,6 +106,9 @@ defmodule Pelable.Batches do
       |> Enum.map(fn user -> user.email end)
     end
 
-    
+    def get_emails(uuid) do
+        chatroom = Repo.get_by(Chatroom, uuid: uuid)
+        get_emails(chatroom)
+    end
 
 end
