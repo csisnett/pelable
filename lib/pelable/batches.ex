@@ -84,6 +84,53 @@ defmodule Pelable.Batches do
 
     # To Monitor Team's healthy levels
 
+    def teams do
+        ["dl5Q0m8kP3LH", "d_j7_FvMSfzc", "BaQVRKH3N-wW", "o6WVZQS9xROL",
+         "OWib6Zf8d1xs", "mavvVf1eT4sV", "pGuZzdqXsxk8", "22LCrDBCS1wz", "Zq6_2V3qXvIV",
+        "l-ZMHysu53l4", "zxuH2TaMc2tE"]
+        |> Enum.map(fn uuid -> Repo.get_by(Chatroom, uuid: uuid) end)
+    end
+
+    def user_status(%User{} = user) do
+        case sent_in_a_day?(user) do
+            true -> "active"
+            false -> "inactive"
+        end
+    end
+
+    def teams_status(team_chats) when is_list(team_chats) do
+        case length(team_chats) do
+        0 -> []
+        x ->
+        [chatroom | rest] = team_chats
+        chatroom = chatroom |> Repo.preload([:participants])
+        participants = chatroom.participants
+        participants_status = Enum.map(participants, fn user -> %{"username" => user.username, "status" => user_status(user), "email" =>  user.email} end)
+        team_status = %{"team name" => chatroom.name, "chat uuid" => chatroom.uuid, "members_status" => participants_status}
+        [team_status | teams_status(rest)] 
+        end
+    end
+
+    # user -> [%{"chatroom name" => "Date/time"}, ...]
+    def get_last_connections(%User{} = user) do
+        user = user |> Repo.preload([:joined_chats, :chat_connections])
+        last_connections = Enum.map(user.joined_chats, fn chatroom -> %{chatroom.name => Chat.get_last_connection(user, chatroom)} end)
+    end
+
+    def sent_in_a_day?(%User{} = user) do
+        case last_sent_message(user) do
+        nil -> false
+        message ->
+        a_day_ago = NaiveDateTime.utc_now |> NaiveDateTime.add(-86_400, :second)
+        NaiveDateTime.compare(message.inserted_at, a_day_ago) == :gt
+        end
+    end
+
+    def last_sent_message(%User{} = user) do
+        query = from m in Message, where: m.sender_id == ^user.id, order_by: [desc: m.id], limit: 1
+        Repo.one(query)
+    end
+
     def delete_all_participants(%Chatroom{} = chatroom) do
         chatroom = chatroom |> Repo.preload([:participants])
         chatroom.participants
@@ -100,6 +147,8 @@ defmodule Pelable.Batches do
         |> Enum.each(fn user -> Chat.delete_participant(chatroom, user) end)
     end
 
+    # Communication with teams
+
     def get_emails(%Chatroom{} = chatroom) do
       chatroom = chatroom |> Repo.preload([:participants])
       chatroom.participants
@@ -109,6 +158,20 @@ defmodule Pelable.Batches do
     def get_emails(uuid) do
         chatroom = Repo.get_by(Chatroom, uuid: uuid)
         get_emails(chatroom)
+    end
+
+    def get_batch_emails(team_list) when is_list(team_list) do
+        case length(team_list) do
+        0 -> []
+        x -> 
+        [first | rest] = team_list
+        emails = get_emails(first)
+        emails ++ get_batch_emails(rest)
+        end
+    end
+
+    def unique_batch_emails(team_list) when is_list(team_list) do
+        get_batch_emails(team_list) |> Enum.uniq |> Enum.join(", ")
     end
 
 end
