@@ -109,6 +109,12 @@ defmodule Pelable.Chat do
       get_participant(chatroom, user) |> Repo.delete
   end
 
+  def delete_participant(uuid, username) do
+    chatroom = Repo.get_by(Chatroom, uuid: uuid)
+    user = Repo.get_by(User, username: username)
+    delete_participant(chatroom, user)
+  end
+
     #%User{}, %Chatroom{} -> boolean 
     # Gets a User, and a preloaded chatroom returns true if user has been invited
     def invited?(%User{} = user, %Chatroom{} = chatroom) do
