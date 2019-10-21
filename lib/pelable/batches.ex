@@ -27,7 +27,7 @@ defmodule Pelable.Batches do
         Repo.all(query) 
     end
 
-    #To make Teams
+    #To make and destroy Teams
 
     def convert_usernames(users) when is_list(users) do
         Enum.map(users, fn username -> Repo.get_by(User, username: username) end)
@@ -76,6 +76,22 @@ defmodule Pelable.Batches do
         end
     end
 
+    def delete_all_participants(%Chatroom{} = chatroom) do
+        chatroom = chatroom |> Repo.preload([:participants])
+        chatroom.participants
+        |> Enum.each(fn user -> Chat.delete_participant(chatroom, user) end)
+    end
+
+    def delete_all_participants(uuid) do
+        chatroom = Repo.get_by(Chatroom, uuid: uuid)
+        delete_all_participants(chatroom)
+    end
+
+    def delete_participants(participants, %Chatroom{} = chatroom) when is_list(participants) do
+        participants
+        |> Enum.each(fn user -> Chat.delete_participant(chatroom, user) end)
+    end
+
     def dead_users do
         users = Learn.list_users
         ch = Repo.get_by(Chatroom, uuid: "c3EMBSqNzdRo")
@@ -91,10 +107,39 @@ defmodule Pelable.Batches do
         |> Enum.map(fn uuid -> Repo.get_by(Chatroom, uuid: uuid) end)
     end
 
-    def user_status(%User{} = user) do
-        case sent_in_a_day?(user) do
-            true -> "active"
-            false -> "inactive"
+    def time_since_last_message_sent(%User{} = user, time_now) do
+        last_message = last_message_sent(user)
+        time_in_seconds = NaiveDateTime.diff(time_now,last_message.inserted_at)
+    end
+
+    def interpret_teams_status(team_status_list) when is_list(team_status_list) do
+        case length(team_status_list) do
+            0 -> []
+            x -> 
+                [team_status | rest] = team_status_list
+                participants_status = Enum.map(team_status["participants_status"], fn user_status -> interpret_user_status(user_status) end)
+                team_status = Map.put(team_status, "participants_status", participants_status)
+                [team_status | interpret_teams_status(rest)]
+        end
+    end
+
+    def interpret_user_status(%{} = user_status) do
+        user_status |> interpret_time_since_last_connection |> interpret_time_since_last_message_sent
+    end
+
+    def interpret_time_since_last_connection(%{} = user_status) do
+        if user_status["time_since_last_connection"] < 172800 do
+            user_status |> Map.put("last_connection_observation", "active last connection under 2 days")
+        else
+            user_status |> Map.put("last_connection_observation", "inactive last connection over 2 days ago")
+        end
+    end
+
+    def interpret_time_since_last_message_sent(%{} = user_status) do
+        if user_status["time_since_last_message_sent"] < 86400 do
+            user_status |> Map.put("last_message_sent_observation", "active last message in the last 24 hours")
+        else
+            user_status |> Map.put("last_message_sent_observation",  "inactive last message more than 24 hours ago")
         end
     end
 
@@ -104,9 +149,12 @@ defmodule Pelable.Batches do
         x ->
         [chatroom | rest] = team_chats
         chatroom = chatroom |> Repo.preload([:participants])
-        participants = chatroom.participants
-        participants_status = Enum.map(participants, fn user -> %{"username" => user.username, "status" => user_status(user), "email" =>  user.email} end)
-        team_status = %{"team name" => chatroom.name, "chat uuid" => chatroom.uuid, "members_status" => participants_status}
+        participants = chatroom.participants |> Enum.filter(fn user -> user.id != 1 end)
+        time_now = NaiveDateTime.utc_now
+        participants_status = Enum.map(participants, fn user ->
+        %{"username" => user.username, "time_since_last_message_sent" => time_since_last_message_sent(user, time_now),
+        "email" =>  user.email, "time_since_last_connection" => time_since_last_connection(user, time_now)} end)
+        team_status = %{"team name" => chatroom.name, "chat uuid" => chatroom.uuid, "participants_status" => participants_status}
         [team_status | teams_status(rest)] 
         end
     end
@@ -117,34 +165,28 @@ defmodule Pelable.Batches do
         last_connections = Enum.map(user.joined_chats, fn chatroom -> %{chatroom.name => Chat.get_last_connection(user, chatroom)} end)
     end
 
-    def sent_in_a_day?(%User{} = user) do
-        case last_sent_message(user) do
-        nil -> false
-        message ->
-        a_day_ago = NaiveDateTime.utc_now |> NaiveDateTime.add(-86_400, :second)
-        NaiveDateTime.compare(message.inserted_at, a_day_ago) == :gt
-        end
-    end
-
-    def last_sent_message(%User{} = user) do
+    def last_message_sent(%User{} = user) do
         query = from m in Message, where: m.sender_id == ^user.id, order_by: [desc: m.id], limit: 1
         Repo.one(query)
     end
 
-    def delete_all_participants(%Chatroom{} = chatroom) do
-        chatroom = chatroom |> Repo.preload([:participants])
-        chatroom.participants
-        |> Enum.each(fn user -> Chat.delete_participant(chatroom, user) end)
+    def time_since_last_connection(%User{} = user, time_now) do
+        last_connection = get_last_last_connection(user)
+        time_since_last_connection(last_connection, time_now)
     end
 
-    def delete_all_participants(uuid) do
-        chatroom = Repo.get_by(Chatroom, uuid: uuid)
-        delete_all_participants(chatroom)
+    def time_since_last_connection(%LastConnection{} = last_connection, time_now) do
+        time_in_seconds = NaiveDateTime.diff(time_now,last_connection.updated_at)
     end
 
-    def delete_participants(participants, %Chatroom{} = chatroom) when is_list(participants) do
-        participants
-        |> Enum.each(fn user -> Chat.delete_participant(chatroom, user) end)
+    def get_last_last_connection(%User{} = user) do
+        query = from lc in LastConnection, where: lc.user_id == ^user.id, order_by: [desc: lc.updated_at], limit: 1
+        Repo.one(query)
+    end
+
+    def get_last_last_connection(username) do
+        user = Repo.get_by(User, username: username)
+        get_last_last_connection(user)
     end
 
     # Communication with teams
