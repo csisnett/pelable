@@ -1,6 +1,6 @@
 defmodule Pelable.Batches do
     
-    import Ecto.Query, warn: false
+    import Ecto.Query, only: [from: 2]
     alias Pelable.Repo
 
     alias Pelable.Chat.{Chatroom, Message, LastConnection, Invitation}
@@ -209,6 +209,47 @@ defmodule Pelable.Batches do
 
     def get_last_message(%Chatroom{} = chatroom) do
         Chat.get_last_message(chatroom)
+    end
+
+    def get_messages_until_date(%Chatroom{} = chatroom, %Date{} = date) do
+        chatroom
+    end
+
+    def momentum_for_date(%Chatroom{} = chatroom, %Date{} = date) do
+        messages = get_messages_for_date(chatroom, date)
+        number_of_messages = messages |> Enum.count
+        case number_of_messages do
+        0 -> -1
+        1 -> -1
+        x ->
+        average_time_between_messages = average_time_between_messages(messages)/3600 #convert seconds to hour
+        momentum = number_of_messages/average_time_between_messages
+        end
+    end
+
+    def average_time_between_messages(messages) when is_list(messages) do
+        number_of_messages = messages |> Enum.count
+        sum_of_time_between_messages = calculate_time_between_messages(messages)
+        average_time_between_messages = sum_of_time_between_messages/number_of_messages
+    end
+
+    def calculate_time_between_messages(messages) when is_list(messages) do
+        case length(messages) do
+        2 ->
+            [first_message, second_message| rest] = messages
+            current_diff = NaiveDateTime.diff(second_message.inserted_at, first_message.inserted_at)
+        x ->
+            [first_message, second_message| rest] = messages
+            current_diff = NaiveDateTime.diff(second_message.inserted_at, first_message.inserted_at)
+            current_diff + calculate_time_between_messages([second_message | rest])
+        end
+    end
+
+    def get_messages_for_date(%Chatroom{} = chatroom, %Date{} = date) do
+        {:ok, datetime} = NaiveDateTime.new(date.year, date.month, date.day, 0,0,0)
+        second_day = NaiveDateTime.add(datetime, 86400)
+        query = from m in Message, where: m.chatroom_id == ^chatroom.id and m.inserted_at >= ^datetime and m.inserted_at <= ^second_day, order_by: [asc: m.inserted_at]
+        Repo.all(query) 
     end
 
     # Communication with teams
