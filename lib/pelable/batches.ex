@@ -217,27 +217,42 @@ defmodule Pelable.Batches do
 
     def momentum_for_date(%Chatroom{} = chatroom, %Date{} = date) do
         messages = get_messages_for_date(chatroom, date)
-        number_of_messages = messages |> Enum.count
-        case number_of_messages do
+        messages |> Enum.count
+        |> case  do
         0 -> "no messages sent"
         1 -> "only one message sent"
         x ->
-        average_time_between_messages = average_time_between_messages(messages)/3600 #convert seconds to hour
-        momentum = number_of_messages/average_time_between_messages
+        {total_responses, average_response_time} = average_response_time(messages)
+        average_response_time = average_response_time/3600 #convert seconds to hour
+        momentum = total_responses/average_response_time
         end
     end
 
-    def average_time_between_messages(messages) when is_list(messages) do
-        number_of_messages = messages |> Enum.count
-        sum_of_time_between_messages = calculate_time_between_messages(messages)
-        average_time_between_messages = sum_of_time_between_messages/number_of_messages
+    def average_response_time(messages) when is_list(messages) do
+        total_responses = total_responses(messages, 0)
+        total_responses_time = total_responses_time(messages)
+        average_response_time = total_responses_time/total_responses
+        {total_responses, average_response_time}
     end
 
-    def calculate_time_between_messages(messages) when is_list(messages) do
+    def total_responses(messages, count) when is_list(messages) do
+        case length(messages) do
+            1 -> count
+            x ->
+            [first_message, second_message| rest] = messages
+            if response?(first_message, second_message) do
+                total_responses([second_message | rest], count + 1)
+            else
+                total_responses([second_message | rest], count)
+            end
+        end
+    end
+
+    def total_responses_time(messages) when is_list(messages) do
         case length(messages) do
         2 ->
             [first_message, second_message| rest] = messages
-            if first_message.sender_id != second_message.sender_id do
+            if response?(first_message, second_message) do
             NaiveDateTime.diff(second_message.inserted_at, first_message.inserted_at)
             else
                 0
@@ -245,13 +260,17 @@ defmodule Pelable.Batches do
         x ->
             [first_message, second_message| rest] = messages
 
-            current_diff = if first_message.sender_id != second_message.sender_id do
+            total_time = if response?(first_message, second_message) do
             NaiveDateTime.diff(second_message.inserted_at, first_message.inserted_at)
             else
                 0
             end
-            current_diff + calculate_time_between_messages([second_message | rest])
+            total_time + total_responses_time([second_message | rest])
         end
+    end
+
+    def response?(%Message{} = first_message, %Message{} = second_message) do
+        first_message.sender_id != second_message.sender_id
     end
 
     def get_messages_for_date(%Chatroom{} = chatroom, %Date{} = date) do
