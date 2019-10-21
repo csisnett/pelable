@@ -119,7 +119,20 @@ defmodule Pelable.Batches do
                 [team_status | rest] = team_status_list
                 participants_status = Enum.map(team_status["participants_status"], fn user_status -> interpret_user_status(user_status) end)
                 team_status = Map.put(team_status, "participants_status", participants_status)
+                team_status = interpret_one_team_status(team_status)
                 [team_status | interpret_teams_status(rest)]
+        end
+    end
+
+    def interpret_one_team_status(team_status) do
+        team_status |> interpret_time_since_last_team_message
+    end
+
+    def interpret_time_since_last_team_message(team_status) do
+        if team_status["time_since_last_team_message"] < 86400 do
+            team_status |> Map.put("last_team_message_observation", "active team last message in the last 24 hours")
+        else
+            team_status |> Map.put("last_team_message_observation",  "inactive team last message more than 24 hours ago")
         end
     end
 
@@ -154,7 +167,7 @@ defmodule Pelable.Batches do
         participants_status = Enum.map(participants, fn user ->
         %{"username" => user.username, "time_since_last_message_sent" => time_since_last_message_sent(user, time_now),
         "email" =>  user.email, "time_since_last_connection" => time_since_last_connection(user, time_now)} end)
-        team_status = %{"team name" => chatroom.name, "chat uuid" => chatroom.uuid, "participants_status" => participants_status}
+        team_status = %{"team name" => chatroom.name, "time_since_last_team_message" => time_since_last_team_message(chatroom, time_now), "chat uuid" => chatroom.uuid, "participants_status" => participants_status}
         [team_status | teams_status(rest)] 
         end
     end
@@ -187,6 +200,15 @@ defmodule Pelable.Batches do
     def get_last_last_connection(username) do
         user = Repo.get_by(User, username: username)
         get_last_last_connection(user)
+    end
+
+    def time_since_last_team_message(%Chatroom{} = chatroom, time_now) do
+        message = get_last_message(chatroom)
+        time_in_seconds = NaiveDateTime.diff(time_now, message.inserted_at)
+    end
+
+    def get_last_message(%Chatroom{} = chatroom) do
+        Chat.get_last_message(chatroom)
     end
 
     # Communication with teams
