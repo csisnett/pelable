@@ -219,8 +219,8 @@ defmodule Pelable.Batches do
         messages = get_messages_for_date(chatroom, date)
         number_of_messages = messages |> Enum.count
         case number_of_messages do
-        0 -> -1
-        1 -> -1
+        0 -> "no messages sent"
+        1 -> "only one message sent"
         x ->
         average_time_between_messages = average_time_between_messages(messages)/3600 #convert seconds to hour
         momentum = number_of_messages/average_time_between_messages
@@ -237,10 +237,19 @@ defmodule Pelable.Batches do
         case length(messages) do
         2 ->
             [first_message, second_message| rest] = messages
-            current_diff = NaiveDateTime.diff(second_message.inserted_at, first_message.inserted_at)
+            if first_message.sender_id != second_message.sender_id do
+            NaiveDateTime.diff(second_message.inserted_at, first_message.inserted_at)
+            else
+                0
+            end
         x ->
             [first_message, second_message| rest] = messages
-            current_diff = NaiveDateTime.diff(second_message.inserted_at, first_message.inserted_at)
+
+            current_diff = if first_message.sender_id != second_message.sender_id do
+            NaiveDateTime.diff(second_message.inserted_at, first_message.inserted_at)
+            else
+                0
+            end
             current_diff + calculate_time_between_messages([second_message | rest])
         end
     end
