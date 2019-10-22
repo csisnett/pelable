@@ -86,7 +86,7 @@
 
 <form id="chat-form">
 <textarea id="body" placeholder="Your message" rows="2" cols="60"> </textarea>
-<input type="submit" id="submit_button" value="Send">
+<input type="submit" id="submit_button" value="Send" class="btn btn-primary">
 </form>
 </div>
 
