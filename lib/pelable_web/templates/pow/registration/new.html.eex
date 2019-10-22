@@ -1,4 +1,4 @@
-<h1>Register</h1>
+<h1>Create an Account</h1>
 
 Sign up to join our community!
 <%= form_for @changeset, @action, [as: :user], fn f -> %>
@@ -32,8 +32,8 @@ Sign up to join our community!
     <span id="error"> <%= translate_error(message) %> </span>
      <% end %>
 <br>
-  <div>
-    <%= submit "Register" %>
+  
+    <%= submit "Register", class: "btn btn-primary btn-lg"%>
   </div>
 <% end %>
 

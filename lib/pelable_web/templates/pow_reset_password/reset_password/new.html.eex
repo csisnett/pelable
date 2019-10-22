@@ -1,4 +1,4 @@
-<h1>Reset password</h1>
+<h1>Reset your password</h1>
 
 <%= form_for @changeset, @action, [as: :user], fn f -> %>
   <%= if @changeset.action do %>
@@ -12,7 +12,7 @@
   <%= error_tag f, :email %>
 
   <div>
-    <%= submit "Submit" %>
+    <%= submit "Submit", class: "btn btn-outline-primary" %>
   </div>
 <% end %>
 

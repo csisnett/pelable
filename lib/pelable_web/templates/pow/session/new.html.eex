@@ -20,7 +20,7 @@
      <% end %>
 <br>
   <div>
-    <%= submit "Sign in" %>
+    <%= submit "Sign in", class: "btn btn-primary" %>
   </div>
 <% end %>
 
