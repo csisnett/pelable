@@ -304,6 +304,24 @@ defmodule Pelable.Chat do
     Repo.all(query)
   end
 
+  def list_messages_after_datetime(id, %NaiveDateTime{} = datetime) do
+    query = from m in Message,
+    join: u in assoc(m, :sender),
+    where: m.chatroom_id == ^id and m.inserted_at >= ^datetime,
+    order_by: [asc: m.inserted_at],
+    preload: [sender: u]
+    Repo.all(query)
+  end
+
+  def list_messages_before_datetime(id, %NaiveDateTime{} = datetime) do
+    query = from m in Message,
+    join: u in assoc(m, :sender),
+    where: m.chatroom_id == ^id and m.inserted_at < ^datetime,
+    order_by: [asc: m.inserted_at],
+    preload: [sender: u]
+    Repo.all(query)
+  end
+
   # Number -> [%{}]
   #Gets chatroom id, returns a list of messages with its users
   # Chatroom's show.html.eex and clear_chatroom depend on this

@@ -5,6 +5,24 @@ defmodule PelableWeb.ChatroomView do
   alias Pelable.Users.User
   alias Pelable.Chat.Chatroom
 
+  def old_messages(user, chatroom) do
+    last_connection = Chat.get_last_connection(user, chatroom)
+    case last_connection do
+      nil -> Chat.list_messages_by_chatroom(chatroom.id)
+      last_connection ->
+    Chat.list_messages_before_datetime(chatroom.id, last_connection.updated_at)
+    end
+  end
+
+  def last_connection(user, chatroom) do
+    Chat.get_last_connection(user, chatroom)
+  end
+
+  def new_messages(user, chatroom) do
+    last_connection = Chat.get_last_connection(user, chatroom)
+    Chat.list_messages_after_datetime(chatroom.id, last_connection.updated_at)
+  end
+
   def seen_last_message?(user, chatroom) do
     Chat.seen_last_message?(user, chatroom)
   end
@@ -37,7 +55,7 @@ defmodule PelableWeb.ChatroomView do
     {:safe, username} = content_tag(:b, username_escaped)
     {:safe, escaped_body} = html_escape(message.body)
     {safe, body} = content_tag(:message, escaped_body)
-    # <p <datetime> datetime </datetime> username <message> body </message> </p>
+    # <p> <datetime> datetime </datetime> username <message> body </message> </p>
     {:safe, [60, "p", [], 62, datetime, " ", username, body, 60, 47, "p", 62]}
   end
 

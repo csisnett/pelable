@@ -60,8 +60,14 @@
 
 
 <div id="chat-box">
-<%= for message <- @messages do %>
+<%= for message <- old_messages(@user, @chatroom) do %>
    <%= render_message message %>
+<% end %>
+<%= if seen_last_message?(@user, @chatroom) == false and last_connection(@user, @chatroom) != nil do %>
+<div class="alert alert-info fade show" id ="new-message-alert" role="alert">New messages<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>
+<%= for message <- new_messages(@user, @chatroom) do %>
+<%= render_message message%>
+<% end %>
 <% end %>
 </div>
 
@@ -89,6 +95,10 @@
 <input type="submit" id="submit_button" value="Send" class="btn btn-primary">
 </form>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 
 <script src="<%= Routes.static_path(@conn, "/js/linkify.min.js") %>" ></script>
@@ -158,5 +168,48 @@ typing_container.innerText = users_string + "...";
  };
 let chatBox = document.querySelector('#chat-box')
 chatBox.scrollTop = chatBox.scrollHeight;
+
+function clean(node) {
+  for(var n = 0; n < node.childNodes.length; n ++)
+  {
+    var child = node.childNodes[n];
+    if
+    (
+      child.nodeType === 8 
+      || 
+      (child.nodeType === 3 && !/\S/.test(child.nodeValue))
+    )
+    {
+      node.removeChild(child);
+      n --;
+    }
+    else if(child.nodeType === 1)
+    {
+      clean(child);
+    }
+  }
+}
+
+$('#new-message-alert').on('closed.bs.alert', function () {
+  var node = document.getElementById('chat-box');
+  for(var n = 0; n < node.childNodes.length; n ++)
+  {
+    var child = node.childNodes[n];
+    if
+    (
+      child.nodeType === 8 
+      || 
+      (child.nodeType === 3 && !/\S/.test(child.nodeValue))
+    )
+    {
+      node.removeChild(child);
+      n --;
+    }
+    else if(child.nodeType === 1)
+    {
+      clean(child);
+    }
+  }
+})
 
  </script>
