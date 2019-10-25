@@ -68,6 +68,32 @@ function get_user_token() {
   
       }
     }
+
+    function get_user_property(user_property) {
+    var x = document.getElementsByTagName("META");
+      var txt = "";
+      var i;
+    for (i = 0; i < x.length; i++) {
+          if (x[i].name==user_property)
+          {
+               return x[i].content;
+           }
+  
+      }
+    }
+
+    function apply_mentions(user_property) {
+    var x = document.getElementsByTagName("META");
+      var txt = "";
+      var i;
+    for (i = 0; i < x.length; i++) {
+          if (x[i].name==user_property)
+          {
+               return x[i].content;
+           }
+  
+      }
+    }
 </script>
 
 <%= if show_web_push?(@conn) do %>

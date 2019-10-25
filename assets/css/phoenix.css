@@ -282,3 +282,7 @@ header nav a {
 .vertical-menu a.current-chatroom {
   background-color: #ccc; /* Dark grey background on mouse-over */
  }
+
+ .highlighted-message {
+background-color: #FFF6DB;
+}

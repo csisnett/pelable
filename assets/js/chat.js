@@ -102,6 +102,7 @@ let Chat = {
         })
 
         channel.on('shout', payload => {
+          let mention = current_user_mention()
           let message = payload.body
           let chatBox = document.querySelector('#chat-box')
           let msgBlock = document.createElement('p')
@@ -111,6 +112,9 @@ let Chat = {
           move_chatbox_down_or_not();
           let new_message = prepare_message(message_element.innerHTML)
           message_element.innerHTML = new_message
+          console.log(message_element)
+          
+          highlight_if_mentioned(message_element.lastChild, mention)
         })
       }
 }

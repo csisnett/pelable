@@ -6,7 +6,31 @@
 
 <%= tag :meta, name: "channel_token",
                content: Phoenix.Token.sign(@conn, "BndIeIG1Y5aZGD534Z0WFpwG+oBWlOkeD/C1lIGvR+mSKF0rNpRWYodPr+0YM2yr", @current_user.id) %>
+<%= tag :meta, name: "username", content: @current_user.username %>
+<script>
 
+function current_user_mention(){
+  let username = get_user_property("username")
+  let mention = "@" + username
+  return mention
+}
+
+function highlight_if_mentioned(message_element, mention){
+if (message_element.innerText.includes(mention))
+          {
+               message_element.parentNode.classList.add("highlighted-message")
+           }
+}
+
+function highlight_mentions(){
+  let mention = current_user_mention()
+  var messages = document.getElementsByTagName("MESSAGE");
+      var i;
+    for (i = 0; i < messages.length; i++) {
+          highlight_if_mentioned(messages[i], mention)
+      }
+}
+</script>
 <div id="chat-interface">
 
 <br><br>
@@ -168,7 +192,7 @@ typing_container.innerText = users_string + "...";
  };
 let chatBox = document.querySelector('#chat-box')
 chatBox.scrollTop = chatBox.scrollHeight;
-
+highlight_mentions()
 function clean(node) {
   for(var n = 0; n < node.childNodes.length; n ++)
   {
