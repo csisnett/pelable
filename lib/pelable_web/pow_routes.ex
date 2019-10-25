@@ -11,7 +11,7 @@ defmodule PelableWeb.Pow.Routes do
     def after_sign_in_path(conn), do: Routes.chatroom_path(conn, :show, "c3EMBSqNzdRo")
 
     @impl true
-    def after_registration_path(conn), do: Routes.pow_session_path(conn, :new)
+    def after_registration_path(conn), do: Routes.chatroom_path(conn, :show, "WEDF8bqVfk9b")
 
     @impl true
     def after_user_updated_path(conn), do: Routes.chatroom_path(conn, :show, "c3EMBSqNzdRo")

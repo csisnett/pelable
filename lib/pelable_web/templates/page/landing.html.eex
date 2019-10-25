@@ -71,7 +71,7 @@ s0.parentNode.insertBefore(s1,s0);
 	                        <h1 class="hero-title mt-0 is-revealing">Stuck in tutorial purgatory?</h1>
 	                        <p class="hero-paragraph is-revealing"> Level up your coding skills.</p>
 	                        <p class="hero-cta mb-0 is-revealing">
-								<a class="button button-primary button-shadow" href="/apply"> Apply</a>
+								<a class="button button-primary button-shadow" href="/registration/new"> Sign up</a>
 							</p>
 						</div>
 						<div class="hero-illustration">
@@ -171,11 +171,11 @@ s0.parentNode.insertBefore(s1,s0);
 
                                 <li>
 									<div class="accordion-title">
-										<span>When is the deadline for the application?</span>
+										<span>Is there a deadline for applying?</span>
 										<div class="accordion-icon"></div>
 									</div>
 									<div class="accordion-body">
-										<p> Yes, after filling out your application and introducing yourself to the community we'll match you with a team  </p>
+										<p> No there isn't, after filling out your application and introducing yourself to the community we'll match you with a team </p>
 									</div>
 								</li>
 
@@ -254,7 +254,7 @@ s0.parentNode.insertBefore(s1,s0);
                     
 						<h3 class="section-title mt-0">Join the Community</h3>
 						<div class="cta-cta">
-							<a class="button button-primary button-shadow" href="/apply">Apply now</a>
+							<a class="button button-primary button-shadow" href="/registration/new">Join now</a>
 						</div>
 						
 					</div>
