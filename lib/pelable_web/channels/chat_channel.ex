@@ -2,6 +2,7 @@ defmodule PelableWeb.ChatChannel do
   use PelableWeb, :channel
   alias PelableWeb.ChatTracker
   alias Pelable.Chat
+  alias Chat.{Message}
   alias PelableWeb.Presence
   alias Pelable.Repo
   alias Pelable.Users.User
@@ -31,27 +32,38 @@ defmodule PelableWeb.ChatChannel do
     end
   end
 
+  def prepare_payload(%Message{} = message, %{} = payload, socket) do
+    payload = Map.put(payload, "username", socket.assigns.current_user.username)
+    payload = Map.merge(payload, %{"inserted_at" => message.inserted_at})
+    sanitized_body = Phoenix.HTML.html_escape(payload["body"]) |> Phoenix.HTML.safe_to_string
+    payload = Map.put(payload, "body", sanitized_body)
+  end
+
+  def broadcast_notification(uuid) do
+    Endpoint.broadcast("chat_notification:" <> uuid, "new_message", %{"new_message" => true})
+  end
+
 
   # It is also common to receive messages from the client and
   # broadcast to everyone in the current topic (chat:lobby).
   def handle_in("shout", payload, socket) do
     "chat:" <> uuid = socket.topic
-    payload = Map.merge(payload, %{"chatroom_uuid" => uuid, "username" => socket.assigns.current_user.username})
+    payload = Map.merge(payload, %{"chatroom_uuid" => uuid, "sender_id" => socket.assigns.current_user.id})
     case Chat.create_message_external(payload) do
-      {:ok, message} ->
-        Endpoint.broadcast("chat_notification:" <> uuid, "new_message", %{"new_message" => true})
-        payload = Map.merge(payload, %{"inserted_at" => message.inserted_at})
-        sanitized_body = Phoenix.HTML.html_escape(payload["body"]) |> Phoenix.HTML.safe_to_string
-        payload = Map.put(payload, "body", sanitized_body)
-      broadcast socket, "shout", payload
-      push_notification(message, payload)
-      {:noreply, socket}
-      {:error, _message} ->
+      {:ok, message, mentions} ->
+        payload = prepare_payload(message, payload, socket)
+
+        broadcast socket, "shout", payload
+
+        broadcast_notification(uuid)
+        send_push_notification(message, payload)
+        {:noreply, socket}
+        {:error, _message} ->
         {:noreply, socket}
     end
   end
 
-  def push_notification(message, payload) do
+  def send_push_notification(message, payload) do
     chatroom = Chat.get_chatroom!(message.chatroom_id)
     case chatroom.type do
     "private" <> something ->
