@@ -390,49 +390,82 @@ defmodule Pelable.Chat do
     Repo.one(query)
   end
 
-  def get_username_from_mention(mention) do
+  def get_username_from_mention(mention) when is_list(mention) do
     [first| rest] = mention
     [username | _] = rest
     username
   end
 
+  def create_mention(%Message{} = message, %User{} = user) do
+    attrs = %{"message_id" => message.id, "user_id" => user.id}
+    %Mention{}
+    |> Mention.changeset(attrs)
+    |> Repo.insert
+  end
+
+  #List of mention tuples {:ok, Mention} || {:error, changeset} -> %Mention{}
+  # Only returns the ok mentions
+  def ok_mentions(mentions) when is_list(mentions) do
+    case length(mentions) do
+      0 -> []
+      x ->
+        [first_mention | rest] = mentions
+        case first_mention do
+          {:error, _c} -> ok_mentions(rest)
+          {:ok, mention} -> [mention] ++ ok_mentions(rest)
+        end
+    end
+  end
+
+  defp insert_mentions(mentioned_users, %Message{} = message) when is_list(mentioned_users) do
+    mentions = Enum.map(mentioned_users, fn user -> create_mention(message, user) end)
+    okay_mentions = ok_mentions(mentions)
+    case length(okay_mentions) do
+      [] -> :no_mentions
+      x ->
+        okay_mentions
+    end
+  end
+
+  #[["@pelable.com", "pelable.com"], ["@carlos", "carlos"], ...] -> [%User{}, %User{}, ..] || []
   # Gets a list of possible mentions and returns a list of mentioned users
   def filter_mentions(mention_list) when is_list(mention_list) do
     case length(mention_list) do
       0 -> []
       x ->
-    [first_mention | rest] = mention_list
-    case Repo.get_by(User, username: get_username_from_mention(first_mention)) do
-      nil -> filter_mentions(rest)
-      user -> [user] ++ filter_mentions(rest)
-    end
+      [first_mention | rest] = mention_list
+      case Repo.get_by(User, username: get_username_from_mention(first_mention)) do
+        nil -> filter_mentions(rest)
+        user -> [user] ++ filter_mentions(rest)
+      end
     end
   end
 
   #If a user mentioned  in message.body exists creates %Mention{}
   def check_public_mentions(%Message{} = message) do
     possible_mentions = Regex.scan(~r/@([^\s]+)/, message.body)
-    mentioned_users = filter_mentions(possible_mentions)
-    mentions_list = Enum.map(mentioned_users, fn user -> [user_id: user.id, message_id: message.id] end)
-    Repo.insert_all(Mention, mentions_list)
+    case filter_mentions(possible_mentions) do
+      [] -> :no_mentions
+      mentioned_users -> insert_mentions(mentioned_users, message)
+    end
+  end
+
+  #If a recipient is mentioned in message.body creates a %Mention{}
+  def check_private_mentions(%Message{} = message) do
+    recipients = get_user_recipients(message)
+    case Enum.filter(recipients, fn user -> String.contains?(message.body, "@" <> user.username) end) do
+        [] -> :no_mentions
+        mentioned_users -> insert_mentions(mentioned_users, message)
+      end
   end
 
   def check_mentions(message) do
     case String.contains?(message.body, "@") do
       false -> :no_mentions
       true -> 
-
-      case get_chatroom_type(message)do
+        case get_chatroom_type(message)do
           "public" <> whatever -> check_public_mentions(message)
-          "private" <> anything ->        
-      recipients = get_user_recipients(message)
-      Enum.filter(recipients, fn user -> String.contains?(message.body, "@" <> user.username) end)
-      |> case do
-        [] -> :no_mentions
-        mentioned_users -> 
-          mentions_list = Enum.map(mentioned_users, fn user -> [user_id: user.id, message_id: message.id] end)
-          Repo.insert_all(Mention, mentions_list)
-        end
+          "private" <> anything -> check_private_mentions(message)
       end
     end
   end
@@ -444,6 +477,12 @@ defmodule Pelable.Chat do
     %Message{}
     |> Message.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def create_message(%{"chatroom_id" => _id, "sender_id" => _user_id} = attrs) do
+    %Message{}
+    |> Message.changeset(attrs)
+    |> Repo.insert
   end
 
   @doc """
