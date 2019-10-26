@@ -8,7 +8,7 @@ defmodule Pelable.Users.User do
   alias Pelable.WorkProjects.{ProjectVersion, WorkProject}
   alias Pelable.Users.User
   alias Pelable.Learn.Goal
-  alias Pelable.Chat.{LastConnection, Chatroom}
+  alias Pelable.Chat.{LastConnection, Chatroom, Message}
 
   schema "users" do
     field :username, :string
@@ -21,6 +21,7 @@ defmodule Pelable.Users.User do
     many_to_many :joined_chats, Chatroom, join_through: "chatroom_participant"
     many_to_many :chat_invitations, Chatroom, join_through: "chatroom_invitation"
     many_to_many :chat_connections, Chatroom, join_through: "last_connection"
+    many_to_many :mentions, Message, join_through: "message_mention"
     has_many :last_connections, LastConnection
     pow_user_fields()
     timestamps()

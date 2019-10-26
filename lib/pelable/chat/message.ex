@@ -11,7 +11,7 @@ defmodule Pelable.Chat.Message do
 
     belongs_to :sender, User
     belongs_to :chatroom, Chatroom
-
+    many_to_many :mentioned_users, User, join_through: "message_mention"
     timestamps()
   end
 
