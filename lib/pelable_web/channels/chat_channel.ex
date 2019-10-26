@@ -37,7 +37,7 @@ defmodule PelableWeb.ChatChannel do
   def handle_in("shout", payload, socket) do
     "chat:" <> uuid = socket.topic
     payload = Map.merge(payload, %{"chatroom_uuid" => uuid, "username" => socket.assigns.current_user.username})
-    case Chat.create_message(payload) do
+    case Chat.create_message_external(payload) do
       {:ok, message} ->
         Endpoint.broadcast("chat_notification:" <> uuid, "new_message", %{"new_message" => true})
         payload = Map.merge(payload, %{"inserted_at" => message.inserted_at})

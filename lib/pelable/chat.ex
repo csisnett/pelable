@@ -6,7 +6,7 @@ defmodule Pelable.Chat do
   import Ecto.Query, warn: false
   alias Pelable.Repo
 
-  alias Pelable.Chat.{Chatroom, Message, LastConnection, Invitation, Participant}
+  alias Pelable.Chat.{Chatroom, Message, LastConnection, Invitation, Participant, Mention}
   alias Pelable.Learn
   alias Pelable.Users.User
   alias Pelable.Chat
@@ -127,6 +127,11 @@ defmodule Pelable.Chat do
 
   def get_last_message(%Chatroom{} = chatroom) do
     Repo.one(from m in Message, where: m.chatroom_id == ^chatroom.id, order_by: [desc: m.id], limit: 1)
+  end
+
+  def get_last_message(uuid) do
+    chatroom = Repo.get_by(Chatroom, uuid: uuid)
+    get_last_message(chatroom)
   end
 
 
@@ -297,10 +302,19 @@ defmodule Pelable.Chat do
     Repo.all(Message)
   end
 
+  # %Message{} -> [1, 5, ..]
   def get_recipients(%Message{} = message) do
     query = from p in Participant,
     where: p.chatroom_id == ^message.chatroom_id and p.user_id != ^message.sender_id,
     select: p.user_id
+    Repo.all(query)
+  end
+
+  def get_user_recipients(%Message{} = message) do
+    query = from p in Participant, where: p.chatroom_id == ^message.chatroom_id and p.user_id != ^message.sender_id,
+    join: u in User,
+    on: p.user_id == u.id,
+    select: u
     Repo.all(query)
   end
 
@@ -362,6 +376,66 @@ defmodule Pelable.Chat do
       {:error, %Ecto.Changeset{}}
 
   """
+
+  def create_message_external(%{} = attrs) do
+    case create_message(attrs) do
+      {:ok, message} ->
+      check_mentions(message)
+      {:ok, message}
+    end
+  end
+
+  def get_chatroom_type(%Message{} = message) do
+    query = from c in Chatroom, where: c.id == ^message.chatroom_id, select: c.type
+    Repo.one(query)
+  end
+
+  def get_username_from_mention(mention) do
+    [first| rest] = mention
+    [username | _] = rest
+    username
+  end
+
+  # Gets a list of possible mentions and returns a list of mentioned users
+  def filter_mentions(mention_list) when is_list(mention_list) do
+    case length(mention_list) do
+      0 -> []
+      x ->
+    [first_mention | rest] = mention_list
+    case Repo.get_by(User, username: get_username_from_mention(first_mention)) do
+      nil -> filter_mentions(rest)
+      user -> [user] ++ filter_mentions(rest)
+    end
+    end
+  end
+
+  #If a user mentioned  in message.body exists creates %Mention{}
+  def check_public_mentions(%Message{} = message) do
+    possible_mentions = Regex.scan(~r/@([^\s]+)/, message.body)
+    mentioned_users = filter_mentions(possible_mentions)
+    mentions_list = Enum.map(mentioned_users, fn user -> [user_id: user.id, message_id: message.id] end)
+    Repo.insert_all(Mention, mentions_list)
+  end
+
+  def check_mentions(message) do
+    case String.contains?(message.body, "@") do
+      false -> :no_mentions
+      true -> 
+
+      case get_chatroom_type(message)do
+          "public" <> whatever -> check_public_mentions(message)
+          "private" <> anything ->        
+      recipients = get_user_recipients(message)
+      Enum.filter(recipients, fn user -> String.contains?(message.body, "@" <> user.username) end)
+      |> case do
+        [] -> :no_mentions
+        mentioned_users -> 
+          mentions_list = Enum.map(mentioned_users, fn user -> [user_id: user.id, message_id: message.id] end)
+          Repo.insert_all(Mention, mentions_list)
+        end
+      end
+    end
+  end
   
   def create_message(%{"chatroom_uuid" => uuid, "username" => username} = attrs) do
     chatroom = get_chatroom_by_uuid(uuid)
