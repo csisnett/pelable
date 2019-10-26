@@ -228,6 +228,11 @@ defmodule Pelable.Batches do
         end
     end
 
+    def momentum_for_date(uuid, %Date{} = date) do
+        chatroom = Repo.get_by(Chatroom, uuid: uuid)
+        momentum_for_date(chatroom, date)
+    end
+
     def average_response_time(messages) when is_list(messages) do
         total_responses = total_responses(messages, 0)
         total_responses_time = total_responses_time(messages)
