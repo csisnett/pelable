@@ -43,6 +43,17 @@ defmodule PelableWeb.ChatChannel do
     Endpoint.broadcast("chat_notification:" <> uuid, "new_message", %{"new_message" => true})
   end
 
+  def insert_mentions(%{} = payload, :no_mentions) do
+    payload
+  end
+
+  def insert_mentions(%{} = payload, mentioned_users) do
+    mentioned_usernames = Enum.map(mentioned_users, fn user -> user.username end)
+    Map.put(payload, "mentioned_usernames", mentioned_usernames)
+  end
+
+  
+
 
   # It is also common to receive messages from the client and
   # broadcast to everyone in the current topic (chat:lobby).
@@ -50,13 +61,13 @@ defmodule PelableWeb.ChatChannel do
     "chat:" <> uuid = socket.topic
     payload = Map.merge(payload, %{"chatroom_uuid" => uuid, "sender_id" => socket.assigns.current_user.id})
     case Chat.create_message_external(payload) do
-      {:ok, message, mentions} ->
-        payload = prepare_payload(message, payload, socket)
+      {:ok, message, users_mentioned} ->
+        payload = prepare_payload(message, payload, socket) |> insert_mentions(users_mentioned)
 
         broadcast socket, "shout", payload
 
         broadcast_notification(uuid)
-        send_push_notification(message, payload)
+        #send_push_notification(message, payload)
         {:noreply, socket}
         {:error, _message} ->
         {:noreply, socket}

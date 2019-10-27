@@ -379,9 +379,13 @@ defmodule Pelable.Chat do
 
   def create_message_external(%{} = attrs) do
     case create_message(attrs) do
+      {:error, m} -> {:error, m}
       {:ok, message} ->
-      check_mentions(message)
-      {:ok, message}
+      case check_mentions(message) do
+        :no_mentions -> {:ok, message, :no_mentions}
+        {mentions, confirmed_users} -> 
+      {:ok, message, confirmed_users}
+      end
     end
   end
 
@@ -417,13 +421,20 @@ defmodule Pelable.Chat do
     end
   end
 
+  # %User{}, [%Mention{}, %Mention{}...] -> true || false
+  def user_in_mentions?(%User{} = user, mentions) when is_list(mentions) do
+    Enum.reduce(mentions, false, fn mention, acc -> mention.user_id == user.id || acc end)
+  end
+
+  #[%User{}, %User{}], %Message{} ->  [%Mention{}, %Mention{}, ...]
   defp insert_mentions(mentioned_users, %Message{} = message) when is_list(mentioned_users) do
     mentions = Enum.map(mentioned_users, fn user -> create_mention(message, user) end)
     okay_mentions = ok_mentions(mentions)
     case length(okay_mentions) do
       [] -> :no_mentions
       x ->
-        okay_mentions
+        confirmed_mentioned_users = Enum.filter(mentioned_users, fn user -> user_in_mentions?(user, okay_mentions) end)
+        {okay_mentions, confirmed_mentioned_users}
     end
   end
 
@@ -479,7 +490,9 @@ defmodule Pelable.Chat do
     |> Repo.insert()
   end
 
-  def create_message(%{"chatroom_id" => _id, "sender_id" => _user_id} = attrs) do
+  def create_message(%{"chatroom_uuid" => uuid, "sender_id" => _user_id} = attrs) do
+    chatroom = get_chatroom_by_uuid(uuid)
+    attrs = Map.put(attrs, "chatroom_id", chatroom.id)
     %Message{}
     |> Message.changeset(attrs)
     |> Repo.insert

@@ -102,8 +102,11 @@ let Chat = {
         })
 
         channel.on('shout', payload => {
-          let mention = current_user_mention()
-          let message = payload.body
+          //let mention = current_user_mention("pelable_bot")
+          let mention = "@pelable_bot"
+          let mentioned_usernames = payload.mentioned_usernames
+          console.log(mentioned_usernames)
+          let message = mentioned_usernames.reduce(bold_mention, payload.body)
           let chatBox = document.querySelector('#chat-box')
           let msgBlock = document.createElement('p')
           var datetime_string = convert_to_local_datetime(payload.inserted_at);

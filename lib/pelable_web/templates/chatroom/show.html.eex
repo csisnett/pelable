@@ -15,6 +15,21 @@ function current_user_mention(){
   return mention
 }
 
+function bold_mention(str, mention){
+  mention = "@" + mention
+  if (str.includes(mention)) {
+  let final_index = str.length
+  let start_index = str.search(mention)
+  let end_index = start_index + mention.length
+  let before_mention = str.slice(0, start_index)
+  let after_mention = str.slice(end_index, final_index)
+  return before_mention + "<b>" + mention + "</b>" + after_mention
+  }
+  else {
+    return str
+  }
+}
+
 function highlight_if_mentioned(message_element, mention){
 if (message_element.innerText.includes(mention))
           {
