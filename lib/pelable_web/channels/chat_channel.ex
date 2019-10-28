@@ -52,9 +52,6 @@ defmodule PelableWeb.ChatChannel do
     Map.put(payload, "mentioned_usernames", mentioned_usernames)
   end
 
-  
-
-
   # It is also common to receive messages from the client and
   # broadcast to everyone in the current topic (chat:lobby).
   def handle_in("shout", payload, socket) do

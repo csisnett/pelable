@@ -4,13 +4,14 @@ defmodule PelableWeb.ChatroomView do
   alias Pelable.Chat.Message
   alias Pelable.Users.User
   alias Pelable.Chat.Chatroom
+  alias Pelable.Repo
 
   def old_messages(user, chatroom) do
     last_connection = Chat.get_last_connection(user, chatroom)
     case last_connection do
       nil -> Chat.list_messages_by_chatroom(chatroom.id)
       last_connection ->
-    Chat.list_messages_before_datetime(chatroom.id, last_connection.updated_at)
+    Chat.list_messages_before_datetime(chatroom.id, last_connection.updated_at) |> Chat.get_mentions |> Repo.all
     end
   end
 
@@ -20,7 +21,7 @@ defmodule PelableWeb.ChatroomView do
 
   def new_messages(user, chatroom) do
     last_connection = Chat.get_last_connection(user, chatroom)
-    Chat.list_messages_after_datetime(chatroom.id, last_connection.updated_at)
+    Chat.list_messages_after_datetime(chatroom.id, last_connection.updated_at) |> Chat.get_mentions |> Repo.all
   end
 
   def seen_last_message?(user, chatroom) do
@@ -48,15 +49,24 @@ defmodule PelableWeb.ChatroomView do
     Chat.get_conversations(user, "private group")
   end
 
+  def create_message_element(escaped_body, %Message{} = message) do
+    case message.mentions do
+      [] -> content_tag(:message, escaped_body)
+      x ->
+        mentions_string = Enum.reduce(message.mentions,"", fn mention, acc -> mention.user.username <> " " <> acc end)
+        content_tag(:message, escaped_body, mentions: mentions_string)
+    end
+  end
+
   def render_message(%Message{} = message) do
     {:safe, datetime} = content_tag(:datetime, message.inserted_at)
     username_raw = message.sender.username <> ": "
     username_escaped = username_raw |> html_escape |> safe_to_string
     {:safe, username} = content_tag(:b, username_escaped)
     {:safe, escaped_body} = html_escape(message.body)
-    {safe, body} = content_tag(:message, escaped_body)
-    # <p> <datetime> datetime </datetime> username <message> body </message> </p>
-    {:safe, [60, "p", [], 62, datetime, " ", username, body, 60, 47, "p", 62]}
+    {:safe, message_element} = create_message_element(escaped_body, message)
+    # <p> <datetime> datetime </datetime> username <message if they exist mentions="csisnett "> body </message> </p>
+    {:safe, [60, "p", [], 62, datetime, " ", username, message_element, 60, 47, "p", 62]}
   end
 
   

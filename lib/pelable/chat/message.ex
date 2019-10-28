@@ -3,7 +3,7 @@ defmodule Pelable.Chat.Message do
   import Ecto.Changeset
 
   alias Pelable.Users.User
-  alias Pelable.Chat.{Message, Chatroom}
+  alias Pelable.Chat.{Message, Chatroom, Mention}
 
   schema "messages" do
     field :body, :string
@@ -12,6 +12,7 @@ defmodule Pelable.Chat.Message do
     belongs_to :sender, User
     belongs_to :chatroom, Chatroom
     many_to_many :mentioned_users, User, join_through: "message_mention"
+    has_many :mentions, Mention
     timestamps()
   end
 

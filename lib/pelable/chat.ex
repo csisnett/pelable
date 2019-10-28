@@ -324,7 +324,6 @@ defmodule Pelable.Chat do
     where: m.chatroom_id == ^id and m.inserted_at >= ^datetime,
     order_by: [asc: m.inserted_at],
     preload: [sender: u]
-    Repo.all(query)
   end
 
   def list_messages_before_datetime(id, %NaiveDateTime{} = datetime) do
@@ -333,7 +332,6 @@ defmodule Pelable.Chat do
     where: m.chatroom_id == ^id and m.inserted_at < ^datetime,
     order_by: [asc: m.inserted_at],
     preload: [sender: u]
-    Repo.all(query)
   end
 
   # Number -> [%{}]
@@ -345,7 +343,13 @@ defmodule Pelable.Chat do
     where: m.chatroom_id == ^id,
     order_by: [asc: m.inserted_at],
     preload: [sender: u]
-    Repo.all(query)
+  end
+
+  def get_mentions(query) do
+    from message in query,
+    left_join: mentions in assoc(message, :mentions),
+    left_join: user in assoc(mentions, :user),
+    preload: [mentions: {mentions, :user}]
   end
 
   @doc """
