@@ -70,8 +70,15 @@ function prepare_message(message){
 function prepare_rendered_messages() {
   var x = document.getElementsByTagName("message");
   for (i = 0; i < x.length; i++) {
-          var message = prepare_message(x[i].innerText)
-         x[i].innerHTML = message
+        var message_element = x[i]
+         if(message_element.getAttribute("mentions") !== null){
+          
+          message_element = bold_mention_element(x[i], x[i].getAttribute("mentions"))
+          //console.log(message_element)
+        }
+
+        var message = prepare_message(message_element.innerHTML)
+         message_element.innerHTML = message
          
     }
 }
