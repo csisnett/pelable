@@ -64,7 +64,7 @@ defmodule PelableWeb.ChatChannel do
         broadcast socket, "shout", payload
 
         broadcast_notification(uuid)
-        #send_push_notification(message, payload)
+        send_push_notification(message, payload)
         {:noreply, socket}
         {:error, _message} ->
         {:noreply, socket}
