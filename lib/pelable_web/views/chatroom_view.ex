@@ -49,12 +49,12 @@ defmodule PelableWeb.ChatroomView do
     Chat.get_conversations(user, "private group")
   end
 
-  def create_message_element(escaped_body, %Message{} = message) do
+  def create_message_element(%Message{} = message) do
     case message.mentions do
-      [] -> content_tag(:message, escaped_body)
+      [] -> content_tag(:message, message.body)
       x ->
         mentions_string = Enum.reduce(message.mentions,"", fn mention, acc -> mention.user.username <> " " <> acc end)
-        content_tag(:message, escaped_body, mentions: mentions_string)
+        content_tag(:message, message.body, mentions: mentions_string)
     end
   end
 
@@ -63,8 +63,7 @@ defmodule PelableWeb.ChatroomView do
     username_raw = message.sender.username <> ": "
     username_escaped = username_raw |> html_escape |> safe_to_string
     {:safe, username} = content_tag(:b, username_escaped)
-    {:safe, escaped_body} = html_escape(message.body)
-    {:safe, message_element} = create_message_element(escaped_body, message)
+    {:safe, message_element} = create_message_element(message)
     # <p> <datetime> datetime </datetime> username <message if they exist mentions="csisnett "> body </message> </p>
     {:safe, [60, "p", [], 62, datetime, " ", username, message_element, 60, 47, "p", 62]}
   end
