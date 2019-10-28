@@ -102,7 +102,7 @@ let Chat = {
         })
 
         channel.on('shout', payload => {
-          //let mention = current_user_mention("pelable_bot")
+          let mention = current_user_mention()
           let mentioned_usernames = payload.mentioned_usernames
           var datetime_string = convert_to_local_datetime(payload.inserted_at);
           console.log(mentioned_usernames)

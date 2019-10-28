@@ -30,6 +30,20 @@ function bold_mention(str, mention){
   }
 }
 
+function getElementByXpath(path) {
+  return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+}
+
+function bold_mention_element(message_element, mention_string){
+  let mentions = mention_string.split(" ")
+  let length = mentions.length
+  mentions = mentions.filter(mention => mention !== " " && mention !== "")
+  //console.log(mentions)
+  let message = mentions.reduce(bold_mention, message_element.innerHTML)
+  message_element.innerHTML = message
+  return message_element
+}
+
 function highlight_if_mentioned(message_element, mention){
 if (message_element.innerText.includes(mention))
           {
@@ -43,6 +57,10 @@ function highlight_mentions(){
       var i;
     for (i = 0; i < messages.length; i++) {
           highlight_if_mentioned(messages[i], mention)
+          /*if(messages[i].getAttribute("mentions") !== null){
+          
+            bold_mention_element(messages[i], messages[i].getAttribute("mentions"))
+          }*/
       }
 }
 </script>
