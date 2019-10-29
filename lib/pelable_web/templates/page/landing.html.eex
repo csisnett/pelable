@@ -163,7 +163,8 @@ s0.parentNode.insertBefore(s1,s0);
 										<div class="accordion-icon"></div>
 									</div>
 									<div class="accordion-body">
-										<p>The program starts on Friday the 11th of October, and finalizes on the 22nd of November</p>
+										<p>The program starts on Friday, November 1, and finalizes on the 13th of December</p>
+                                        <p> More precisely in: <div id="deadline"> </div></p> 
 									</div>
 
 	                                
@@ -231,7 +232,7 @@ s0.parentNode.insertBefore(s1,s0);
 										<div class="accordion-icon"></div>
 									</div>
 									<div class="accordion-body">
-										<p> The next batch is scheduled to start the first day of November and ends on the 13th of December. Apply <a href="https://forms.gle/dus9GnYWRfa3tWeSA"> here </a> </p>
+										<p> The next batch is scheduled to start on Friday, January 10, 2020 and finalizes on February 21. Apply <a href="https://forms.gle/etrtrewmYKiWDJ8RA"> here </a> </p>
 									</div>
 								</li>
 
@@ -295,7 +296,7 @@ s0.parentNode.insertBefore(s1,s0);
         </footer>
     </div>
     <script>
-    var deadline = new Date("Oct 17, 2019 23:55:00").getTime(); 
+    var deadline = new Date("Nov 1, 2019 00:00:01").getTime(); 
 var x = setInterval(function() { 
 var now = new Date().getTime(); 
 var t = deadline - now; 
@@ -305,10 +306,10 @@ var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
 var seconds = Math.floor((t % (1000 * 60)) / 1000); 
 document.getElementById("deadline").innerHTML = days + " days "  
 + hours + " hours " + minutes + " minutes and " + seconds + " seconds "; 
-    if (t < 0) { 
+    /*if (t < 0) { 
         clearInterval(x); 
         document.getElementById("deadline").innerHTML = "The deadline has passed! For late applications please contact Carlos our program coordinator: carlos@pelable.com or in the chat in the bottom-right corner";
-    } 
+    } */
 }, 1000); 
     </script>
     <script src="<%= Routes.static_path(@conn, "/js/main.min.js") %>"></script>
