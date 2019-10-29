@@ -4,18 +4,21 @@ defmodule Pelable.Chat.Chatroom do
 
   alias Pelable.Users.User
 
-  @types ["public", "private group", "private conversation"]
+  @types ["public", "private group", "private conversation", "private group team"]
 
   schema "chatrooms" do
     field :name, :string
     field :description, :string
     field :type, :string, default: "public"
-    
+    field :expires_at, :utc_datetime
+    field :expired?, :boolean
+
     field :uuid, :string
     belongs_to :creator, User
     many_to_many :participants, User, join_through: "chatroom_participant"
     many_to_many :invited_users, User, join_through: "chatroom_invitation"
     many_to_many :connected_users, User, join_through: "last_connection"
+    
     timestamps()
   end
 
