@@ -37,7 +37,7 @@ defmodule Pelable.Batches do
     # Takes a list of usernames and join the respective users to a new chatroom.
     def create_team_chat(user_list, team_name) when is_list(user_list) do
         user_list = convert_usernames(user_list)
-        chatroom = Chat.create_chatroom_assoc(%{"type" => "private group", "creator_id" => 1, "name" => team_name}) |> Repo.preload([:participants])
+        chatroom = Chat.create_chatroom_assoc(%{"type" => "private group team", "creator_id" => 1, "name" => team_name}) |> Repo.preload([:participants])
         chatroom_changeset = Ecto.Changeset.change(chatroom)
         chatroom_participants_changeset = chatroom_changeset |> Ecto.Changeset.put_assoc(:participants, user_list)
         Repo.update!(chatroom_participants_changeset)
