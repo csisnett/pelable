@@ -177,7 +177,7 @@ defmodule Pelable.Chat do
   end
 
   def filter_private_groups(chatrooms) do
-    chatrooms |> Enum.filter(fn chatroom -> chatroom.type == "private group" end)
+    chatrooms |> Enum.filter(fn chatroom -> chatroom.type == "private group" or chatroom.type == "private group team" end)
   end
 
 
