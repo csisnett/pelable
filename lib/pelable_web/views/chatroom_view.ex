@@ -9,7 +9,7 @@ defmodule PelableWeb.ChatroomView do
   def old_messages(user, chatroom) do
     last_connection = Chat.get_last_connection(user, chatroom)
     case last_connection do
-      nil -> Chat.list_messages_by_chatroom(chatroom.id) |> Repo.all
+      nil -> Chat.list_messages_by_chatroom(chatroom.id) |> Chat.get_mentions |> Repo.all
       last_connection ->
     Chat.list_messages_before_datetime(chatroom.id, last_connection.updated_at) |> Chat.get_mentions |> Repo.all
     end
