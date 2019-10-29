@@ -134,7 +134,7 @@ function myFunction() {
           <div class="topnav" id="myTopnav">
   
    <a href="/apply">Apply</a>
-   <a href="/program"> The Program </a>
+   <a href="/program"> Program </a>
   <a href="/chat">Chat</a>
   <a href="/guide">Guide</a>
   <%= if Pow.Plug.current_user(@conn) do %>

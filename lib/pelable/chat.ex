@@ -235,7 +235,7 @@ defmodule Pelable.Chat do
 
   #Deletes all messages except the first one(which is needed so that seen_last_message? works)
   def clear_chatroom(%Chatroom{} = chatroom) do
-    messages = list_messages_by_chatroom(chatroom.id)
+    messages = list_messages_by_chatroom(chatroom.id) |> Repo.all
     [first | to_be_deleted] = messages
     Enum.each(to_be_deleted, fn m -> delete_message(m) end)
   end

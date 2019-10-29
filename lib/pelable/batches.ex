@@ -16,7 +16,7 @@ defmodule Pelable.Batches do
     end
 
     def list_users_in_batch(id) do
-        Chat.list_messages_by_chatroom(id)
+        Chat.list_messages_by_chatroom(id) |> Repo.all
         |> Enum.map(fn m -> get_user_from_message(m) end)
         |> Enum.uniq
     end
@@ -100,10 +100,18 @@ defmodule Pelable.Batches do
 
     # To Monitor Team's healthy levels
 
+    def dead_teams do
+        ["l-ZMHysu53l4", "zxuH2TaMc2tE"] |> Enum.map(fn uuid -> Repo.get_by(Chatroom, uuid: uuid) end)
+    end
+
+    def chatting_teams do
+        ["Zq6_2V3qXvIV", "pGuZzdqXsxk8"]
+    end
+
     def teams do
         ["dl5Q0m8kP3LH", "d_j7_FvMSfzc", "BaQVRKH3N-wW", "o6WVZQS9xROL",
          "OWib6Zf8d1xs", "mavvVf1eT4sV", "pGuZzdqXsxk8", "22LCrDBCS1wz", "Zq6_2V3qXvIV",
-        "l-ZMHysu53l4", "zxuH2TaMc2tE"]
+        "zxuH2TaMc2tE"]
         |> Enum.map(fn uuid -> Repo.get_by(Chatroom, uuid: uuid) end)
     end
 
