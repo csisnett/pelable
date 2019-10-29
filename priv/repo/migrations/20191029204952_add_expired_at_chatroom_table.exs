@@ -3,7 +3,7 @@ defmodule Pelable.Repo.Migrations.AddExpiredAtChatroomTable do
 
   def change do
     alter table(:chatrooms) do
-      add :expires_at, :string
+      add :expires_at, :utc_datetime
       add :expired?, :boolean
     end
   end
