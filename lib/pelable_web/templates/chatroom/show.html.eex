@@ -114,8 +114,7 @@ function highlight_mentions(){
  <% end %>
 
 </div>
-
-
+<%= if participant?(@chatroom, @user) or @chatroom.type == "public" do %>
 <div id="chat-box">
 <%= for message <- old_messages(@user, @chatroom) do %>
    <%= render_message message %>
@@ -127,6 +126,10 @@ function highlight_mentions(){
 <% end %>
 <% end %>
 </div>
+<% end %>
+<%= if show_joining_prompt?(@chatroom, @user) do %>
+To join click here :)
+<% end %>
 
 <div id="user-list">
 <%= if @chatroom.type != "public" do %>

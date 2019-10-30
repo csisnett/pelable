@@ -6,6 +6,21 @@ defmodule PelableWeb.ChatroomView do
   alias Pelable.Chat.Chatroom
   alias Pelable.Repo
 
+  def able_to_join?(%Chatroom{} = chatroom) do
+    DateTime.compare(chatroom.expires_at, DateTime.utc_now) == :gt
+  end
+
+  def participant?(%Chatroom{} = chatroom, %User{} = user) do
+    Enum.any?(chatroom.participants, fn participant -> participant.id == user.id end)
+  end
+
+  def show_joining_prompt?(%Chatroom{} = chatroom, %User{} = user) do
+    case chatroom.type do
+      "private group team" -> able_to_join?(chatroom)
+      _anything_else -> false
+    end
+  end
+
   def old_messages(user, chatroom) do
     last_connection = Chat.get_last_connection(user, chatroom)
     case last_connection do
