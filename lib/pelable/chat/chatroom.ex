@@ -52,7 +52,7 @@ defmodule Pelable.Chat.Chatroom do
   @doc false
   def changeset(chatroom, attrs) do
     chatroom
-    |> cast(attrs, [:uuid, :description, :name, :creator_id, :type])
+    |> cast(attrs, [:uuid, :description, :name, :creator_id, :type, :expires_at])
     |> validate_required([:name, :creator_id, :type])
     |> generate_uuid
     |> generate_expiration_date

@@ -15,6 +15,12 @@ defmodule PelableWeb.ChatroomController do
     render(conn, "new.html", changeset: changeset)
   end
 
+  def new_participant(conn, %{"uuid" => uuid} = params) do
+    chatroom = Repo.get_by(Chatroom, uuid: uuid)
+    {:ok, participant} = Chat.add_participant(conn.assigns.current_user, chatroom)
+    show(conn, params)
+  end
+
   def create(conn, %{"chatroom" => chatroom_params}) do
     case Chat.create_chatroom(chatroom_params) do
       {:ok, chatroom} ->

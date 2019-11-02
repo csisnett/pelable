@@ -1,5 +1,6 @@
 <div id="everything">
 <h1><%= @chatroom.name %> </h1>
+<%= if participant?(@chatroom, @user) or @chatroom.type == "public" do %>
 <%= if description?(@chatroom.description) do %>
 <%= @chatroom.description %>
 <% end %>
@@ -114,7 +115,6 @@ function highlight_mentions(){
  <% end %>
 
 </div>
-<%= if participant?(@chatroom, @user) or @chatroom.type == "public" do %>
 <div id="chat-box">
 <%= for message <- old_messages(@user, @chatroom) do %>
    <%= render_message message %>
@@ -126,10 +126,7 @@ function highlight_mentions(){
 <% end %>
 <% end %>
 </div>
-<% end %>
-<%= if show_joining_prompt?(@chatroom, @user) do %>
-To join click here :)
-<% end %>
+
 
 <div id="user-list">
 <%= if @chatroom.type != "public" do %>
@@ -154,6 +151,15 @@ To join click here :)
 <textarea id="body" placeholder="Your message" rows="2" cols="60"> </textarea>
 <input type="submit" id="submit_button" value="Send" class="btn btn-primary">
 </form>
+<% else %>
+<%= if show_joining_prompt?(@chatroom, @user) do %>
+
+<%= form_for @conn, Routes.chatroom_path(@conn, :new_participant, @chatroom.uuid), fn f -> %>
+  <%= submit "Accept invitation" %>
+<% end %>
+
+<% end %>
+<% end %>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
