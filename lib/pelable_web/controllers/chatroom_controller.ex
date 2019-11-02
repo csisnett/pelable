@@ -5,6 +5,7 @@ defmodule PelableWeb.ChatroomController do
   alias Pelable.Chat.Chatroom
   alias Pelable.Repo
   alias PelableWeb.PowMailer
+  alias Pelable.Batches
 
   def index(conn, _params) do
     chatrooms = Chat.list_chatrooms()
@@ -18,9 +19,9 @@ defmodule PelableWeb.ChatroomController do
 
   def new_participant(conn, %{"uuid" => uuid} = params) do
     chatroom = Repo.get_by(Chatroom, uuid: uuid)
-    {:ok, participant} = Chat.add_participant(conn.assigns.current_user, chatroom)
+    Batches.add_user_to_team(conn.assigns.current_user, chatroom)
     event = conn.assigns.current_user.username <> " aka " <> conn.assigns.current_user.email <> " has accepted the invitation from " <> chatroom.name
-    PowMailer.send_admin(%{"text" => event, "html" => event, "subject" => "accepted invitation by " <> conn.assigns.current_user.username})
+    PowMailer.send_admin(%{"text" => event, "html" => event, "subject" => chatroom.name <> " invitation accepted by " <> conn.assigns.current_user.username})
     conn = conn |> put_flash(:info, "You have accepted the invitation successfully")
     show(conn, params)
   end
@@ -29,7 +30,7 @@ defmodule PelableWeb.ChatroomController do
     conn = conn |> put_flash(:info, "You have declined the invitation.")
     chatroom = Repo.get_by(Chatroom, uuid: uuid)
     event = conn.assigns.current_user.username <> " aka " <> conn.assigns.current_user.email <> " has declined the invitation from " <> chatroom.name
-    PowMailer.send_admin(%{"text" => event, "html" => event, "subject" => "declined invitation by " <> conn.assigns.current_user.username})
+    PowMailer.send_admin(%{"text" => event, "html" => event, "subject" => chatroom.name <> " invitation declined by " <> conn.assigns.current_user.username})
     show(conn, %{"uuid" => "c3EMBSqNzdRo"})
   end
 

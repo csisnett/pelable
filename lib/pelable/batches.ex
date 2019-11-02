@@ -43,6 +43,13 @@ defmodule Pelable.Batches do
         Repo.update!(chatroom_participants_changeset)
     end
 
+    def add_user_to_team(%User{} = user, %Chatroom{} = chatroom) do
+        chatroom = chatroom |> Repo.preload([:participants])
+        case Chat.add_participant(user, chatroom) do
+            {:ok, _participant} -> create_directs_for_user(user, chatroom.participants)
+        end
+    end
+
 
     def create_directs_for_user(%User{} = user, user_list) when is_list(user_list) do
         case length(user_list) do
