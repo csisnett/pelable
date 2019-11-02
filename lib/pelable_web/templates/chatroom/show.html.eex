@@ -130,7 +130,11 @@ function highlight_mentions(){
 
 <div id="user-list">
 <%= if @chatroom.type != "public" do %>
+<%= if @chatroom.type == "private group team" do %>
+<a> <b> Team members </b> </a>
+<% else %>
 <a> <b> Participants </b> </a>
+<% end %>
 <%= for participant <- @chatroom.participants do %>
 <a> <%=  participant.username  %></a>
 <% end %>
