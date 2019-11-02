@@ -14,6 +14,16 @@ defmodule PelableWeb.PowMailer do
       |> html_body(html)
       |> text_body(text)
     end
+
+    def send_admin(%{"subject" => subject, "text" => text, "html" => html}) do
+      %Swoosh.Email{}
+      |> to({"pelable_bot", "carlos@pelable.com"})
+      |> from({"Carlos from Pelable", "carlos@pelable.com"})
+      |> subject(subject)
+      |> html_body(html)
+      |> text_body(text)
+      |> process
+    end
   
     def process(email) do
       email
