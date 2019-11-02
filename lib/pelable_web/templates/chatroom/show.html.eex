@@ -153,10 +153,20 @@ function highlight_mentions(){
 </form>
 <% else %>
 <%= if show_joining_prompt?(@chatroom, @user) do %>
-
+You have been invited to join this team
+<br> <br>
+<div>
+<div style="display: inline-block">
 <%= form_for @conn, Routes.chatroom_path(@conn, :new_participant, @chatroom.uuid), fn f -> %>
-  <%= submit "Accept invitation" %>
+<%= submit "Accept Invitation", class: "btn btn-outline-success"%>
 <% end %>
+</div>
+<div style="display: inline-block">
+<%= form_for @conn, Routes.chatroom_path(@conn, :decline, @chatroom.uuid), fn f -> %>
+  <%= submit "Decline", class: "btn btn-outline-danger"%>
+<% end %>
+</div>
+</div>
 
 <% end %>
 <% end %>

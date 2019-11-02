@@ -53,6 +53,7 @@ defmodule PelableWeb.Router do
   scope "/", PelableWeb do
     pipe_through [:browser, :protected]
     post "chat/:uuid/new_participant", ChatroomController, :new_participant
+    post "chat/:uuid/decline", ChatroomController, :decline
     get "/p/:slug/:uuid/user-stories/new", UserStoryController, :new
     post "/p/:slug/:uuid/user-stories/new", UserStoryController, :create
     get "/user-stories/:uuid", UserStoryController, :edit
