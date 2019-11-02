@@ -233,7 +233,8 @@ defmodule Pelable.Chat do
     chatroom
   end
 
-  def create_team_chatroom(%{"name" => _name, "creator_id" => _id, "type" => _type} = attrs) do
+  def create_team_chatroom(%{"name" => _name, "creator_id" => _id} = attrs) do
+    attrs = Map.put(attrs, "type", "private group team")
     {:ok, chatroom} = create_chatroom(attrs)
     initial_message = %{"chatroom_uuid" => chatroom.uuid, "username" => "pelable_bot", "body" => "\nHello there this is your team's chat, say hi! tell us a bit about yourself😃\n\nHere's a to-do list of the things you'll do during the week:\n\n- Introduce yourself\n- Share your goals and time commitments\n- Choose a Techstack\n- Brainstorm and decide on a project\n- Schedule your first meeting\n\nYou can find this in more details here: https://www.notion.so/pelable/Getting-Started-The-first-week-9c3ff31f0c8342a0b9194f223755dbac\n\nTo get familiar with the program check out our guide: https://pelable.com/guide"}
     {:ok, message} = create_message(initial_message)
