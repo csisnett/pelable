@@ -11,7 +11,8 @@ defmodule Pelable.Chat.Chatroom do
     field :description, :string
     field :type, :string, default: "public"
     field :expires_at, :utc_datetime
-    field :expired?, :boolean, default: false
+    field :moved?, :boolean, default: false
+    field :properties, :map
 
     field :uuid, :string
     belongs_to :creator, User
@@ -52,7 +53,7 @@ defmodule Pelable.Chat.Chatroom do
   @doc false
   def changeset(chatroom, attrs) do
     chatroom
-    |> cast(attrs, [:uuid, :description, :name, :creator_id, :type, :expires_at])
+    |> cast(attrs, [:uuid, :description, :name, :creator_id, :type, :expires_at, :properties])
     |> validate_required([:name, :creator_id, :type])
     |> generate_uuid
     |> generate_expiration_date
