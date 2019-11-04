@@ -171,7 +171,11 @@ You have been invited to join this team
 <% end %>
 </div>
 </div>
-
+<% else %>
+Your invitation to join this team has expired
+<%= form_for @conn, Routes.chatroom_path(@conn, :new_team, @chatroom.uuid), fn f -> %>
+  <%= submit "Join a new team", class: "btn btn-outline-primary"%>
+<% end %>
 <% end %>
 <% end %>
 </div>

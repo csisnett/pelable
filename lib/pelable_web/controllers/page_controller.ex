@@ -32,10 +32,6 @@ defmodule PelableWeb.PageController do
     redirect(conn, to: "/chat/c3EMBSqNzdRo")
   end
 
-  def healthcheck(conn, _params) do
-    text(conn, "ok")
-  end
-
   def guide(conn, _params) do
     redirect(conn, external: "https://www.notion.so/pelable/The-Pelable-Guide-67f5a87eac70415a8d9f687fc1b3fc37")
   end

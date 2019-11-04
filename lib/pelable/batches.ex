@@ -33,12 +33,19 @@ defmodule Pelable.Batches do
         Enum.map(users, fn username -> Repo.get_by(User, username: username) end)
     end
 
+    def new_team_request(%User{} = user, %Chatroom{} = chatroom) do
+      event = user.username <> " aka " <> user.email <> " invitation for " <> chatroom.name <> " has expired and wants to join a new team"
+      PowMailer.send_admin(%{"text" => event, "html" => event, "subject" => "New team request from "<> user.username})
+    end
+
+    #Used for November Batch
     def create_invitation_team(team_name) do
         chatroom = Chat.create_team_chatroom(%{"creator_id" => 1, "name" => team_name})
         Chat.add_participant("csisnett", chatroom.uuid)
         chatroom
     end
 
+    # Used this for October Batch
     # [username, ..., username], String -> %Chatroom{"type" => "private group", ""}
     # Takes a list of usernames and join the respective users to a new chatroom.
     def create_team_chat(user_list, team_name) when is_list(user_list) do

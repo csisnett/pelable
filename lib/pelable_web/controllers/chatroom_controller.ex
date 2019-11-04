@@ -26,6 +26,13 @@ defmodule PelableWeb.ChatroomController do
     show(conn, params)
   end
 
+  def new_team(conn, %{"uuid" => uuid} = params) do
+    chatroom = Repo.get_by(Chatroom, uuid: uuid)
+    Batches.new_team_request(conn.assigns.current_user, chatroom)
+    conn = conn |> put_flash(:info, "Your request has been sent successfully. We'll send you an invitation to join a new team")
+    show(conn, %{"uuid" => "c3EMBSqNzdRo"})
+  end
+
   def decline(conn, %{"uuid" => uuid} = params) do
     conn = conn |> put_flash(:info, "You have declined the invitation.")
     chatroom = Repo.get_by(Chatroom, uuid: uuid)
