@@ -3,6 +3,7 @@ defmodule PelableWeb.PowMailer do
     use Swoosh.Mailer, otp_app: :pow
   
     import Swoosh.Email
+    alias Pelable.Users.User
     
     require Logger
   
@@ -15,9 +16,19 @@ defmodule PelableWeb.PowMailer do
       |> text_body(text)
     end
 
+    def send_to_user(%User{} = user, %{"subject" => subject, "text" => text, "html" => html}) do
+      %Swoosh.Email{}
+      |> to({user.username, user.email})
+      |> from({"Carlos from Pelable", "carlos@pelable.com"})
+      |> subject(subject)
+      |> html_body(html)
+      |> text_body(text)
+      |> process
+    end
+
     def send_admin(%{"subject" => subject, "text" => text, "html" => html}) do
       %Swoosh.Email{}
-      |> to({"pelable_bot", "carlos@pelable.com"})
+      |> to({"Carlos Sisnett", "carlos@pelable.com"})
       |> from({"Carlos from Pelable", "carlos@pelable.com"})
       |> subject(subject)
       |> html_body(html)

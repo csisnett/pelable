@@ -12,8 +12,12 @@ defmodule Pelable.Monitor do
 
   # To Monitor Team's healthy levels
 
+    def convert_to_chatroom(team_list) when is_list(team_list) do
+        team_list |> Enum.map(fn uuid -> Repo.get_by(Chatroom, uuid: uuid) end)
+    end
+
     def dead_teams do
-        ["l-ZMHysu53l4", "zxuH2TaMc2tE"] |> Enum.map(fn uuid -> Repo.get_by(Chatroom, uuid: uuid) end)
+        ["l-ZMHysu53l4", "zxuH2TaMc2tE"] |> convert_to_chatroom
     end
 
     def chatting_teams do
@@ -24,7 +28,7 @@ defmodule Pelable.Monitor do
         ["dl5Q0m8kP3LH", "d_j7_FvMSfzc", "BaQVRKH3N-wW", "o6WVZQS9xROL",
         "OWib6Zf8d1xs", "mavvVf1eT4sV", "pGuZzdqXsxk8", "22LCrDBCS1wz", "Zq6_2V3qXvIV",
         "zxuH2TaMc2tE"]
-        |> Enum.map(fn uuid -> Repo.get_by(Chatroom, uuid: uuid) end)
+        |> convert_to_chatroom
     end
 
     def time_since_last_message_sent(%User{} = user, time_now) do

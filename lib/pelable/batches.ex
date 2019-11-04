@@ -59,7 +59,14 @@ defmodule Pelable.Batches do
     def add_user_to_team(%User{} = user, %Chatroom{} = chatroom) do
         chatroom = chatroom |> Repo.preload([:participants])
         case Chat.add_participant(user, chatroom) do
-            {:ok, _participant} -> create_directs_for_user(user, chatroom.participants)
+            {:ok, _participant} -> 
+                create_directs_for_user(user, chatroom.participants)
+                url = "https://pelable.com/chat/" <> chatroom.uuid
+                text = user.username <> " just joined" <> chatroom.name <> "🎉\n Welcome them into the team😊"
+                html = "<b>" <> user.username <> "</b>" <> " just joined " <> chatroom.name <> "🎉" <> "<br>" <> "<a href=#{url}> Welcome </a> them into the team😊"
+                message = %{"subject" => user.username <> " joined your team!", "text" => text, "html" => html}
+                Enum.each(chatroom.participants, fn user -> PowMailer.send_to_user(user, message)end)
+
         end
     end
 
