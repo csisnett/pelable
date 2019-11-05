@@ -9,3 +9,4 @@ alias Learn.Goal
 alias Pelable.Chat
 alias Pelable.Batches
 alias Pelable.Chat.{Chatroom, Message, Participant, Invitation, Mention}
+alias Pelable.Monitor
