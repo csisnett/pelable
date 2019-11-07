@@ -43,17 +43,8 @@ defmodule PelableWeb.ChatroomView do
     Chat.seen_last_message?(user, chatroom)
   end
 
-  def get_recipient(%User{} = user, participants) when is_list(participants) do
-    case length(participants) do
-    1 -> user.username
-    x -> 
-    recipient = Enum.filter(participants, fn recipient -> user.username != recipient.username end) |> Enum.at(0)
-    recipient.username
-    end
-  end
-
   def render_private_conversation(%User{} = user, %Chatroom{} = chatroom, path) do
-    content_tag(:a, get_recipient(user, chatroom.participants), chatroom_uuid: chatroom.uuid, href: path)
+    content_tag(:a, Chat.get_recipient(user, chatroom.participants), chatroom_uuid: chatroom.uuid, href: path)
   end
 
   def get_private_conversations(user) do

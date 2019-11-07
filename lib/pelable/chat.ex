@@ -12,7 +12,7 @@ defmodule Pelable.Chat do
   alias Pelable.Chat
   alias PelableWeb.PowMailer
 
-  @chatroom_types ["public", "private conversation", "private group"]
+  @chatroom_types ["public", "private conversation", "private group", "private group team"]
 
   @doc """
   Returns the list of chatrooms.
@@ -246,6 +246,16 @@ defmodule Pelable.Chat do
     messages = list_messages_by_chatroom(chatroom.id) |> Repo.all
     [first | to_be_deleted] = messages
     Enum.each(to_be_deleted, fn m -> delete_message(m) end)
+  end
+
+  #To get the other recipient in a private conversation
+  def get_recipient(%User{} = user, participants) when is_list(participants) do
+    case length(participants) do
+    1 -> user.username
+    x -> 
+    recipient = Enum.filter(participants, fn recipient -> user.username != recipient.username end) |> Enum.at(0)
+    recipient.username
+    end
   end
 
   @doc """
