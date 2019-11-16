@@ -24,10 +24,10 @@ defmodule Pelable.Monitor do
         ["Zq6_2V3qXvIV", "pGuZzdqXsxk8"]
     end
 
-    def teams do
-        ["dl5Q0m8kP3LH", "d_j7_FvMSfzc", "BaQVRKH3N-wW", "o6WVZQS9xROL",
-        "OWib6Zf8d1xs", "mavvVf1eT4sV", "pGuZzdqXsxk8", "22LCrDBCS1wz", "Zq6_2V3qXvIV",
-        "zxuH2TaMc2tE"]
+    def october_teams do
+        ["dl5Q0m8kP3LH", "d_j7_FvMSfzc", "BaQVRKH3N-wW",
+        "OWib6Zf8d1xs", "mavvVf1eT4sV", "pGuZzdqXsxk8", "22LCrDBCS1wz", "Zq6_2V3qXvIV"
+        ]
         |> convert_to_chatroom
     end
 
