@@ -107,23 +107,23 @@ s0.parentNode.insertBefore(s1,s0);
 						<div class="features-header text-center">
 							<div class="container-sm">
 								<h2 class="section-title mt-0">Meet Pelable</h2>
-								<p class="section-paragraph mb-0">Pelable is a 6-week intensive program where you'll focus on building a project with a remote team</p>
+								<p class="section-paragraph mb-0">Pelable is a free 6-week program where you'll focus on building a project with a remote team</p>
 							</div>
 						</div>
                         <div class="features-wrap">
                             <div class="feature is-revealing">
                                 <div class="feature-inner">
                                     <div class="feature-icon">
-                                        <img src="<%= Routes.static_path(@conn, "/images/feature-icon-01.svg") %>" alt="Feature 01">
+                                        <img src="<%= Routes.static_path(@conn, "/images/feature-icon-01.svg") %>" alt="Sign up">
                                     </div>
-                                    <h4 class="feature-title">Apply</h4>
-                                    <p class="text-sm">Fill out the application</p>
+                                    <h4 class="feature-title">Sign up</h4>
+                                    <p class="text-sm">Create an account and fill out the survey</p>
                                 </div>
                             </div>
                             <div class="feature is-revealing">
                                 <div class="feature-inner">
                                     <div class="feature-icon">
-                                        <img src="<%= Routes.static_path(@conn, "/images/feature-icon-02.svg") %>" alt="Feature 02">
+                                        <img src="<%= Routes.static_path(@conn, "/images/feature-icon-02.svg") %>" alt="Meet your new team">
                                     </div>
                                     <h4 class="feature-title">Meet your new Team</h4>
                                     <p class="text-sm">During the 1st week you'll choose a project and get to know each other </p>
@@ -132,7 +132,7 @@ s0.parentNode.insertBefore(s1,s0);
                             <div class="feature is-revealing">
                                 <div class="feature-inner">
                                     <div class="feature-icon">
-                                        <img src="<%= Routes.static_path(@conn, "/images/feature-icon-03.svg") %>" alt="Feature 03">
+                                        <img src="<%= Routes.static_path(@conn, "/images/feature-icon-03.svg") %>" alt="Start working">
                                     </div>
                                     <h4 class="feature-title">Start Working</h4>
                                     <p class="text-sm">The next 5 weeks you'll work on the user stories to complete your MVP</p>
@@ -141,7 +141,7 @@ s0.parentNode.insertBefore(s1,s0);
                             <div class="feature is-revealing">
                                 <div class="feature-inner">
                                     <div class="feature-icon">
-                                        <img src="<%= Routes.static_path(@conn, "/images/feature-icon-04.svg") %>" alt="Feature 04">
+                                        <img src="<%= Routes.static_path(@conn, "/images/feature-icon-04.svg") %>" alt="Show it to the world">
                                     </div>
                                     <h4 class="feature-title">Show it to the World</h4>
                                     <p class="text-sm">Deploy your project and receive feedback from the community</p>
@@ -163,7 +163,7 @@ s0.parentNode.insertBefore(s1,s0);
 										<div class="accordion-icon"></div>
 									</div>
 									<div class="accordion-body">
-										<p>The program starts on Friday, November 1, and finalizes on the 13th of December</p>
+										<p>The program starts on Friday, February 7 and ends on March 20.</p>
                                         <p> More precisely in: <div id="deadline"> </div></p> 
 									</div>
 
@@ -176,7 +176,7 @@ s0.parentNode.insertBefore(s1,s0);
 										<div class="accordion-icon"></div>
 									</div>
 	                                <div class="accordion-body">
-	                                    <p>Pelable has no monetary cost, that being said we expect learners to invest part-time (20 hours per week) or full-time (30 to 40 hours per week) </p>
+	                                    <p>Pelable has no monetary cost, that being said we expect learners to dedicate either part-time (20 hours per week) or full-time (30 to 40 hours per week) </p>
 	                                </div>
 								</li>
 								
@@ -222,7 +222,7 @@ s0.parentNode.insertBefore(s1,s0);
 										<div class="accordion-icon"></div>
 									</div>
 									<div class="accordion-body">
-										<p> The next batch is scheduled to start on Friday, January 10, 2020 and finalizes on February 21. Apply <a href="https://forms.gle/etrtrewmYKiWDJ8RA"> here </a> </p>
+										<p> The next batch is scheduled to start on Friday, March 6 and ends on April 17. Apply <a href="https://forms.gle/etrtrewmYKiWDJ8RA"> here </a> </p>
 									</div>
 								</li>
 
@@ -280,16 +280,16 @@ s0.parentNode.insertBefore(s1,s0);
                         </li>
                        
                     </ul>
-                    <div class="footer-copyright">&copy; 2019 Pelable, all rights reserved</div>
+                    <div class="footer-copyright">&copy; 2020 Pelable, all rights reserved</div>
                 </div>
             </div>
         </footer>
     </div>
     <script>
-    var deadline = new Date("Nov 1, 2019 00:00:01").getTime(); 
+    var deadline = new Date("Feb 7, 2020 00:00:01").getTime(); 
 var x = setInterval(function() { 
 var now = new Date().getTime(); 
-var t = deadline - now; 
+var t = deadline - now;
 var days = Math.floor(t / (1000 * 60 * 60 * 24)); 
 var hours = Math.floor((t%(1000 * 60 * 60 * 24))/(1000 * 60 * 60)); 
 var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60)); 
