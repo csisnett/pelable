@@ -29,6 +29,8 @@ defmodule Pelable.Batches do
 
     #To make and destroy Teams
 
+    # [String, ...] -> %User{}
+    # Takes a list of usernames and returns a list of %User{}
     def convert_usernames(users) when is_list(users) do
         Enum.map(users, fn username -> Repo.get_by(User, username: username) end)
     end
