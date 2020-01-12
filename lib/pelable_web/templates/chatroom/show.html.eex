@@ -153,8 +153,10 @@ function highlight_mentions(){
 
 <form id="chat-form">
 <textarea id="body" placeholder="Your message" rows="2" cols="60"> </textarea>
+ <img id="emoji-icon" src="<%= Routes.static_path(@conn, "/images/smiley.png") %>" />
 <input type="submit" id="submit_button" value="Send" class="btn btn-primary">
 </form>
+
 <% else %>
 <%= if show_joining_prompt?(@chatroom, @user) do %>
 You have been invited to join this team
@@ -295,5 +297,21 @@ $('#new-message-alert').on('closed.bs.alert', function () {
     }
   }
 })
+
+ </script>
+ <script src="https://cdn.jsdelivr.net/npm/emoji-button@latest/dist/index.min.js"> </script>
+
+ <script>
+  var chat_input = document.getElementById("body");
+  var emoji_icon = document.getElementById("emoji-icon");
+  var picker = new EmojiButton();
+
+  picker.on('emoji', emoji => {
+    chat_input.value += emoji;
+  });
+
+  emoji_icon.addEventListener('click', () => {
+    picker.pickerVisible ? picker.hidePicker() : picker.showPicker(emoji_icon);
+  });
 
  </script>
