@@ -120,4 +120,65 @@ defmodule Pelable.LearnTest do
       assert %Ecto.Changeset{} = Learn.change_tag(tag)
     end
   end
+
+  describe "workspaces" do
+    alias Pelable.Learn.Workspace
+
+    @valid_attrs %{name: "some name", type: "some type"}
+    @update_attrs %{name: "some updated name", type: "some updated type"}
+    @invalid_attrs %{name: nil, type: nil}
+
+    def workspace_fixture(attrs \\ %{}) do
+      {:ok, workspace} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Learn.create_workspace()
+
+      workspace
+    end
+
+    test "list_workspaces/0 returns all workspaces" do
+      workspace = workspace_fixture()
+      assert Learn.list_workspaces() == [workspace]
+    end
+
+    test "get_workspace!/1 returns the workspace with given id" do
+      workspace = workspace_fixture()
+      assert Learn.get_workspace!(workspace.id) == workspace
+    end
+
+    test "create_workspace/1 with valid data creates a workspace" do
+      assert {:ok, %Workspace{} = workspace} = Learn.create_workspace(@valid_attrs)
+      assert workspace.name == "some name"
+      assert workspace.type == "some type"
+    end
+
+    test "create_workspace/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Learn.create_workspace(@invalid_attrs)
+    end
+
+    test "update_workspace/2 with valid data updates the workspace" do
+      workspace = workspace_fixture()
+      assert {:ok, %Workspace{} = workspace} = Learn.update_workspace(workspace, @update_attrs)
+      assert workspace.name == "some updated name"
+      assert workspace.type == "some updated type"
+    end
+
+    test "update_workspace/2 with invalid data returns error changeset" do
+      workspace = workspace_fixture()
+      assert {:error, %Ecto.Changeset{}} = Learn.update_workspace(workspace, @invalid_attrs)
+      assert workspace == Learn.get_workspace!(workspace.id)
+    end
+
+    test "delete_workspace/1 deletes the workspace" do
+      workspace = workspace_fixture()
+      assert {:ok, %Workspace{}} = Learn.delete_workspace(workspace)
+      assert_raise Ecto.NoResultsError, fn -> Learn.get_workspace!(workspace.id) end
+    end
+
+    test "change_workspace/1 returns a workspace changeset" do
+      workspace = workspace_fixture()
+      assert %Ecto.Changeset{} = Learn.change_workspace(workspace)
+    end
+  end
 end

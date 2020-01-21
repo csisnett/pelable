@@ -1,0 +1,28 @@
+<h1>Listing Workspaces</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for workspace <- @workspaces do %>
+    <tr>
+      <td><%= workspace.name %></td>
+      <td><%= workspace.type %></td>
+
+      <td>
+        <%= link "Show", to: Routes.workspace_path(@conn, :show, workspace) %>
+        <%= link "Edit", to: Routes.workspace_path(@conn, :edit, workspace) %>
+        <%= link "Delete", to: Routes.workspace_path(@conn, :delete, workspace), method: :delete, data: [confirm: "Are you sure?"] %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Workspace", to: Routes.workspace_path(@conn, :new) %></span>
