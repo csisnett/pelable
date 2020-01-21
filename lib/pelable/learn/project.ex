@@ -3,8 +3,7 @@ defmodule Pelable.Learn.Project do
   import Ecto.Changeset
 
   alias Pelable.Users.User
-  alias Pelable.Learn.{NameSlug}
-  alias Pelable.Learn.Workspace
+  alias Pelable.Learn.{NameSlug, Workspace}
 
   schema "projects" do
     field :name, :string
