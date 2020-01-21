@@ -44,7 +44,7 @@ defmodule Pelable.Learn do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_chatroom(%User{} = user) do
+  def delete_user(%User{} = user) do
     Repo.delete(user)
   end
 
