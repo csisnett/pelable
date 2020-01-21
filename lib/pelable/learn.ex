@@ -345,4 +345,100 @@ defmodule Pelable.Learn do
   def change_workspace(%Workspace{} = workspace) do
     Workspace.changeset(workspace, %{})
   end
+
+  alias Pelable.Learn.WorkspaceMember
+
+  @doc """
+  Returns the list of workspace_member.
+
+  ## Examples
+
+      iex> list_workspace_member()
+      [%WorkspaceMember{}, ...]
+
+  """
+  def list_workspace_member do
+    Repo.all(WorkspaceMember)
+  end
+
+  @doc """
+  Gets a single workspace_member.
+
+  Raises `Ecto.NoResultsError` if the Workspace member does not exist.
+
+  ## Examples
+
+      iex> get_workspace_member!(123)
+      %WorkspaceMember{}
+
+      iex> get_workspace_member!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_workspace_member!(id), do: Repo.get!(WorkspaceMember, id)
+
+  @doc """
+  Creates a workspace_member.
+
+  ## Examples
+
+      iex> create_workspace_member(%{field: value})
+      {:ok, %WorkspaceMember{}}
+
+      iex> create_workspace_member(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_workspace_member(attrs \\ %{}) do
+    %WorkspaceMember{}
+    |> WorkspaceMember.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a workspace_member.
+
+  ## Examples
+
+      iex> update_workspace_member(workspace_member, %{field: new_value})
+      {:ok, %WorkspaceMember{}}
+
+      iex> update_workspace_member(workspace_member, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_workspace_member(%WorkspaceMember{} = workspace_member, attrs) do
+    workspace_member
+    |> WorkspaceMember.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a WorkspaceMember.
+
+  ## Examples
+
+      iex> delete_workspace_member(workspace_member)
+      {:ok, %WorkspaceMember{}}
+
+      iex> delete_workspace_member(workspace_member)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_workspace_member(%WorkspaceMember{} = workspace_member) do
+    Repo.delete(workspace_member)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking workspace_member changes.
+
+  ## Examples
+
+      iex> change_workspace_member(workspace_member)
+      %Ecto.Changeset{source: %WorkspaceMember{}}
+
+  """
+  def change_workspace_member(%WorkspaceMember{} = workspace_member) do
+    WorkspaceMember.changeset(workspace_member, %{})
+  end
 end

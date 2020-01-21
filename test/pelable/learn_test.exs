@@ -181,4 +181,63 @@ defmodule Pelable.LearnTest do
       assert %Ecto.Changeset{} = Learn.change_workspace(workspace)
     end
   end
+
+  describe "workspace_member" do
+    alias Pelable.Learn.WorkspaceMember
+
+    @valid_attrs %{role: "some role"}
+    @update_attrs %{role: "some updated role"}
+    @invalid_attrs %{role: nil}
+
+    def workspace_member_fixture(attrs \\ %{}) do
+      {:ok, workspace_member} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Learn.create_workspace_member()
+
+      workspace_member
+    end
+
+    test "list_workspace_member/0 returns all workspace_member" do
+      workspace_member = workspace_member_fixture()
+      assert Learn.list_workspace_member() == [workspace_member]
+    end
+
+    test "get_workspace_member!/1 returns the workspace_member with given id" do
+      workspace_member = workspace_member_fixture()
+      assert Learn.get_workspace_member!(workspace_member.id) == workspace_member
+    end
+
+    test "create_workspace_member/1 with valid data creates a workspace_member" do
+      assert {:ok, %WorkspaceMember{} = workspace_member} = Learn.create_workspace_member(@valid_attrs)
+      assert workspace_member.role == "some role"
+    end
+
+    test "create_workspace_member/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Learn.create_workspace_member(@invalid_attrs)
+    end
+
+    test "update_workspace_member/2 with valid data updates the workspace_member" do
+      workspace_member = workspace_member_fixture()
+      assert {:ok, %WorkspaceMember{} = workspace_member} = Learn.update_workspace_member(workspace_member, @update_attrs)
+      assert workspace_member.role == "some updated role"
+    end
+
+    test "update_workspace_member/2 with invalid data returns error changeset" do
+      workspace_member = workspace_member_fixture()
+      assert {:error, %Ecto.Changeset{}} = Learn.update_workspace_member(workspace_member, @invalid_attrs)
+      assert workspace_member == Learn.get_workspace_member!(workspace_member.id)
+    end
+
+    test "delete_workspace_member/1 deletes the workspace_member" do
+      workspace_member = workspace_member_fixture()
+      assert {:ok, %WorkspaceMember{}} = Learn.delete_workspace_member(workspace_member)
+      assert_raise Ecto.NoResultsError, fn -> Learn.get_workspace_member!(workspace_member.id) end
+    end
+
+    test "change_workspace_member/1 returns a workspace_member changeset" do
+      workspace_member = workspace_member_fixture()
+      assert %Ecto.Changeset{} = Learn.change_workspace_member(workspace_member)
+    end
+  end
 end
