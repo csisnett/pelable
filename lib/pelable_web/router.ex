@@ -48,6 +48,7 @@ defmodule PelableWeb.Router do
     get "/chat", PageController, :chat
     get "/check39432", PageController, :healthcheck
     get "/guide", PageController, :guide
+    resources "/posts", PostController
   end
 
   scope "/", PelableWeb do

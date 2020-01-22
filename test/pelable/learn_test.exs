@@ -248,4 +248,67 @@ defmodule Pelable.LearnTest do
       assert %Ecto.Changeset{} = Learn.change_section(section)
     end
   end
+
+  describe "posts" do
+    alias Pelable.Learn.Post
+
+    @valid_attrs %{body: "some body", body_html: "some body_html", uuid: "7488a646-e31f-11e4-aace-600308960662"}
+    @update_attrs %{body: "some updated body", body_html: "some updated body_html", uuid: "7488a646-e31f-11e4-aace-600308960668"}
+    @invalid_attrs %{body: nil, body_html: nil, uuid: nil}
+
+    def post_fixture(attrs \\ %{}) do
+      {:ok, post} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Learn.create_post()
+
+      post
+    end
+
+    test "list_posts/0 returns all posts" do
+      post = post_fixture()
+      assert Learn.list_posts() == [post]
+    end
+
+    test "get_post!/1 returns the post with given id" do
+      post = post_fixture()
+      assert Learn.get_post!(post.id) == post
+    end
+
+    test "create_post/1 with valid data creates a post" do
+      assert {:ok, %Post{} = post} = Learn.create_post(@valid_attrs)
+      assert post.body == "some body"
+      assert post.body_html == "some body_html"
+      assert post.uuid == "7488a646-e31f-11e4-aace-600308960662"
+    end
+
+    test "create_post/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Learn.create_post(@invalid_attrs)
+    end
+
+    test "update_post/2 with valid data updates the post" do
+      post = post_fixture()
+      assert {:ok, %Post{} = post} = Learn.update_post(post, @update_attrs)
+      assert post.body == "some updated body"
+      assert post.body_html == "some updated body_html"
+      assert post.uuid == "7488a646-e31f-11e4-aace-600308960668"
+    end
+
+    test "update_post/2 with invalid data returns error changeset" do
+      post = post_fixture()
+      assert {:error, %Ecto.Changeset{}} = Learn.update_post(post, @invalid_attrs)
+      assert post == Learn.get_post!(post.id)
+    end
+
+    test "delete_post/1 deletes the post" do
+      post = post_fixture()
+      assert {:ok, %Post{}} = Learn.delete_post(post)
+      assert_raise Ecto.NoResultsError, fn -> Learn.get_post!(post.id) end
+    end
+
+    test "change_post/1 returns a post changeset" do
+      post = post_fixture()
+      assert %Ecto.Changeset{} = Learn.change_post(post)
+    end
+  end
 end
