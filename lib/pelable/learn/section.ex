@@ -17,10 +17,11 @@ defmodule Pelable.Learn.Section do
   @doc false
   def changeset(section, attrs) do
     section
-    |> cast(attrs, [:name, :uuid, :workspace_id])
-    |> validate_required([:name, :uuid, :workspace_id])
+    |> cast(attrs, [:name, :workspace_id])
+    |> validate_required([:name, :workspace_id])
+    |> foreign_key_constraint(:workspace_id)
     |> unique_constraint(:uuid)
-    |> NameSlug.maybe_generate_slug
     |> unique_constraint(:name_must_be_unique, name: :unique_slug_name_index)
+    |> NameSlug.maybe_generate_slug
   end
 end
