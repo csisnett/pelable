@@ -8,7 +8,7 @@ defmodule Pelable.Learn.Thread do
   schema "threads" do
     field :title, :string
     field :type, :string, default: "public"
-    field :uuid, Ecto.ShortUUID
+    field :uuid, Ecto.ShortUUID, autogenerate: true
 
     belongs_to :first_post, Post
     belongs_to :section, Section
