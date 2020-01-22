@@ -5,7 +5,7 @@ defmodule Pelable.Repo.Migrations.CreatePosts do
     create table(:posts) do
       add :body, :text
       add :body_html, :text
-      add :uuid, :uuid
+      add :uuid, :uuid, null: false
 
       timestamps()
     end
