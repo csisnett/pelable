@@ -311,4 +311,67 @@ defmodule Pelable.LearnTest do
       assert %Ecto.Changeset{} = Learn.change_post(post)
     end
   end
+
+  describe "threads" do
+    alias Pelable.Learn.Thread
+
+    @valid_attrs %{title: "some title", type: "some type", uuid: "7488a646-e31f-11e4-aace-600308960662"}
+    @update_attrs %{title: "some updated title", type: "some updated type", uuid: "7488a646-e31f-11e4-aace-600308960668"}
+    @invalid_attrs %{title: nil, type: nil, uuid: nil}
+
+    def thread_fixture(attrs \\ %{}) do
+      {:ok, thread} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Learn.create_thread()
+
+      thread
+    end
+
+    test "list_threads/0 returns all threads" do
+      thread = thread_fixture()
+      assert Learn.list_threads() == [thread]
+    end
+
+    test "get_thread!/1 returns the thread with given id" do
+      thread = thread_fixture()
+      assert Learn.get_thread!(thread.id) == thread
+    end
+
+    test "create_thread/1 with valid data creates a thread" do
+      assert {:ok, %Thread{} = thread} = Learn.create_thread(@valid_attrs)
+      assert thread.title == "some title"
+      assert thread.type == "some type"
+      assert thread.uuid == "7488a646-e31f-11e4-aace-600308960662"
+    end
+
+    test "create_thread/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Learn.create_thread(@invalid_attrs)
+    end
+
+    test "update_thread/2 with valid data updates the thread" do
+      thread = thread_fixture()
+      assert {:ok, %Thread{} = thread} = Learn.update_thread(thread, @update_attrs)
+      assert thread.title == "some updated title"
+      assert thread.type == "some updated type"
+      assert thread.uuid == "7488a646-e31f-11e4-aace-600308960668"
+    end
+
+    test "update_thread/2 with invalid data returns error changeset" do
+      thread = thread_fixture()
+      assert {:error, %Ecto.Changeset{}} = Learn.update_thread(thread, @invalid_attrs)
+      assert thread == Learn.get_thread!(thread.id)
+    end
+
+    test "delete_thread/1 deletes the thread" do
+      thread = thread_fixture()
+      assert {:ok, %Thread{}} = Learn.delete_thread(thread)
+      assert_raise Ecto.NoResultsError, fn -> Learn.get_thread!(thread.id) end
+    end
+
+    test "change_thread/1 returns a thread changeset" do
+      thread = thread_fixture()
+      assert %Ecto.Changeset{} = Learn.change_thread(thread)
+    end
+  end
 end
