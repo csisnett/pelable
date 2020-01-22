@@ -1,0 +1,30 @@
+<h1>Listing Sections</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Uuid</th>
+      <th>Slug</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for section <- @sections do %>
+    <tr>
+      <td><%= section.name %></td>
+      <td><%= section.uuid %></td>
+      <td><%= section.slug %></td>
+
+      <td>
+        <%= link "Show", to: Routes.section_path(@conn, :show, section) %>
+        <%= link "Edit", to: Routes.section_path(@conn, :edit, section) %>
+        <%= link "Delete", to: Routes.section_path(@conn, :delete, section), method: :delete, data: [confirm: "Are you sure?"] %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Section", to: Routes.section_path(@conn, :new) %></span>

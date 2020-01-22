@@ -1,0 +1,23 @@
+<h1>Show Section</h1>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @section.name %>
+  </li>
+
+  <li>
+    <strong>Uuid:</strong>
+    <%= @section.uuid %>
+  </li>
+
+  <li>
+    <strong>Slug:</strong>
+    <%= @section.slug %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.section_path(@conn, :edit, @section) %></span>
+<span><%= link "Back", to: Routes.section_path(@conn, :index) %></span>
