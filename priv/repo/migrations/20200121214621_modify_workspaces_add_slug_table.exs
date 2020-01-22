@@ -3,7 +3,7 @@ defmodule Pelable.Repo.Migrations.ModifyWorkspacesAddSlugTable do
 
   def change do
     alter table(:workspaces) do
-      add :slug, :string
+      add :slug, :string, null: false
     end
   end
 end
