@@ -11,7 +11,7 @@ defmodule Pelable.Learn.Workspace do
     field :type, :string, default: "public"
     field :uuid, Ecto.ShortUUID, autogenerate: true
     field :slug, NameSlug.Type
-
+    
     belongs_to :creator, User
     belongs_to :chatroom, Chatroom
     timestamps()
