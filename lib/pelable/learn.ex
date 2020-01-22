@@ -636,4 +636,100 @@ defmodule Pelable.Learn do
   def change_thread(%Thread{} = thread) do
     Thread.changeset(thread, %{})
   end
+
+  alias Pelable.Learn.ThreadPost
+
+  @doc """
+  Returns the list of thread_posts.
+
+  ## Examples
+
+      iex> list_thread_posts()
+      [%ThreadPost{}, ...]
+
+  """
+  def list_thread_posts do
+    Repo.all(ThreadPost)
+  end
+
+  @doc """
+  Gets a single thread_post.
+
+  Raises `Ecto.NoResultsError` if the Thread post does not exist.
+
+  ## Examples
+
+      iex> get_thread_post!(123)
+      %ThreadPost{}
+
+      iex> get_thread_post!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_thread_post!(id), do: Repo.get!(ThreadPost, id)
+
+  @doc """
+  Creates a thread_post.
+
+  ## Examples
+
+      iex> create_thread_post(%{field: value})
+      {:ok, %ThreadPost{}}
+
+      iex> create_thread_post(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_thread_post(attrs \\ %{}) do
+    %ThreadPost{}
+    |> ThreadPost.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a thread_post.
+
+  ## Examples
+
+      iex> update_thread_post(thread_post, %{field: new_value})
+      {:ok, %ThreadPost{}}
+
+      iex> update_thread_post(thread_post, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_thread_post(%ThreadPost{} = thread_post, attrs) do
+    thread_post
+    |> ThreadPost.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a ThreadPost.
+
+  ## Examples
+
+      iex> delete_thread_post(thread_post)
+      {:ok, %ThreadPost{}}
+
+      iex> delete_thread_post(thread_post)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_thread_post(%ThreadPost{} = thread_post) do
+    Repo.delete(thread_post)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking thread_post changes.
+
+  ## Examples
+
+      iex> change_thread_post(thread_post)
+      %Ecto.Changeset{source: %ThreadPost{}}
+
+  """
+  def change_thread_post(%ThreadPost{} = thread_post) do
+    ThreadPost.changeset(thread_post, %{})
+  end
 end

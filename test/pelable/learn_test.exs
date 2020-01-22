@@ -374,4 +374,61 @@ defmodule Pelable.LearnTest do
       assert %Ecto.Changeset{} = Learn.change_thread(thread)
     end
   end
+
+  describe "thread_posts" do
+    alias Pelable.Learn.ThreadPost
+
+    @valid_attrs %{}
+    @update_attrs %{}
+    @invalid_attrs %{}
+
+    def thread_post_fixture(attrs \\ %{}) do
+      {:ok, thread_post} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Learn.create_thread_post()
+
+      thread_post
+    end
+
+    test "list_thread_posts/0 returns all thread_posts" do
+      thread_post = thread_post_fixture()
+      assert Learn.list_thread_posts() == [thread_post]
+    end
+
+    test "get_thread_post!/1 returns the thread_post with given id" do
+      thread_post = thread_post_fixture()
+      assert Learn.get_thread_post!(thread_post.id) == thread_post
+    end
+
+    test "create_thread_post/1 with valid data creates a thread_post" do
+      assert {:ok, %ThreadPost{} = thread_post} = Learn.create_thread_post(@valid_attrs)
+    end
+
+    test "create_thread_post/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Learn.create_thread_post(@invalid_attrs)
+    end
+
+    test "update_thread_post/2 with valid data updates the thread_post" do
+      thread_post = thread_post_fixture()
+      assert {:ok, %ThreadPost{} = thread_post} = Learn.update_thread_post(thread_post, @update_attrs)
+    end
+
+    test "update_thread_post/2 with invalid data returns error changeset" do
+      thread_post = thread_post_fixture()
+      assert {:error, %Ecto.Changeset{}} = Learn.update_thread_post(thread_post, @invalid_attrs)
+      assert thread_post == Learn.get_thread_post!(thread_post.id)
+    end
+
+    test "delete_thread_post/1 deletes the thread_post" do
+      thread_post = thread_post_fixture()
+      assert {:ok, %ThreadPost{}} = Learn.delete_thread_post(thread_post)
+      assert_raise Ecto.NoResultsError, fn -> Learn.get_thread_post!(thread_post.id) end
+    end
+
+    test "change_thread_post/1 returns a thread_post changeset" do
+      thread_post = thread_post_fixture()
+      assert %Ecto.Changeset{} = Learn.change_thread_post(thread_post)
+    end
+  end
 end
