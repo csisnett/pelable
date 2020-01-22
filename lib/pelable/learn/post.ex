@@ -3,12 +3,14 @@ defmodule Pelable.Learn.Post do
   import Ecto.Changeset
 
   alias Pelable.Learn.Post
+  alias Pelable.Users.User
 
   schema "posts" do
     field :body, :string
     field :body_html, :string
     field :uuid, Ecto.ShortUUID, autogenerate: true
 
+    belongs_to :creator, User
     belongs_to :parent, Post
     timestamps()
   end
@@ -16,9 +18,10 @@ defmodule Pelable.Learn.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:body, :body_html, :parent_id])
-    |> validate_required([:body, :body_html])
+    |> cast(attrs, [:body, :body_html, :parent_id, :creator_id])
+    |> validate_required([:body, :creator_id])
     |> unique_constraint(:uuid)
+    |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:parent_id)
   end
 end
