@@ -23,6 +23,8 @@ defmodule Pelable.Learn.Project do
     project
     |> cast(attrs, [:name, :description, :workspace_id, :creator_id])
     |> validate_required([:name, :workspace_id, :creator_id])
+    |> foreign_key_constraint(:creator_id)
+    |> foreign_key_constraint(:workspace_id)
     |> unique_constraint(:uuid)
     |> NameSlug.maybe_generate_slug
   end
