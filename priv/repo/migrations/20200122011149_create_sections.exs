@@ -6,7 +6,7 @@ defmodule Pelable.Repo.Migrations.CreateSections do
       add :name, :string, null: false
       add :uuid, :uuid, null: false
       add :slug, :string, null: false
-      add :workspace_id, references(:workspaces, on_delete: :nothing)
+      add :workspace_id, references(:workspaces, on_delete: :delete_all), null: false
 
       timestamps()
     end
