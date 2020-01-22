@@ -4,7 +4,7 @@ defmodule Pelable.Repo.Migrations.CreateProjects do
   def change do
     create table(:projects) do
       add :name, :string, null: false
-      add :slug, :string
+      add :slug, :string, null: false
       add :description, :text
       add :uuid, :uuid, null: false
       add :workspace_id, references(:workspaces, on_delete: :delete_all), null: false
