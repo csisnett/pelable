@@ -22,4 +22,5 @@ function closeWin() {
 <img src="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/227_Netflix_logo-512.png" alt="Netflix" onclick="openWin('https://netflix.com')">
 <img src="https://cdn4.iconfinder.com/data/icons/social-media-flat-7/64/Social-media_Tiktok-512.png" alt="TikTok" onclick="openWin('https://tiktok.com')">
 <img src="https://elixirforum.com/uploads/default/original/2X/3/301658d2571b34804e642eb7a28976609422ac3b.png" alt="TikTok" onclick="openWin('https://elixirforum.com')">
-<button onclick="closeWin()">Close break window</button>
+<br> <br>
+<button class="btn btn-primary" onclick="closeWin()">Close break window</button>
