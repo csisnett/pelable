@@ -1,0 +1,25 @@
+<script>
+var myWindow;
+
+function openWin(link) {
+  time_in_ms = document.getElementById('rest').value * 60 * 1000
+  myWindow = window.open(link, "_blank", "width=3440, height=1440");
+  setTimeout(closeWin, time_in_ms)   
+}
+
+function closeWin() {
+  myWindow.close();
+}
+</script>
+
+<h1> How long is your break? </h1>
+<input style="height:100px;width:80px;font-size:30pt;" name="rest" type="text" maxlength="3" id="rest"/> <h1>minutes </h1> <br>
+
+<h2> Select your site -> </h2> <br>
+<img src="https://cdn3.iconfinder.com/data/icons/social-media-circle/512/circle-twitter-512.png" alt="Twitter" onclick="openWin('https://twitter.com')">
+<img src="https://icons-for-free.com/iconfiles/png/512/reddit+website+icon-1320168605279647340.png" alt="Reddit" onclick="openWin('https://reddit.com')">
+<img src="https://cdn3.iconfinder.com/data/icons/popular-services-brands/512/youtube-512.png" alt="Youtube" onclick="openWin('https://youtube.com')">
+<img src="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/227_Netflix_logo-512.png" alt="Netflix" onclick="openWin('https://netflix.com')">
+<img src="https://cdn4.iconfinder.com/data/icons/social-media-flat-7/64/Social-media_Tiktok-512.png" alt="TikTok" onclick="openWin('https://tiktok.com')">
+<img src="https://elixirforum.com/uploads/default/original/2X/3/301658d2571b34804e642eb7a28976609422ac3b.png" alt="TikTok" onclick="openWin('https://elixirforum.com')">
+<button onclick="closeWin()">Close break window</button>
