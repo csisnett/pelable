@@ -50,6 +50,7 @@ defmodule PelableWeb.Router do
     get "/guide", PageController, :guide
     get "/break", PageController, :break
 
+    resources "/posts", PostController
   end
 
   scope "/", PelableWeb do

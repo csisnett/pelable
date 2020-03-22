@@ -4,6 +4,17 @@
 
   <li>
     <strong>Name:</strong>
+    <%= @project.name %>
+  </li>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @project.description %>
+  </li>
+
+  <li>
+    <strong>Uuid:</strong>
+    <%= @project.uuid %>
   </li>
 
 </ul>

@@ -1,0 +1,30 @@
+<h1>Listing Threads</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Uuid</th>
+      <th>Type</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for thread <- @threads do %>
+    <tr>
+      <td><%= thread.title %></td>
+      <td><%= thread.uuid %></td>
+      <td><%= thread.type %></td>
+
+      <td>
+        <%= link "Show", to: Routes.thread_path(@conn, :show, thread) %>
+        <%= link "Edit", to: Routes.thread_path(@conn, :edit, thread) %>
+        <%= link "Delete", to: Routes.thread_path(@conn, :delete, thread), method: :delete, data: [confirm: "Are you sure?"] %>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Thread", to: Routes.thread_path(@conn, :new) %></span>

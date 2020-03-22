@@ -1,24 +1,18 @@
 defmodule PelableWeb.ProjectControllerTest do
   use PelableWeb.ConnCase
 
-  alias Pelable.Projects
-  alias Pelable.WorkProjects
-  alias Pelable.Repo
-  alias Pelable.Users.User
-  
-  @create_attrs %{"creator_id" => 1}
-  @update_attrs %{"creator_id" => 2}
-  @invalid_attrs %{updated_at: nil}
+  alias Pelable.Learn
+
+  @create_attrs %{description: "some description", name: "some name", uuid: "7488a646-e31f-11e4-aace-600308960662"}
+  @update_attrs %{description: "some updated description", name: "some updated name", uuid: "7488a646-e31f-11e4-aace-600308960668"}
+  @invalid_attrs %{description: nil, name: nil, uuid: nil}
 
   def fixture(:project) do
-    User.changeset(%User{}, %{"creator_id" => 1,"username" => "carlos", "email" => "a@calr.com"}) |> Repo.insert
-    User.changeset(%User{}, %{"creator_id" => 1,"username" => "carlos2", "email" => "a@ca2lr.com"}) |> Repo.insert
-    {:ok, project} = Projects.create_project(@create_attrs)
+    {:ok, project} = Learn.create_project(@create_attrs)
     project
   end
 
   describe "index" do
-    
     test "lists all projects", %{conn: conn} do
       conn = get(conn, Routes.project_path(conn, :index))
       assert html_response(conn, 200) =~ "Listing Projects"
@@ -26,7 +20,6 @@ defmodule PelableWeb.ProjectControllerTest do
   end
 
   describe "new project" do
-    
     test "renders form", %{conn: conn} do
       conn = get(conn, Routes.project_path(conn, :new))
       assert html_response(conn, 200) =~ "New Project"
@@ -34,7 +27,6 @@ defmodule PelableWeb.ProjectControllerTest do
   end
 
   describe "create project" do
-    
     test "redirects to show when data is valid", %{conn: conn} do
       conn = post(conn, Routes.project_path(conn, :create), project: @create_attrs)
 
@@ -45,7 +37,6 @@ defmodule PelableWeb.ProjectControllerTest do
       assert html_response(conn, 200) =~ "Show Project"
     end
 
-    @tag :skip
     test "renders errors when data is invalid", %{conn: conn} do
       conn = post(conn, Routes.project_path(conn, :create), project: @invalid_attrs)
       assert html_response(conn, 200) =~ "New Project"
@@ -63,16 +54,15 @@ defmodule PelableWeb.ProjectControllerTest do
 
   describe "update project" do
     setup [:create_project]
-    @tag :skip
+
     test "redirects when data is valid", %{conn: conn, project: project} do
       conn = put(conn, Routes.project_path(conn, :update, project), project: @update_attrs)
       assert redirected_to(conn) == Routes.project_path(conn, :show, project)
 
       conn = get(conn, Routes.project_path(conn, :show, project))
-      assert html_response(conn, 200) =~ "some updated name"
+      assert html_response(conn, 200) =~ "some updated description"
     end
 
-    @tag :skip
     test "renders errors when data is invalid", %{conn: conn, project: project} do
       conn = put(conn, Routes.project_path(conn, :update, project), project: @invalid_attrs)
       assert html_response(conn, 200) =~ "Edit Project"

@@ -5,13 +5,13 @@
     </div>
   <% end %>
 
-  <%= label f, :name %>
-  <%= text_input f, :name %>
-  <%= error_tag f, :name %>
+  <%= label f, :body %>
+  <%= textarea f, :body %>
+  <%= error_tag f, :body %>
 
-  <%= label f, :description %>
-  <%= textarea f, :description %>
-  <%= error_tag f, :description %>
+  <%= label f, :body_html %>
+  <%= textarea f, :body_html %>
+  <%= error_tag f, :body_html %>
 
   <%= label f, :uuid %>
   <%= text_input f, :uuid %>
