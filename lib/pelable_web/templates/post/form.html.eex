@@ -1,3 +1,6 @@
+
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+
 <%= form_for @changeset, @action, fn f -> %>
   <%= if @changeset.action do %>
     <div class="alert alert-danger">
@@ -10,14 +13,40 @@
   <%= error_tag f, :body %>
 
   <%= label f, :body_html %>
-  <%= textarea f, :body_html %>
+  <%= hidden_input f, :body_html %>
   <%= error_tag f, :body_html %>
-
-  <%= label f, :uuid %>
-  <%= text_input f, :uuid %>
-  <%= error_tag f, :uuid %>
 
   <div>
     <%= submit "Save" %>
   </div>
 <% end %>
+
+<script>
+
+tinymce.init({
+        selector: '#post_body'
+      });
+/*
+var quill = new Quill('#editor-container', {
+  modules: {
+    toolbar: [
+      ['bold', 'italic'],
+      ['link', 'blockquote', 'code-block', 'image'],
+      [{ list: 'ordered' }, { list: 'bullet' }]
+    ]
+  },
+  placeholder: 'Compose an epic...',
+  theme: 'snow'
+});
+
+var form = document.querySelector('form');
+form.onsubmit = function() {
+  // Populate hidden form on submit
+  var about = document.querySelector('#post_body_html');
+  about.value = JSON.stringify(quill.getContents());
+  
+  // No back end to actually submit to!
+  return true;
+};
+*/
+</script>

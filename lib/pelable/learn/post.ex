@@ -19,7 +19,7 @@ defmodule Pelable.Learn.Post do
   def changeset(post, attrs) do
     post
     |> cast(attrs, [:body, :body_html, :parent_id, :creator_id])
-    |> validate_required([:body, :creator_id])
+    |> validate_required([:creator_id])
     |> unique_constraint(:uuid)
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:parent_id)
