@@ -7,7 +7,6 @@ defmodule Pelable.Learn.Post do
 
   schema "posts" do
     field :body, :string
-    field :body_html, :string
     field :uuid, Ecto.ShortUUID, autogenerate: true
 
     belongs_to :creator, User
@@ -18,7 +17,7 @@ defmodule Pelable.Learn.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:body, :body_html, :parent_id, :creator_id])
+    |> cast(attrs, [:body, :parent_id, :creator_id])
     |> validate_required([:creator_id])
     |> unique_constraint(:uuid)
     |> foreign_key_constraint(:creator_id)

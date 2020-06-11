@@ -8,11 +8,6 @@
   </li>
 
   <li>
-    <strong>Body html:</strong>
-    <%= @post.body_html %>
-  </li>
-
-  <li>
     <strong>Uuid:</strong>
     <%= @post.uuid %>
   </li>

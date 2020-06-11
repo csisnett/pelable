@@ -252,9 +252,9 @@ defmodule Pelable.LearnTest do
   describe "posts" do
     alias Pelable.Learn.Post
 
-    @valid_attrs %{body: "some body", body_html: "some body_html", uuid: "7488a646-e31f-11e4-aace-600308960662"}
-    @update_attrs %{body: "some updated body", body_html: "some updated body_html", uuid: "7488a646-e31f-11e4-aace-600308960668"}
-    @invalid_attrs %{body: nil, body_html: nil, uuid: nil}
+    @valid_attrs %{body: "some body", uuid: "7488a646-e31f-11e4-aace-600308960662"}
+    @update_attrs %{body: "some updated body",  uuid: "7488a646-e31f-11e4-aace-600308960668"}
+    @invalid_attrs %{body: nil, uuid: nil}
 
     def post_fixture(attrs \\ %{}) do
       {:ok, post} =
@@ -278,7 +278,6 @@ defmodule Pelable.LearnTest do
     test "create_post/1 with valid data creates a post" do
       assert {:ok, %Post{} = post} = Learn.create_post(@valid_attrs)
       assert post.body == "some body"
-      assert post.body_html == "some body_html"
       assert post.uuid == "7488a646-e31f-11e4-aace-600308960662"
     end
 
@@ -290,7 +289,6 @@ defmodule Pelable.LearnTest do
       post = post_fixture()
       assert {:ok, %Post{} = post} = Learn.update_post(post, @update_attrs)
       assert post.body == "some updated body"
-      assert post.body_html == "some updated body_html"
       assert post.uuid == "7488a646-e31f-11e4-aace-600308960668"
     end
 

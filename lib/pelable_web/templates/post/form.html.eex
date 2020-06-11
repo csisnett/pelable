@@ -1,5 +1,4 @@
-
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.tiny.cloud/1/sdh3ypn9jmqj3kkwqwci7pstdlpffoq60wpub8u9k0mhv39s/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 
 <%= form_for @changeset, @action, fn f -> %>
   <%= if @changeset.action do %>
@@ -8,13 +7,9 @@
     </div>
   <% end %>
 
-  <%= label f, :body %>
+  
   <%= textarea f, :body %>
   <%= error_tag f, :body %>
-
-  <%= label f, :body_html %>
-  <%= hidden_input f, :body_html %>
-  <%= error_tag f, :body_html %>
 
   <div>
     <%= submit "Save" %>
