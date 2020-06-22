@@ -40,7 +40,7 @@ defmodule PelableWeb.PostController do
 
   def update(conn, %{"id" => id, "post" => post_params}) do
     post = Learn.get_post!(id)
-
+    post_params = Map.put(post_params, "user_id", conn.assigns.current_user.id)
     case Learn.update_post(post, post_params) do
       {:ok, post} ->
         conn
