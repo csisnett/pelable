@@ -54,7 +54,8 @@ defmodule Pelable.MixProject do
       {:redix, "~> 0.10.2"},
       {:castore, "~> 0.1.3"},
       {:cors_plug, "~> 2.0"},
-      {:httpoison, "~> 1.6"}
+      {:httpoison, "~> 1.6"},
+      {:bodyguard, "~> 2.4"}
     ]
   end
 
