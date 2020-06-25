@@ -56,6 +56,7 @@ defmodule Pelable.Users.User do
     |> validate_required([:username, :email])
     |> lowercase_username
     |> replace_white_space
+    |> validate_length(:username, max: 15)
     |> pow_changeset(attrs)
     |> pow_extension_changeset(attrs)
     |> unique_constraint(:username)
