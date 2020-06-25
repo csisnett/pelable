@@ -519,7 +519,7 @@ defmodule Pelable.Learn do
     :ok -> 
     post
     |> Post.changeset(attrs)
-    |> Repo.update() |> IO.puts
+    |> Repo.update()
     _ ->
     end
   end
