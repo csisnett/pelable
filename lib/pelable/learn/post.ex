@@ -6,6 +6,7 @@ defmodule Pelable.Learn.Post do
   alias Pelable.Users.User
 
   schema "posts" do
+    field :title, :string
     field :body, :string
     field :uuid, Ecto.ShortUUID, autogenerate: true
 
@@ -17,7 +18,7 @@ defmodule Pelable.Learn.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:body, :parent_id, :creator_id])
+    |> cast(attrs, [:title, :body, :parent_id, :creator_id])
     |> validate_required([:creator_id])
     |> unique_constraint(:uuid)
     |> foreign_key_constraint(:creator_id)

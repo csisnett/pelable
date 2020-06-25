@@ -7,7 +7,9 @@
     </div>
   <% end %>
 
-  
+  <%= text_input f, :title, placeholder: "Untitled note"%>
+  <%= error_tag f, :title %>
+  <br> <br>
   <%= textarea f, :body %>
   <%= error_tag f, :body %>
 
