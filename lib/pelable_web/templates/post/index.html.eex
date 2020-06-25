@@ -16,9 +16,9 @@
       <td><%= post.uuid %></td>
 
       <td>
-        <%= link "Show", to: Routes.post_path(@conn, :show, post) %>
-        <%= link "Edit", to: Routes.post_path(@conn, :edit, post) %>
-        <%= link "Delete", to: Routes.post_path(@conn, :delete, post), method: :delete, data: [confirm: "Are you sure?"] %>
+        <%= link "Show", to: Routes.post_path(@conn, :show, post.title || "Untitled", post.uuid) %>
+        <%= link "Edit", to: Routes.post_path(@conn, :edit, post.title || "Untitled", post.uuid) %>
+        <%= link "Delete", to: Routes.post_path(@conn, :delete, post.title || "Untitled", post.uuid), method: :delete, data: [confirm: "Are you sure?"] %>
       </td>
     </tr>
 <% end %>

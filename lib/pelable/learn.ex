@@ -479,6 +479,8 @@ defmodule Pelable.Learn do
   """
   def get_post!(id), do: Repo.get!(Post, id)
 
+  def get_post_by_uuid(uuid), do: Repo.get_by(Post, uuid: uuid)
+
   @doc """
   Creates a post.
 
@@ -513,11 +515,12 @@ defmodule Pelable.Learn do
 
   """
   def update_post(%Post{} = post, user, attrs) do
-    with :ok <- Bodyguard.permit(Learn.Policy, :update_post, user, post)
-    do
+    case Bodyguard.permit(Learn.Policy, :update_post, user, post) do
+    :ok -> 
     post
     |> Post.changeset(attrs)
-    |> Repo.update()
+    |> Repo.update() |> IO.puts
+    _ ->
     end
   end
 

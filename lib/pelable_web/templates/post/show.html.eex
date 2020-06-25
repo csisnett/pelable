@@ -14,5 +14,5 @@
 
 </ul>
 
-<span><%= link "Edit", to: Routes.post_path(@conn, :edit, @post) %></span>
+<span><%= link "Edit", to: Routes.post_path(@conn,  :edit, @post.title || "Untitled", @post.uuid) %></span>
 <span><%= link "Back", to: Routes.post_path(@conn, :index) %></span>

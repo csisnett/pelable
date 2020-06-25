@@ -46,11 +46,15 @@ defmodule PelableWeb.Router do
     get "/layout", PageController, :layout
     get "/chat/:uuid", ChatroomController, :show
     get "/chat", PageController, :chat
-    get "/check39432", PageController, :healthcheck
     get "/guide", PageController, :guide
     get "/break", PageController, :break
 
-    resources "/posts", PostController
+    resources "/post", PostController, except: [:show, :edit, :update, :delete]
+    get "/post/:title/:uuid", PostController, :show
+    get "/post/:title/:uuid/edit", PostController, :edit
+    put "/post/:title/:uuid", PostController, :update
+    delete "/post/:title/:uuid", PostController, :delete
+    
   end
 
   scope "/", PelableWeb do
