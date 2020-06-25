@@ -15,8 +15,9 @@ defmodule PelableWeb.PostController do
   end
 
   def create(conn, %{"post" => post_params}) do
-    post_params = Map.put(post_params, "creator_id", conn.assigns.current_user.id)
-    case Learn.create_post(post_params) do
+    user = conn.assigns.current_user
+    post_params = Map.put(post_params, "creator_id", user.id)
+    case Learn.create_post(post_params, user) do
       {:ok, post} ->
         conn
         |> put_flash(:info, "Post created successfully.")
@@ -39,9 +40,10 @@ defmodule PelableWeb.PostController do
   end
 
   def update(conn, %{"id" => id, "post" => post_params}) do
+    user = conn.assigns.current_user
     post = Learn.get_post!(id)
-    post_params = Map.put(post_params, "user_id", conn.assigns.current_user.id)
-    case Learn.update_post(post, post_params) do
+
+    case Learn.update_post(post, user, post_params) do
       {:ok, post} ->
         conn
         |> put_flash(:info, "Post updated successfully.")
@@ -54,7 +56,8 @@ defmodule PelableWeb.PostController do
 
   def delete(conn, %{"id" => id}) do
     post = Learn.get_post!(id)
-    {:ok, _post} = Learn.delete_post(post)
+    user = conn.assigns.current_user
+    {:ok, _post} = Learn.delete_post(post, user)
 
     conn
     |> put_flash(:info, "Post deleted successfully.")

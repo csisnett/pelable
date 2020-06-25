@@ -2,12 +2,15 @@ defmodule Pelable.Learn do
   @moduledoc """
   The Learn context.
   """
+  alias __MODULE__
 
   import Ecto.Query, warn: false
   alias Pelable.Repo
 
   alias Pelable.Learn.{Goal, Tag}
   alias Pelable.Users.User
+
+  defdelegate authorize(action, user, params), to: Pelable.Learn.Policy
 
   def list_users do
     Repo.all(User)
@@ -488,10 +491,13 @@ defmodule Pelable.Learn do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_post(attrs \\ %{}) do
-    %Post{}
-    |> Post.changeset(attrs)
-    |> Repo.insert()
+  def create_post(attrs \\ %{}, user) do
+    with :ok <- Bodyguard.permit(Learn.Policy, :create_post, user, %Post{})
+    do
+      %Post{}
+      |> Post.changeset(attrs)
+      |> Repo.insert()
+    end
   end
 
   @doc """
@@ -506,10 +512,13 @@ defmodule Pelable.Learn do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_post(%Post{} = post, attrs) do
+  def update_post(%Post{} = post, user, attrs) do
+    with :ok <- Bodyguard.permit(Learn.Policy, :update_post, user, post)
+    do
     post
     |> Post.changeset(attrs)
     |> Repo.update()
+    end
   end
 
   @doc """
@@ -524,8 +533,11 @@ defmodule Pelable.Learn do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_post(%Post{} = post) do
+  def delete_post(%Post{} = post, user) do
+    with :ok <- Bodyguard.permit(Learn.Policy, :delete_post, user, post)
+    do
     Repo.delete(post)
+    end
   end
 
   @doc """
