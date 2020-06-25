@@ -14,6 +14,7 @@ defmodule Pelable.Users.User do
     field :username, :string
     field :nickname, :string
     field :fullname, :string
+    field :site_role, :string, default: "regular"
     
     many_to_many :goals, Goal, join_through: "user_goal"
     many_to_many :work_projects, WorkProject, join_through: "work_project_user"
@@ -46,6 +47,11 @@ defmodule Pelable.Users.User do
       username ->
         changeset |> put_change(:username, String.replace(username, ~r/ +/, ""))
     end
+  end
+
+  def changeset_role(user, attrs) do
+    user
+    |> cast(attrs, [:site_role])
   end
 
 
