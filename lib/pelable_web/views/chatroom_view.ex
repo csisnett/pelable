@@ -60,6 +60,7 @@ defmodule PelableWeb.ChatroomView do
       [] -> content_tag(:message, message.body)
       x ->
         mentions_string = Enum.reduce(message.mentions,"", fn mention, acc -> mention.user.username <> " " <> acc end)
+        #content_tag automatically escapes its content
         content_tag(:message, message.body, mentions: mentions_string)
     end
   end
