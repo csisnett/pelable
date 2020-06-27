@@ -55,6 +55,12 @@ defmodule Pelable.Users.User do
   end
 
 
+  def changeset_email(user, attrs) do
+    user
+    |> cast(attrs, [:email])
+  end
+
+
 
   def changeset(user, attrs) do
     user

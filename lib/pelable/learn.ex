@@ -35,6 +35,12 @@ defmodule Pelable.Learn do
     |> Repo.update()
   end
 
+  def update_user_email(%User{} = user, %{"email" => _} = attrs) do
+    user
+    |> User.changeset_email(attrs)
+    |> Repo.update()
+  end
+
   @doc """
   Deletes a user.
 
