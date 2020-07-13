@@ -21,7 +21,10 @@
 <script>
 
 tinymce.init({
-        selector: '#post_body'
+        selector: '#post_body',
+        plugins: "lists fullscreen autosave",
+        height: 500,
+        toolbar: "fullscreen | undo redo | styleselect | numlist bullist | bold italic | alignleft aligncenter alignright"
       });
 /*
 var quill = new Quill('#editor-container', {
