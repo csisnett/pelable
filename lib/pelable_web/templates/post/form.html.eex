@@ -22,9 +22,10 @@
 
 tinymce.init({
         selector: '#post_body',
-        plugins: "lists fullscreen autosave",
+        plugins: "lists fullscreen autosave link",
         height: 500,
-        toolbar: "fullscreen | undo redo | styleselect | numlist bullist | bold italic | alignleft aligncenter alignright"
+        toolbar: "fullscreen | undo redo | styleselect | numlist bullist | bold italic | link | alignleft aligncenter alignright",
+        link_default_protocol: "https"
       });
 /*
 var quill = new Quill('#editor-container', {
