@@ -226,6 +226,14 @@ defmodule Pelable.Chat do
     |> Repo.insert()
   end
 
+  def create_default_chatroom(%User{} = user) do
+    pelable_bot = Learn.get_user_by_username("pelable_bot")
+    attrs = %{"name" => "Private chat: Only you can see it", "creator_id" => pelable_bot.id, "type" => "private conversation"}
+    chatroom = Chat.create_chatroom_assoc(attrs)
+    {:ok, _} = add_participant(user, chatroom)
+    chatroom
+  end
+
   def create_chatroom_assoc(%{"name" => _name, "creator_id" => _id, "type" => _type} = attrs) do
     {:ok, chatroom} = create_chatroom(attrs)
     initial_message = %{"chatroom_uuid" => chatroom.uuid, "username" => "pelable_bot", "body" => "Hello there😃, this is the start of this chat!"}
