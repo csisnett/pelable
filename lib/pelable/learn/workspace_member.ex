@@ -6,8 +6,8 @@ defmodule Pelable.Learn.WorkspaceMember do
   alias Pelable.Learn.Workspace
 
   schema "workspace_member" do
-    field :role, :string, default: "team member"
-
+    field :withdrawal, :naive_datetime
+    
     belongs_to :user, User
     belongs_to :workspace, Workspace
     timestamps()
@@ -16,8 +16,8 @@ defmodule Pelable.Learn.WorkspaceMember do
   @doc false
   def changeset(workspace_member, attrs) do
     workspace_member
-    |> cast(attrs, [:role, :user_id, :workspace_id])
-    |> validate_required([:role, :user_id, :workspace_id])
+    |> cast(attrs, [:user_id, :workspace_id, :withdrawal])
+    |> validate_required([:user_id, :workspace_id])
     |> foreign_key_constraint(:user_id)
     |> foreign_key_constraint(:workspace_id)
   end
