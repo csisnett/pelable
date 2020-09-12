@@ -10,7 +10,6 @@ defmodule Pelable.Learn.Workspace do
     field :name, :string
     field :uuid, Ecto.ShortUUID, autogenerate: true
     field :slug, NameSlug.Type
-    field :personal?, :boolean, default: false
     
     belongs_to :creator, User
     belongs_to :chatroom, Chatroom
@@ -21,7 +20,7 @@ defmodule Pelable.Learn.Workspace do
   @doc false
   def changeset(workspace, attrs) do
     workspace
-    |> cast(attrs, [:name, :creator_id, :chatroom_id, :personal?])
+    |> cast(attrs, [:name, :creator_id, :chatroom_id])
     |> validate_required([:name, :creator_id, :chatroom_id])
     |> unique_constraint(:uuid)
     |> foreign_key_constraint(:creator_id)
