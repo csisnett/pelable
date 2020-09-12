@@ -7,8 +7,9 @@ defmodule Pelable.Learn do
   import Ecto.Query, warn: false
   alias Pelable.Repo
 
-  alias Pelable.Learn.{Goal, Tag}
+  alias Pelable.Learn.{Workspace, Goal, Tag, WorkspaceMember}
   alias Pelable.Users.User
+  alias Pelable.Chat
 
   defdelegate authorize(action, user, params), to: Pelable.Learn.Policy
 
@@ -40,6 +41,8 @@ defmodule Pelable.Learn do
     |> User.changeset_email(attrs)
     |> Repo.update()
   end
+
+ 
 
   @doc """
   Deletes a user.
@@ -101,6 +104,18 @@ defmodule Pelable.Learn do
   """
   def get_workspace!(id), do: Repo.get!(Workspace, id)
 
+  # Takes a user and returns its personal workspace
+  # %User{} -> %Workspace{}
+  #comments: There should only be one personal workspace per user, each user is the creator of its personal workspace
+  def get_personal_workspace(%User{} = user) do
+    query = from wm in WorkspaceMember,
+    where: wm.user_id == ^user.id and wm.personal? == true,
+    join: w in Workspace,
+    on: w.id == wm.workspace_id,
+    select: w
+    Repo.one(query)
+  end
+
   @doc """
   Creates a workspace.
 
@@ -117,6 +132,18 @@ defmodule Pelable.Learn do
     %Workspace{}
     |> Workspace.changeset(attrs)
     |> Repo.insert()
+  end
+
+
+  #Creates a personal workspace for the user and its own chatroom as well.
+  # %User{} -> %Workspace{creator_id: user.id, :personal?: true}
+  def create_personal_workspace(%User{} = user) do
+    chatroom = Chat.create_default_chatroom(user)
+    workspace_params = %{"name" => "My workspace", "creator_id" => user.id, "chatroom_id" => chatroom.id}
+    {:ok, workspace} = create_workspace(workspace_params)
+    workspace_member_params = %{"user_id" => user.id, "workspace_id" => workspace.id, "personal?" => true}
+    {:ok, workspace_member} = create_workspace_member(workspace_member_params)
+    workspace
   end
 
   @doc """
@@ -309,6 +336,16 @@ defmodule Pelable.Learn do
     %Project{}
     |> Project.changeset(attrs)
     |> Repo.insert()
+  end
+
+  #Creates a new project for the user given
+  # %{"name", "description"}, %User{} -> %Project{}
+  def create_project(%{} = project_params, %User{} = user) do
+    personal_workspace = get_personal_workspace(user)
+    project_params
+    |> Map.put("creator_id", user.id) 
+    |> Map.put("workspace_id", personal_workspace.id) 
+    |> create_project
   end
 
   @doc """

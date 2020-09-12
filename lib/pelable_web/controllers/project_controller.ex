@@ -15,7 +15,8 @@ defmodule PelableWeb.ProjectController do
   end
 
   def create(conn, %{"project" => project_params}) do
-    case Learn.create_project(project_params) do
+    user = conn.assigns.current_user
+    case Learn.create_project(project_params, user) do
       {:ok, project} ->
         conn
         |> put_flash(:info, "Project created successfully.")
