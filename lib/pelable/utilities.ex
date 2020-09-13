@@ -1,5 +1,7 @@
 defmodule Pelable.Utilities do
 
+  import Ecto.Changeset
+  
     def markdown_to_html(changeset) do
         case changeset do
           %Ecto.Changeset{valid?: true, changes: %{description_markdown: description}} ->
