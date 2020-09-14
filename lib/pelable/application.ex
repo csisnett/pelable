@@ -17,6 +17,8 @@ defmodule Pelable.Application do
       # Starts a worker by calling: Pelable.Worker.start_link(arg)
       # {Pelable.Worker, arg},
 
+      {Phoenix.PubSub, [name: Pelable.PubSub, adapter: Phoenix.PubSub.PG2]},
+      
       {Redix, {@redis_url, [name: :redix]}},
       # # Or in a distributed system:
       # {Pow.Store.Backend.MnesiaCache, extra_db_nodes: Node.list()},

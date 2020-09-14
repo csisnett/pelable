@@ -15,7 +15,7 @@ config :pelable, PelableWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "rco4O02JtEqNj3mWNwfw1MpK/tHqZSKMvYRSiYQy1LGTzudZk38ohbHOlBlXEhNd",
   render_errors: [view: PelableWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Pelable.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub_server: Pelable.PubSub
 
 # Configures Elixir's Logger
 config :logger, :console,
