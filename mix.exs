@@ -5,7 +5,7 @@ defmodule Pelable.MixProject do
     [
       app: :pelable,
       version: "0.1.0",
-      elixir: "~> 1.5",
+      elixir: "~> 1.10.4",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -33,29 +33,29 @@ defmodule Pelable.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.4.0"},
-      {:phoenix_pubsub, "~> 1.1"},
-      {:phoenix_ecto, "~> 4.0"},
-      {:ecto_sql, "~> 3.0"},
-      {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 2.11"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:gettext, "~> 0.11"},
-      {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"},
-      {:pow, "~> 1.0.12"},
-      {:html_sanitize_ex, "~> 1.3.0-rc3"},
-      {:earmark, "~> 1.3"},
-      {:ecto_autoslug_field, "~> 2.0"},
-      {:ecto_shortuuid, "~> 0.1.2"},
-      {:swoosh, "~> 0.23.4"},
+      {:phoenix, "~> 1.5.4"},
+      {:phoenix_pubsub, "~> 2.0"},
+      {:phoenix_ecto, "~> 4.2.0"},
+      {:ecto_sql, "~> 3.4.5"},
+      {:postgrex, ">= 0.15.5"},
+      {:phoenix_html, "~> 2.14.2"},
+      {:phoenix_live_reload, "~> 1.2.4", only: :dev},
+      {:gettext, "~> 0.18.1"},
+      {:jason, "~> 1.2.2"},
+      {:plug_cowboy, "~> 2.3.0"},
+      {:pow, "~> 1.0.21"},
+      {:html_sanitize_ex, "~> 1.4.1"},
+      {:earmark, "~> 1.4.10"},
+      {:ecto_autoslug_field, "~> 2.0.1"},
+      {:ecto_shortuuid, "~> 0.1.3"},
+      {:swoosh, "~> 0.23.5"},
       {:plug_attack, "~> 0.4.2"},
       {:remote_ip, "~> 0.1.5"},
       {:redix, "~> 0.10.2"},
-      {:castore, "~> 0.1.3"},
-      {:cors_plug, "~> 2.0"},
-      {:httpoison, "~> 1.6"},
-      {:bodyguard, "~> 2.4"}
+      {:castore, "~> 0.1.7"},
+      {:cors_plug, "~> 2.0.2"},
+      {:httpoison, "~> 1.7.0"},
+      {:bodyguard, "~> 2.4.0"}
     ]
   end
 
