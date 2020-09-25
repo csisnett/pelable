@@ -3,7 +3,7 @@ defmodule Pelable.Learn.Project do
   import Ecto.Changeset
 
   alias Pelable.Users.User
-  alias Pelable.Learn.{NameSlug, Workspace}
+  alias Pelable.Learn.{NameSlug}
 
   schema "projects" do
     field :name, :string
@@ -13,7 +13,6 @@ defmodule Pelable.Learn.Project do
 
 
     belongs_to :creator, User
-    belongs_to :workspace, Workspace
 
     timestamps()
   end
@@ -21,10 +20,9 @@ defmodule Pelable.Learn.Project do
   @doc false
   def changeset(project, attrs) do
     project
-    |> cast(attrs, [:name, :description, :workspace_id, :creator_id])
-    |> validate_required([:name, :workspace_id, :creator_id])
+    |> cast(attrs, [:name, :description, :creator_id])
+    |> validate_required([:name, :creator_id])
     |> foreign_key_constraint(:creator_id)
-    |> foreign_key_constraint(:workspace_id)
     |> unique_constraint(:uuid)
     |> NameSlug.maybe_generate_slug
   end
