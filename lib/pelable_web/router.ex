@@ -35,9 +35,8 @@ defmodule PelableWeb.Router do
   scope "/", PelableWeb do
     pipe_through [:browser]
 
-    resources "/projects", WorkProjectController, except: [:show, :create, :new]
-    get "/p/:slug/:uuid", WorkProjectController, :show
-    resources "/project_versions", ProjectVersionController
+    resources "/projects", ProjectController
+    get "/p/:slug/:uuid", ProjectController, :show
     resources "/goals", GoalController
     get "/program", PageController, :landing
     get "/apply", PageController, :apply
@@ -62,13 +61,9 @@ defmodule PelableWeb.Router do
     post "chat/:uuid/new_participant", ChatroomController, :new_participant
     post "chat/:uuid/decline", ChatroomController, :decline
     post "chat/:uuid/new_team", ChatroomController, :new_team
-    get "/p/:slug/:uuid/user-stories/new", UserStoryController, :new
-    post "/p/:slug/:uuid/user-stories/new", UserStoryController, :create
-    get "/user-stories/:uuid", UserStoryController, :edit
-    put "/user-stories/:uuid", UserStoryController, :update
-    delete "/user-stories/:uuid", UserStoryController, :delete
-    get "/projects/new", WorkProjectController, :new
-    post "/projects", WorkProjectController, :create
+
+    get "/projects/new", ProjectController, :new
+    post "/projects", ProjectController, :create
     get "/start_project/:uuid", WorkProjectController, :start
     post "/start_project/:uuid", WorkProjectController, :start
     
@@ -76,11 +71,6 @@ defmodule PelableWeb.Router do
 
   scope "/", PelableWeb do
     pipe_through [:api, :protected]
-
-    post "/p/slug/:uuid/user_stories", WorkProjectUserStoryController, :create
-    put "/p/slug/:uuid/user_stories/:id", WorkProjectUserStoryController, :update
-    delete "/p/slug/:uuid/user_stories/:id", WorkProjectUserStoryController, :delete
-
   end
 
   # Other scopes may use custom stacks.
