@@ -66,69 +66,6 @@ defmodule Pelable.LearnTest do
     end
   end
 
-  describe "sections" do
-    alias Pelable.Learn.Section
-
-    @valid_attrs %{name: "some name", slug: "some slug", uuid: "7488a646-e31f-11e4-aace-600308960662"}
-    @update_attrs %{name: "some updated name", slug: "some updated slug", uuid: "7488a646-e31f-11e4-aace-600308960668"}
-    @invalid_attrs %{name: nil, slug: nil, uuid: nil}
-
-    def section_fixture(attrs \\ %{}) do
-      {:ok, section} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Learn.create_section()
-
-      section
-    end
-
-    test "list_sections/0 returns all sections" do
-      section = section_fixture()
-      assert Learn.list_sections() == [section]
-    end
-
-    test "get_section!/1 returns the section with given id" do
-      section = section_fixture()
-      assert Learn.get_section!(section.id) == section
-    end
-
-    test "create_section/1 with valid data creates a section" do
-      assert {:ok, %Section{} = section} = Learn.create_section(@valid_attrs)
-      assert section.name == "some name"
-      assert section.slug == "some slug"
-      assert section.uuid == "7488a646-e31f-11e4-aace-600308960662"
-    end
-
-    test "create_section/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Learn.create_section(@invalid_attrs)
-    end
-
-    test "update_section/2 with valid data updates the section" do
-      section = section_fixture()
-      assert {:ok, %Section{} = section} = Learn.update_section(section, @update_attrs)
-      assert section.name == "some updated name"
-      assert section.slug == "some updated slug"
-      assert section.uuid == "7488a646-e31f-11e4-aace-600308960668"
-    end
-
-    test "update_section/2 with invalid data returns error changeset" do
-      section = section_fixture()
-      assert {:error, %Ecto.Changeset{}} = Learn.update_section(section, @invalid_attrs)
-      assert section == Learn.get_section!(section.id)
-    end
-
-    test "delete_section/1 deletes the section" do
-      section = section_fixture()
-      assert {:ok, %Section{}} = Learn.delete_section(section)
-      assert_raise Ecto.NoResultsError, fn -> Learn.get_section!(section.id) end
-    end
-
-    test "change_section/1 returns a section changeset" do
-      section = section_fixture()
-      assert %Ecto.Changeset{} = Learn.change_section(section)
-    end
-  end
-
   describe "posts" do
     alias Pelable.Learn.Post
 
