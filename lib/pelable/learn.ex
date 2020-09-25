@@ -125,10 +125,8 @@ defmodule Pelable.Learn do
   #Creates a new project for the user given
   # %{"name", "description"}, %User{} -> %Project{}
   def create_project(%{} = project_params, %User{} = user) do
-    personal_workspace = get_personal_workspace(user)
     project_params
     |> Map.put("creator_id", user.id) 
-    |> Map.put("workspace_id", personal_workspace.id) 
     |> create_project
   end
 
