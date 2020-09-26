@@ -125,9 +125,7 @@ defmodule Pelable.Learn do
   #Creates a new project for the user given
   # %{"name", "description"}, %User{} -> %Project{}
   def create_project(%{} = project_params, %User{} = user) do
-    project_params
-    |> Map.put("creator_id", user.id) 
-    |> create_project
+    {:ok, project} = project_params |> Map.put("creator_id", user.id) |> create_project
   end
 
   @doc """
@@ -176,6 +174,34 @@ defmodule Pelable.Learn do
   def change_project(%Project{} = project) do
     Project.changeset(project, %{})
   end
+
+  alias Pelable.Learn.ProjectMember
+
+
+
+
+  def create_project_member(attrs \\ %{}) do
+    %ProjectMember{}
+    |> ProjectMember.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_project_member(%ProjectMember{} = project_member, attrs) do
+    project_member
+    |> ProjectMember.changeset(attrs)
+    |> Repo.update()
+  end
+
+
+  def delete_project_member(%ProjectMember{} = project_member) do
+    Repo.delete(project_member)
+  end
+
+  def change_project_member(%ProjectMember{} = project_member) do
+    ProjectMember.changeset(project_member, %{})
+  end
+
+
 
   alias Pelable.Learn.Post
 
