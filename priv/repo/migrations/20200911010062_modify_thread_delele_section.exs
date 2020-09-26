@@ -5,6 +5,6 @@ defmodule Pelable.Repo.Migrations.ModifyThreadDeleleSection do
     alter table(:threads) do
       remove :section_id
     end
-    remove index(:threads, [:section_id])
+    drop index(:threads, [:section_id])
   end
 end
