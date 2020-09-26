@@ -126,6 +126,8 @@ defmodule Pelable.Learn do
   # %{"name", "description"}, %User{} -> %Project{}
   def create_project(%{} = project_params, %User{} = user) do
     {:ok, project} = project_params |> Map.put("creator_id", user.id) |> create_project
+    {:ok, _project_member} = create_project_member(%{"user_id" => user.id, "project_id" => project.id})
+    project
   end
 
   @doc """
@@ -178,7 +180,14 @@ defmodule Pelable.Learn do
   alias Pelable.Learn.ProjectMember
 
 
-
+  def get_projects(%User{} = user) do
+    query = from pm in ProjectMember,
+    where: pm.user_id == ^user.id,
+    join: p in Project,
+    on: p.id == pm.project_id,
+    select: p
+    Repo.all(query)
+  end
 
   def create_project_member(attrs \\ %{}) do
     %ProjectMember{}
