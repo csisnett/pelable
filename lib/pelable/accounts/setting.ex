@@ -8,6 +8,7 @@ defmodule Pelable.Accounts.Setting do
   schema "settings" do
     field :setting_key, :string
     field :value, :string
+    field :uuid, Ecto.ShortUUID, autogenerate: true
 
     belongs_to :user, User
     timestamps()
