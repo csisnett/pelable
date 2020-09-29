@@ -1,0 +1,8 @@
+<h1>Show Setting</h1>
+
+<ul>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.setting_path(@conn, :edit, @setting) %></span>
+<span><%= link "Back", to: Routes.setting_path(@conn, :index) %></span>
