@@ -5,7 +5,6 @@ defmodule Pelable.Users.User do
   import Ecto.Changeset
 
   alias Pelable.Repo
-  alias Pelable.WorkProjects.{ProjectVersion, WorkProject}
   alias Pelable.Users.User
   alias Pelable.Learn.Goal
   alias Pelable.Chat.{LastConnection, Chatroom, Message}
@@ -17,8 +16,6 @@ defmodule Pelable.Users.User do
     field :site_role, :string, default: "regular"
     
     many_to_many :goals, Goal, join_through: "user_goal"
-    many_to_many :work_projects, WorkProject, join_through: "work_project_user"
-    many_to_many :project_bookmarks, WorkProject, join_through: "project_bookmark"
     many_to_many :joined_chats, Chatroom, join_through: "chatroom_participant"
     many_to_many :chat_invitations, Chatroom, join_through: "chatroom_invitation"
     many_to_many :chat_connections, Chatroom, join_through: "last_connection"

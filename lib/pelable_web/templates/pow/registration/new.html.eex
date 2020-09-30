@@ -31,6 +31,7 @@ Sign up to join our community!
   <%= if message = f.errors[:confirm_password] do %>
     <span id="error"> <%= translate_error(message) %> </span>
      <% end %>
+     <%= hidden_input f, :timezone%>
 <br>
   
     <%= submit "Register", class: "btn btn-primary btn-lg"%>

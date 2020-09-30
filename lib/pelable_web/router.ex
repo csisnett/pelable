@@ -64,8 +64,6 @@ defmodule PelableWeb.Router do
 
     get "/projects/new", ProjectController, :new
     post "/projects", ProjectController, :create
-    get "/start_project/:uuid", WorkProjectController, :start
-    post "/start_project/:uuid", WorkProjectController, :start
 
     get "/settings/", SettingController, :index
     put "/settings", SettingController, :update
