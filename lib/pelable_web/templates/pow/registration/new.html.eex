@@ -26,9 +26,9 @@ Sign up to join our community!
     <span id="error"> <%= translate_error(message) %> </span>
      <% end %>
 <br><br>
-  <%= label f, :confirm_password %>
-  <%= password_input f, :confirm_password %>
-  <%= if message = f.errors[:confirm_password] do %>
+  <%= label f, :password_confirmation %>
+  <%= password_input f, :password_confirmation %>
+  <%= if message = f.errors[:password_confirmation] do %>
     <span id="error"> <%= translate_error(message) %> </span>
      <% end %>
      <%= hidden_input f, :timezone%>
@@ -40,3 +40,8 @@ Sign up to join our community!
 
 
 <span><%= link "Sign in", to: Routes.pow_session_path(@conn, :new) %></span>
+
+<script>
+var timezone_element = document.getElementById("user_timezone");
+timezone_element.value = Intl.DateTimeFormat().resolvedOptions().timeZone
+</script>

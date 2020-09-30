@@ -55,7 +55,8 @@ defmodule Pelable.MixProject do
       {:castore, "~> 0.1.7"},
       {:cors_plug, "~> 2.0.2"},
       {:httpoison, "~> 1.7.0"},
-      {:bodyguard, "~> 2.4.0"}
+      {:bodyguard, "~> 2.4.0"},
+      {:tzdata, "~> 1.0.3"}
     ]
   end
 
