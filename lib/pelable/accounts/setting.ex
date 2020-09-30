@@ -3,7 +3,7 @@ defmodule Pelable.Accounts.Setting do
   import Ecto.Changeset
   alias Pelable.Users.User
 
-  @valid_setting_keys ["timezone"]
+  @valid_setting_keys ["timezone", "admin"]
 
   schema "settings" do
     field :setting_key, :string

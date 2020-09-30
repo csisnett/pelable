@@ -4,21 +4,21 @@
   <thead>
     <tr>
 
-      <th scope="col"> name     </th>
-      <th scope="col"> value     </th>
-      <th scope="col"> </th>
+      <th scope="col"> name </th>
+      <th scope="col"> value </th>
+     
     </tr>
   </thead>
   <tbody>
+ <%= form_tag("/settings", [method: "put"])%>
+  <input class="btn btn-outline-primary" type="submit" value="update settings">
 <%= for setting <- @settings do %>
     <tr>
-    <th scope="row"> <%= setting.setting_key %> </th>
-    <td> <%= setting.value%> </td>
-    <td>
-        <span><%= link "Edit", to: Routes.setting_path(@conn, :edit, setting) %></span>
-      </td>
+    <th scope="row"><label for="<%= setting.setting_key %>"> <%= setting.setting_key %> </label> </th>
+    <td> <input id="<%= setting.setting_key %>" name="<%= setting.setting_key %>" value="<%= setting.value %>" type="text">  </td>
     </tr>
     </tr>
 <% end %>
+</form>
   </tbody>
 </table>

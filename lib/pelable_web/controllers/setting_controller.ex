@@ -39,17 +39,18 @@ defmodule PelableWeb.SettingController do
     render(conn, "edit.html", setting: setting, changeset: changeset)
   end
 
-  def update(conn, %{"id" => id, "setting" => setting_params}) do
-    setting = Accounts.get_setting!(id)
-
-    case Accounts.update_setting(setting, setting_params) do
-      {:ok, setting} ->
+  # %{"timezone" => _, ...}
+  def update(conn, setting_params) do
+    current_user = conn.assigns.current_user
+    case Accounts.update_settings(setting_params, current_user) do
+      [_|_] ->
         conn
-        |> put_flash(:info, "Setting updated successfully.")
-        |> redirect(to: Routes.setting_path(conn, :show, setting))
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", setting: setting, changeset: changeset)
+        |> put_flash(:info, "Settings were updated successfully.")
+        |> redirect(to: Routes.setting_path(conn, :index))
+        [] -> 
+          conn
+          |> put_flash(:info, "No settings were changed.")
+          |> redirect(to: Routes.setting_path(conn, :index))
     end
   end
 
