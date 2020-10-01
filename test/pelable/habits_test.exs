@@ -65,4 +65,63 @@ defmodule Pelable.HabitsTest do
       assert %Ecto.Changeset{} = Habits.change_habit(habit)
     end
   end
+
+  describe "streaks" do
+    alias Pelable.Habits.Streak
+
+    @valid_attrs %{habit: "some habit"}
+    @update_attrs %{habit: "some updated habit"}
+    @invalid_attrs %{habit: nil}
+
+    def streak_fixture(attrs \\ %{}) do
+      {:ok, streak} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_streak()
+
+      streak
+    end
+
+    test "list_streaks/0 returns all streaks" do
+      streak = streak_fixture()
+      assert Habits.list_streaks() == [streak]
+    end
+
+    test "get_streak!/1 returns the streak with given id" do
+      streak = streak_fixture()
+      assert Habits.get_streak!(streak.id) == streak
+    end
+
+    test "create_streak/1 with valid data creates a streak" do
+      assert {:ok, %Streak{} = streak} = Habits.create_streak(@valid_attrs)
+      assert streak.habit == "some habit"
+    end
+
+    test "create_streak/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_streak(@invalid_attrs)
+    end
+
+    test "update_streak/2 with valid data updates the streak" do
+      streak = streak_fixture()
+      assert {:ok, %Streak{} = streak} = Habits.update_streak(streak, @update_attrs)
+      assert streak.habit == "some updated habit"
+    end
+
+    test "update_streak/2 with invalid data returns error changeset" do
+      streak = streak_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_streak(streak, @invalid_attrs)
+      assert streak == Habits.get_streak!(streak.id)
+    end
+
+    test "delete_streak/1 deletes the streak" do
+      streak = streak_fixture()
+      assert {:ok, %Streak{}} = Habits.delete_streak(streak)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_streak!(streak.id) end
+    end
+
+    test "change_streak/1 returns a streak changeset" do
+      streak = streak_fixture()
+      assert %Ecto.Changeset{} = Habits.change_streak(streak)
+    end
+  end
 end
