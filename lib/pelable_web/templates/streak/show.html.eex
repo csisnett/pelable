@@ -1,0 +1,13 @@
+<h1>Show Streak</h1>
+
+<ul>
+
+  <li>
+    <strong>Habit:</strong>
+    <%= @streak.habit %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.streak_path(@conn, :edit, @streak) %></span>
+<span><%= link "Back", to: Routes.streak_path(@conn, :index) %></span>

@@ -1,0 +1,5 @@
+<h1>Edit Streak</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.streak_path(@conn, :update, @streak)) %>
+
+<span><%= link "Back", to: Routes.streak_path(@conn, :index) %></span>

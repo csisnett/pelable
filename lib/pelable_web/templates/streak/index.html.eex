@@ -1,0 +1,26 @@
+<h1>Listing Streaks</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Habit</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for streak <- @streaks do %>
+    <tr>
+      <td><%= streak.habit %></td>
+
+      <td>
+        <span><%= link "Show", to: Routes.streak_path(@conn, :show, streak) %></span>
+        <span><%= link "Edit", to: Routes.streak_path(@conn, :edit, streak) %></span>
+        <span><%= link "Delete", to: Routes.streak_path(@conn, :delete, streak), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Streak", to: Routes.streak_path(@conn, :new) %></span>
