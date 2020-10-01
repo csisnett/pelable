@@ -1,0 +1,30 @@
+<h1>Listing Habits</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Time frequency</th>
+      <th>Archived?</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for habit <- @habits do %>
+    <tr>
+      <td><%= habit.name %></td>
+      <td><%= habit.time_frequency %></td>
+      <td><%= habit.archived? %></td>
+
+      <td>
+        <span><%= link "Show", to: Routes.habit_path(@conn, :show, habit) %></span>
+        <span><%= link "Edit", to: Routes.habit_path(@conn, :edit, habit) %></span>
+        <span><%= link "Delete", to: Routes.habit_path(@conn, :delete, habit), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Habit", to: Routes.habit_path(@conn, :new) %></span>
