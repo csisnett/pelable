@@ -6,7 +6,9 @@ defmodule Pelable.Habits do
   import Ecto.Query, warn: false
   alias Pelable.Repo
 
-  alias Pelable.Habits.Habit
+  alias Pelable.Users.User
+  alias Pelable.Habits.{Habit, Streak, HabitCompletion}
+  alias Pelable.Accounts
 
   @doc """
   Returns the list of habits.
@@ -37,6 +39,15 @@ defmodule Pelable.Habits do
   """
   def get_habit!(id), do: Repo.get!(Habit, id)
 
+  def get_habit_by_uuid(uuid) do
+    Repo.get_by(Habit, uuid: uuid)
+  end
+
+  def get_user_timezone(%User{} = user) do
+    setting = Accounts.get_user_setting("timezone", user)
+    setting.value
+  end
+
   @doc """
   Creates a habit.
 
@@ -53,6 +64,93 @@ defmodule Pelable.Habits do
     %Habit{}
     |> Habit.changeset(attrs)
     |> Repo.insert()
+  end
+
+  # Takes a map and a user returns a new Habit which has a new streak as well.
+  # %{} -> %Habit{}
+  def create_habit(%{} = params, %User{} = user) do
+    params = params |> Map.put("user_id", user.id)
+    {:ok, habit} = create_habit(params)
+    streak_params = %{"habit_id" => habit.id}
+    create_streak(streak_params)
+    habit
+  end
+
+  # Converts a day & time in UTC to the equivalent day & time in another timezone
+  # %NaiveDateTime{}, String -> %DateTime{}
+  def convert_to_local_time(%NaiveDateTime{} = naive, local_timezone) do
+    {:ok, date_time} = DateTime.from_naive(naive, "Etc/UTC")
+    {:ok, local_datetime} = DateTime.shift_zone(date_time, local_timezone, Tzdata.TimeZoneDatabase)
+    local_datetime
+  end
+
+  #Takes a naive date time and a time zone and turns it to a DateTime with that timezone
+  # %NaiveDateTime{}, String -> %DateTime{}
+  def add_timezone(%NaiveDateTime{} = naive, timezone) do
+    {:ok, date_time} = DateTime.from_naive(naive, timezone, Tzdata.TimeZoneDatabase)
+    date_time
+  end
+
+  #Get last habitcompletion, habit frequency and return true if habit completion has been under habit frequency
+  def is_streak_active?(%Streak{} = streak, local_present_time, timezone, time_frequency = "daily") do
+    habit_completion = get_last_habit_completion(streak)
+    case habit_completion do
+      nil ->
+        streak_creation_time = convert_to_local_time(streak.created_at, timezone)
+        streak_creation_time.day == local_present_time.day #Returns true if we're in the same day the streak was created
+
+      habit_completion ->
+        completion_date = habit_completion.created_at_local_datetime |> add_timezone(timezone) |> DateTime.to_date
+        present_date = local_present_time |> DateTime.to_date
+
+        Date.diff(present_date, completion_date) <= 1 # Returns true if habit completion was today or yesterday
+    end
+
+  end
+
+  #Gets a habit and returns an active streak.
+  #If the last streak is still active it returns it otherwise creates a new one.
+  # %Habit{} -> %Streak{}
+  def get_or_create_active_streak(%Habit{} = habit, local_present_time, timezone) do
+    streak = get_last_streak(habit)
+    case is_streak_active?(streak, local_present_time, timezone, habit.time_frequency) do
+      true -> streak
+      false -> 
+        {:ok, new_streak} = create_streak(%{"habit_id" => habit.id})
+        new_streak
+    end
+  end
+
+  def get_last_streak(%Habit{} = habit) do
+    query = 
+    from s in Streak,
+    where: s.habit_id == ^habit.id,
+    order_by: [desc: s.id],
+    limit: 1
+    Repo.one(query)
+  end
+
+  def get_last_habit_completion(%Streak{} = streak) do
+    query = 
+    from hc in HabitCompletion,
+    where: hc.streak_id == ^streak.id,
+    order_by: [desc: hc.id],
+    limit: 1
+    Repo.one(query)
+  end
+
+  #Gets a map with a habit's uuid and a user and returns a new habit completion
+  # %{}, %User{} -> %HabitCompletion{}
+  def create_habit_completion(%{"habit_uuid" => uuid} = params, %User{} = user) do
+    timezone = get_user_timezone(user)
+    {:ok, local_present_time} = DateTime.now(timezone, Tzdata.TimeZoneDatabase)
+    active_streak = get_habit_by_uuid(uuid) |> get_or_create_active_streak(local_present_time, timezone)
+    
+    params
+    |> Map.put("streak_id", active_streak.id)
+    |> Map.put("local_timezone", timezone) 
+    |> Map.put("created_at_local_datetime", local_present_time)
+    |> create_habit_completion
   end
 
   @doc """

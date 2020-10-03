@@ -10,3 +10,5 @@ alias Pelable.Batches
 alias Pelable.Chat.{Chatroom, Message, Participant, Invitation, Mention}
 alias Pelable.Monitor
 alias Pelable.Notifications
+alias Pelable.Habits
+alias Pelable.Habits.{Habit, Streak, HabitCompletion}
