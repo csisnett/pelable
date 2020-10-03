@@ -124,4 +124,63 @@ defmodule Pelable.HabitsTest do
       assert %Ecto.Changeset{} = Habits.change_streak(streak)
     end
   end
+
+  describe "habitcompletion" do
+    alias Pelable.Habits.HabitCompletion
+
+    @valid_attrs %{local_datetime: ~N[2010-04-17 14:00:00]}
+    @update_attrs %{local_datetime: ~N[2011-05-18 15:01:01]}
+    @invalid_attrs %{local_datetime: nil}
+
+    def habit_completion_fixture(attrs \\ %{}) do
+      {:ok, habit_completion} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_habit_completion()
+
+      habit_completion
+    end
+
+    test "list_habitcompletion/0 returns all habitcompletion" do
+      habit_completion = habit_completion_fixture()
+      assert Habits.list_habitcompletion() == [habit_completion]
+    end
+
+    test "get_habit_completion!/1 returns the habit_completion with given id" do
+      habit_completion = habit_completion_fixture()
+      assert Habits.get_habit_completion!(habit_completion.id) == habit_completion
+    end
+
+    test "create_habit_completion/1 with valid data creates a habit_completion" do
+      assert {:ok, %HabitCompletion{} = habit_completion} = Habits.create_habit_completion(@valid_attrs)
+      assert habit_completion.local_datetime == ~N[2010-04-17 14:00:00]
+    end
+
+    test "create_habit_completion/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_habit_completion(@invalid_attrs)
+    end
+
+    test "update_habit_completion/2 with valid data updates the habit_completion" do
+      habit_completion = habit_completion_fixture()
+      assert {:ok, %HabitCompletion{} = habit_completion} = Habits.update_habit_completion(habit_completion, @update_attrs)
+      assert habit_completion.local_datetime == ~N[2011-05-18 15:01:01]
+    end
+
+    test "update_habit_completion/2 with invalid data returns error changeset" do
+      habit_completion = habit_completion_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_habit_completion(habit_completion, @invalid_attrs)
+      assert habit_completion == Habits.get_habit_completion!(habit_completion.id)
+    end
+
+    test "delete_habit_completion/1 deletes the habit_completion" do
+      habit_completion = habit_completion_fixture()
+      assert {:ok, %HabitCompletion{}} = Habits.delete_habit_completion(habit_completion)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_habit_completion!(habit_completion.id) end
+    end
+
+    test "change_habit_completion/1 returns a habit_completion changeset" do
+      habit_completion = habit_completion_fixture()
+      assert %Ecto.Changeset{} = Habits.change_habit_completion(habit_completion)
+    end
+  end
 end

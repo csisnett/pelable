@@ -197,4 +197,100 @@ defmodule Pelable.Habits do
   def change_streak(%Streak{} = streak, attrs \\ %{}) do
     Streak.changeset(streak, attrs)
   end
+
+  alias Pelable.Habits.HabitCompletion
+
+  @doc """
+  Returns the list of habitcompletion.
+
+  ## Examples
+
+      iex> list_habitcompletion()
+      [%HabitCompletion{}, ...]
+
+  """
+  def list_habitcompletion do
+    Repo.all(HabitCompletion)
+  end
+
+  @doc """
+  Gets a single habit_completion.
+
+  Raises `Ecto.NoResultsError` if the Habit completion does not exist.
+
+  ## Examples
+
+      iex> get_habit_completion!(123)
+      %HabitCompletion{}
+
+      iex> get_habit_completion!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_habit_completion!(id), do: Repo.get!(HabitCompletion, id)
+
+  @doc """
+  Creates a habit_completion.
+
+  ## Examples
+
+      iex> create_habit_completion(%{field: value})
+      {:ok, %HabitCompletion{}}
+
+      iex> create_habit_completion(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_habit_completion(attrs \\ %{}) do
+    %HabitCompletion{}
+    |> HabitCompletion.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a habit_completion.
+
+  ## Examples
+
+      iex> update_habit_completion(habit_completion, %{field: new_value})
+      {:ok, %HabitCompletion{}}
+
+      iex> update_habit_completion(habit_completion, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_habit_completion(%HabitCompletion{} = habit_completion, attrs) do
+    habit_completion
+    |> HabitCompletion.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a habit_completion.
+
+  ## Examples
+
+      iex> delete_habit_completion(habit_completion)
+      {:ok, %HabitCompletion{}}
+
+      iex> delete_habit_completion(habit_completion)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_habit_completion(%HabitCompletion{} = habit_completion) do
+    Repo.delete(habit_completion)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking habit_completion changes.
+
+  ## Examples
+
+      iex> change_habit_completion(habit_completion)
+      %Ecto.Changeset{data: %HabitCompletion{}}
+
+  """
+  def change_habit_completion(%HabitCompletion{} = habit_completion, attrs \\ %{}) do
+    HabitCompletion.changeset(habit_completion, attrs)
+  end
 end

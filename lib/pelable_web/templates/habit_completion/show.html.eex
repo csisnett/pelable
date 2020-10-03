@@ -1,0 +1,13 @@
+<h1>Show Habit completion</h1>
+
+<ul>
+
+  <li>
+    <strong>Local datetime:</strong>
+    <%= @habit_completion.local_datetime %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.habit_completion_path(@conn, :edit, @habit_completion) %></span>
+<span><%= link "Back", to: Routes.habit_completion_path(@conn, :index) %></span>

@@ -1,0 +1,26 @@
+<h1>Listing Habitcompletion</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Local datetime</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for habit_completion <- @habitcompletion do %>
+    <tr>
+      <td><%= habit_completion.local_datetime %></td>
+
+      <td>
+        <span><%= link "Show", to: Routes.habit_completion_path(@conn, :show, habit_completion) %></span>
+        <span><%= link "Edit", to: Routes.habit_completion_path(@conn, :edit, habit_completion) %></span>
+        <span><%= link "Delete", to: Routes.habit_completion_path(@conn, :delete, habit_completion), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Habit completion", to: Routes.habit_completion_path(@conn, :new) %></span>
