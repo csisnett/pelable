@@ -48,6 +48,75 @@ defmodule Pelable.Habits do
     setting.value
   end
 
+  # %User{} -> [%Habit{}, ...]
+  # Produces a list of all (current and archived) user's habits
+  def list_user_habits(%User{} = user) do
+    query = from h in Habit, where: h.user_id == ^user.id, select: h
+    Repo.all(query)
+  end
+
+  # %User{} -> [%Habit{}, ...]
+  # Produces a list of a user's current habits
+  def list_user_current_habits(%User{} = user) do
+    query = from h in Habit, where: h.user_id == ^user.id and h.archived? == false, select: h
+    Repo.all(query)
+  end
+
+  
+  # %Streak{}, String, String -> %Streak{}
+  #Receives a streak, if active it adds the count value to the streak. If inactive creates a new streak with count: 0
+  def count_streak(%Streak{} = streak, timezone, time_frequency = "daily") do
+    case is_streak_active?(streak, timezone, time_frequency) do
+      true ->
+        count = count_habit_completions(streak)
+        {:active_streak, add_count_to_streak(streak,count) }
+      false ->
+        streak_params = %{"habit_id" => streak.habit_id}
+        {:ok, streak} = create_streak(streak_params)
+        {:new_streak, add_count_to_streak(streak, 0)}
+    end
+  end
+  
+  # %Streak{} -> %Streak{}
+  #adds a key :count to %Streak with the count value received
+  def add_count_to_streak(%Streak{} = streak, count) when is_integer(count) do
+    streak |> Map.put(:count, count)
+  end
+
+  # %Streak{} -> Integer
+  # Counts how many habit completions the Streak has
+  def count_habit_completions(%Streak{} = streak) do
+    [count] = Repo.all(from hc in HabitCompletion, where: hc.streak_id == ^streak.id, select: count("*"))
+    count
+  end
+
+  # List, List -> List
+  # Returns habits_streaks' list when there's no habits left (base case)
+  def get_habits_last_streaks([], habits_streaks) when is_list(habits_streaks) do
+    habits_streaks
+  end
+
+  # [%Habit{}] -> [{%Habit{}, %Streak{}}]
+  # Gets the last streak for each habit and puts them in a tuple for a new list
+  # Gets last streaks without any side effects
+  def get_habits_last_streaks(habits, habits_streaks \\ []) when is_list(habits) do
+    [this_habit | rest] = habits
+    streak = get_last_streak(this_habit)
+    result = {this_habit, streak}
+
+    habits_streaks = [result | habits_streaks]
+    get_habits_last_streaks(rest, habits_streaks)
+  end
+
+  # %User{} -> [{%Habit{}, %Streak{}}, ...]
+  # Produces a user's current habits with their respective active streaks
+  #(in case the last streak was inactive it creates a new one)
+  def get_user_habits(%User{} = user) do
+    habits = list_user_current_habits(user)
+    user_timezone = get_user_timezone(user)
+    Enum.map(habits, fn habit -> {habit, get_or_create_active_streak(habit, user_timezone) }end)
+  end
+
   @doc """
   Creates a habit.
 
@@ -66,8 +135,16 @@ defmodule Pelable.Habits do
     |> Repo.insert()
   end
 
-  # Takes a map and a user returns a new Habit which has a new streak as well.
+  # String -> %DateTime{}
+  # Creates a DateTime for the present in the timezone given.
+  def create_local_present_time(timezone) do
+    {:ok, local_present_time} = DateTime.now(timezone, Tzdata.TimeZoneDatabase)
+    local_present_time
+  end
+
+
   # %{} -> %Habit{}
+  # Creates a new habit with the params and the user given.
   def create_habit(%{} = params, %User{} = user) do
     params = params |> Map.put("user_id", user.id)
     {:ok, habit} = create_habit(params)
@@ -76,44 +153,47 @@ defmodule Pelable.Habits do
     habit
   end
 
-  # Converts a day & time in UTC to the equivalent day & time in another timezone
   # %NaiveDateTime{}, String -> %DateTime{}
+  # Converts a day & time in UTC to the equivalent day & time in another timezone
   def convert_to_local_time(%NaiveDateTime{} = naive, local_timezone) do
     {:ok, date_time} = DateTime.from_naive(naive, "Etc/UTC")
     {:ok, local_datetime} = DateTime.shift_zone(date_time, local_timezone, Tzdata.TimeZoneDatabase)
     local_datetime
   end
 
-  #Takes a naive date time and a time zone and turns it to a DateTime with that timezone
+  
   # %NaiveDateTime{}, String -> %DateTime{}
+  # Converts a NaiveDateTime to a DateTime with a timezone
   def add_timezone(%NaiveDateTime{} = naive, timezone) do
     {:ok, date_time} = DateTime.from_naive(naive, timezone, Tzdata.TimeZoneDatabase)
     date_time
   end
 
-  #Get last habitcompletion, habit frequency and return true if habit completion has been under habit frequency
-  def is_streak_active?(%Streak{} = streak, local_present_time, timezone, time_frequency = "daily") do
+  # %Streak{}, String, String -> Boolean
+  # Returns true if the streak is active, otherwise false
+  def is_streak_active?(%Streak{} = streak, timezone, time_frequency = "daily") do
     habit_completion = get_last_habit_completion(streak)
+    local_present_time = create_local_present_time(timezone)
+
     case habit_completion do
       nil ->
-        streak_creation_time = convert_to_local_time(streak.created_at, timezone)
-        streak_creation_time.day == local_present_time.day #Returns true if we're in the same day the streak was created
+        streak_creation_time = convert_to_local_time(streak.inserted_at, timezone)
+        streak_creation_time.day == local_present_time.day # true if we're in the same day the streak was created
 
       habit_completion ->
         completion_date = habit_completion.created_at_local_datetime |> add_timezone(timezone) |> DateTime.to_date
         present_date = local_present_time |> DateTime.to_date
 
-        Date.diff(present_date, completion_date) <= 1 # Returns true if habit completion was today or yesterday
+        Date.diff(present_date, completion_date) <= 1 # true if habit completion was today or yesterday
     end
 
   end
 
-  #Gets a habit and returns an active streak.
-  #If the last streak is still active it returns it otherwise creates a new one.
   # %Habit{} -> %Streak{}
-  def get_or_create_active_streak(%Habit{} = habit, local_present_time, timezone) do
+  # Returns the habit's last active streak. If it's inactive it creates a new streak.
+  def get_or_create_active_streak(%Habit{} = habit, timezone) do
     streak = get_last_streak(habit)
-    case is_streak_active?(streak, local_present_time, timezone, habit.time_frequency) do
+    case is_streak_active?(streak, timezone, habit.time_frequency) do
       true -> streak
       false -> 
         {:ok, new_streak} = create_streak(%{"habit_id" => habit.id})
@@ -121,6 +201,8 @@ defmodule Pelable.Habits do
     end
   end
 
+  # %Habit{} -> %Streak{}
+  # Returns the habit's last streak
   def get_last_streak(%Habit{} = habit) do
     query = 
     from s in Streak,
@@ -130,6 +212,8 @@ defmodule Pelable.Habits do
     Repo.one(query)
   end
 
+  # %Streak{} -> %HabitCompletion{}
+  # Returns the streak's last habit completion
   def get_last_habit_completion(%Streak{} = streak) do
     query = 
     from hc in HabitCompletion,
@@ -139,13 +223,15 @@ defmodule Pelable.Habits do
     Repo.one(query)
   end
 
-  #Gets a map with a habit's uuid and a user and returns a new habit completion
   # %{}, %User{} -> %HabitCompletion{}
+  #Creates a HabitCompletion from a habit's uuid and a user.
   def create_habit_completion(%{"habit_uuid" => uuid} = params, %User{} = user) do
     timezone = get_user_timezone(user)
-    {:ok, local_present_time} = DateTime.now(timezone, Tzdata.TimeZoneDatabase)
-    active_streak = get_habit_by_uuid(uuid) |> get_or_create_active_streak(local_present_time, timezone)
     
+    active_streak = get_habit_by_uuid(uuid) |> get_or_create_active_streak(timezone)
+    
+    local_present_time = create_local_present_time(timezone)
+
     params
     |> Map.put("streak_id", active_streak.id)
     |> Map.put("local_timezone", timezone) 
