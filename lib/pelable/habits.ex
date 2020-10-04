@@ -63,23 +63,10 @@ defmodule Pelable.Habits do
   end
 
   
-  # %Streak{}, String, String -> %Streak{}
-  #Receives a streak, if active it adds the count value to the streak. If inactive creates a new streak with count: 0
-  def count_streak(%Streak{} = streak, timezone, time_frequency = "daily") do
-    case is_streak_active?(streak, timezone, time_frequency) do
-      true ->
-        count = count_habit_completions(streak)
-        {:active_streak, add_count_to_streak(streak,count) }
-      false ->
-        streak_params = %{"habit_id" => streak.habit_id}
-        {:ok, streak} = create_streak(streak_params)
-        {:new_streak, add_count_to_streak(streak, 0)}
-    end
-  end
-  
-  # %Streak{} -> %Streak{}
-  #adds a key :count to %Streak with the count value received
-  def add_count_to_streak(%Streak{} = streak, count) when is_integer(count) do
+  # %Streak{}-> %Streak{}
+  #Receives a streak, calculates how many HabitCompletion has and records it in the count field
+  def count_streak(%Streak{} = streak) do
+    count = count_habit_completions(streak)
     streak |> Map.put(:count, count)
   end
 
@@ -194,10 +181,13 @@ defmodule Pelable.Habits do
   def get_or_create_active_streak(%Habit{} = habit, timezone) do
     streak = get_last_streak(habit)
     case is_streak_active?(streak, timezone, habit.time_frequency) do
-      true -> streak
+      true ->
+        streak = count_streak(streak)
+        {:active_streak, streak}
       false -> 
         {:ok, new_streak} = create_streak(%{"habit_id" => habit.id})
-        new_streak
+        new_streak = new_streak |> Map.put(:count, 0)
+        {:new_streak, new_streak}
     end
   end
 
@@ -228,7 +218,7 @@ defmodule Pelable.Habits do
   def create_habit_completion(%{"habit_uuid" => uuid} = params, %User{} = user) do
     timezone = get_user_timezone(user)
     
-    active_streak = get_habit_by_uuid(uuid) |> get_or_create_active_streak(timezone)
+    {_, active_streak} = get_habit_by_uuid(uuid) |> get_or_create_active_streak(timezone)
     
     local_present_time = create_local_present_time(timezone)
 
