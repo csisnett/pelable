@@ -68,8 +68,12 @@ defmodule PelableWeb.Router do
     get "/settings/", SettingController, :index
     put "/settings", SettingController, :update
 
-    resources "/habits", HabitController
+    resources "/habits", HabitController, except: [:show, :edit, :update, :delete]
     
+    get "habits/:uuid", HabitController, :show
+    get "habits/:uuid/edit", HabitController, :edit
+    put "habits/:uuid", HabitController, :update
+    delete "habits/:uuid", HabitController, :delete
   end
 
   scope "/", PelableWeb do

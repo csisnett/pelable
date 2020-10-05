@@ -133,14 +133,14 @@ defmodule Pelable.Habits do
   end
 
 
-  # %{} -> %Habit{}
-  # Creates a new habit with the params and the user given.
+  # %{}, %User{} -> %Habit{}
+  # Creates a new habit with its initial streak for the user given.
   def create_habit(%{} = params, %User{} = user) do
     params = params |> Map.put("user_id", user.id)
     {:ok, habit} = create_habit(params)
     streak_params = %{"habit_id" => habit.id}
     create_streak(streak_params)
-    habit
+    {:ok, habit}
   end
 
   # %NaiveDateTime{}, String -> %DateTime{}

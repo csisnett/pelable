@@ -19,5 +19,5 @@
 
 </ul>
 
-<span><%= link "Edit", to: Routes.habit_path(@conn, :edit, @habit) %></span>
+<span><%= link "Edit", to: Routes.habit_path(@conn, :edit, @habit.uuid) %></span>
 <span><%= link "Back", to: Routes.habit_path(@conn, :index) %></span>

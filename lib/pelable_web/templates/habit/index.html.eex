@@ -58,9 +58,9 @@
 
       <td>
       <button class="btn btn-primary" onclick="log_habit('<%= habit.uuid %>')"> Add log </button>
-        <span><%= link "Show", to: Routes.habit_path(@conn, :show, habit) %></span>
-        <span><%= link "Edit", to: Routes.habit_path(@conn, :edit, habit) %></span>
-        <span><%= link "Delete", to: Routes.habit_path(@conn, :delete, habit), method: :delete, data: [confirm: "Are you sure?"] %></span>
+        <span><%= link "Show", to: Routes.habit_path(@conn, :show, habit.uuid) %></span>
+        <span><%= link "Edit", to: Routes.habit_path(@conn, :edit, habit.uuid) %></span>
+        <span><%= link "Delete", to: Routes.habit_path(@conn, :delete, habit.uuid), method: :delete, data: [confirm: "Are you sure?"] %></span>
       </td>
     </tr>
     
