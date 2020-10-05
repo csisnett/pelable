@@ -33,7 +33,7 @@ defmodule PelableWeb.HabitController do
       {:ok, habit} ->
         conn
         |> put_flash(:info, "Habit created successfully.")
-        |> redirect(to: Routes.habit_path(conn, :show, habit))
+        |> redirect(to: Routes.habit_path(conn, :show, habit.uuid))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
