@@ -5,8 +5,21 @@ defmodule PelableWeb.HabitController do
   alias Pelable.Habits.Habit
 
   def index(conn, _params) do
-    habits = Habits.list_habits()
+    user = conn.assigns.current_user
+    habits = Habits.get_user_habits(user)
     render(conn, "index.html", habits: habits)
+  end
+
+  def log_habit(conn, %{"uuid" => uuid} = params) do
+    user = conn.assigns.current_user
+    habit = Habits.get_habit_by_uuid(uuid)
+    case Habits.log_habit(habit, user) do
+      {:ok, habit_completion} ->
+
+        json(conn, %{"completion" => habit_completion})
+        whatever ->
+          json(conn, %{"error" => whatever})
+    end
   end
 
   def new(conn, _params) do

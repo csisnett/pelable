@@ -67,11 +67,15 @@ defmodule PelableWeb.Router do
 
     get "/settings/", SettingController, :index
     put "/settings", SettingController, :update
+
+    resources "/habits", HabitController
     
   end
 
   scope "/", PelableWeb do
     pipe_through [:api, :protected]
+
+    post "/log-habit/:uuid", HabitController, :log_habit
   end
 
   # Other scopes may use custom stacks.

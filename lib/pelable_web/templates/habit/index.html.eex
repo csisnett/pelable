@@ -1,30 +1,77 @@
-<h1>Listing Habits</h1>
+<%= csrf_meta_tag() %>
+
+<script>
+
+
+  function add_completion_to_streak(habit_uuid){
+    var streak_holder = document.querySelector(`td[habit_uuid="${habit_uuid}"]`)
+    let new_count = parseInt(streak_holder.textContent) + 1
+    streak_holder.textContent = new_count.toString();
+  }
+
+
+
+  function log_habit(habit_uuid) {
+    var csrf_token = document.querySelector('meta[name="csrf-token"]').content
+
+  var base_url = "<%= Routes.habit_url(@conn, :log_habit, "") %>" 
+  var url = base_url + habit_uuid;
+
+  var data = {};
+  data._csrf_token = csrf_token;
+
+  var json = JSON.stringify(data);
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", url, true);
+  xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+  xhr.onload = function () {
+	var response = JSON.parse(xhr.responseText);
+  console.log(response)
+    }
+    xhr.send(json);
+    add_completion_to_streak(habit_uuid)
+  }
+
+
+  
+</script>
+<h1>My Habits</h1>
 
 <table>
   <thead>
     <tr>
       <th>Name</th>
-      <th>Time frequency</th>
-      <th>Archived?</th>
+      <th>Streak</th>
+      
 
       <th></th>
     </tr>
   </thead>
   <tbody>
-<%= for habit <- @habits do %>
+<%= for {habit, {_active_or_created, streak}} <- @habits do %>
+     
     <tr>
-      <td><%= habit.name %></td>
-      <td><%= habit.time_frequency %></td>
-      <td><%= habit.archived? %></td>
+      <td> <%= habit.name %> </td>
+      <td habit_uuid="<%= habit.uuid %>"><%= streak.count %></td>
+      
 
       <td>
+      <button class="btn btn-primary" onclick="log_habit('<%= habit.uuid %>')"> Add log </button>
         <span><%= link "Show", to: Routes.habit_path(@conn, :show, habit) %></span>
         <span><%= link "Edit", to: Routes.habit_path(@conn, :edit, habit) %></span>
         <span><%= link "Delete", to: Routes.habit_path(@conn, :delete, habit), method: :delete, data: [confirm: "Are you sure?"] %></span>
       </td>
     </tr>
+    
 <% end %>
   </tbody>
 </table>
 
 <span><%= link "New Habit", to: Routes.habit_path(@conn, :new) %></span>
+
+<script>
+
+
+</script>
+

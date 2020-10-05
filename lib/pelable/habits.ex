@@ -7,8 +7,11 @@ defmodule Pelable.Habits do
   alias Pelable.Repo
 
   alias Pelable.Users.User
-  alias Pelable.Habits.{Habit, Streak, HabitCompletion}
+  alias Pelable.Habits
+  alias Pelable.Habits.{Habit, Streak, HabitCompletion, Policy}
   alias Pelable.Accounts
+
+  defdelegate authorize(action, user, params), to: Pelable.Habits.Policy
 
   @doc """
   Returns the list of habits.
@@ -213,20 +216,31 @@ defmodule Pelable.Habits do
     Repo.one(query)
   end
 
+  # %Habit{}, %User{} -> %HabitCompletion{}
+  # Adds a log to this user's habit
+  # Used for external calls
+  def log_habit(%Habit{} = habit, %User{} = user) do
+    create_habit_completion(habit, user)
+  end
+
   # %{}, %User{} -> %HabitCompletion{}
   #Creates a HabitCompletion from a habit's uuid and a user.
-  def create_habit_completion(%{"habit_uuid" => uuid} = params, %User{} = user) do
+  def create_habit_completion(%Habit{} = habit, %User{} = user) do
+
+    with :ok <- Bodyguard.permit(Habits.Policy, :log_habit, user, habit) do
+
     timezone = get_user_timezone(user)
     
-    {_, active_streak} = get_habit_by_uuid(uuid) |> get_or_create_active_streak(timezone)
+    {_, active_streak} = habit |> get_or_create_active_streak(timezone)
     
     local_present_time = create_local_present_time(timezone)
 
-    params
+    %{}
     |> Map.put("streak_id", active_streak.id)
     |> Map.put("local_timezone", timezone) 
     |> Map.put("created_at_local_datetime", local_present_time)
     |> create_habit_completion
+    end
   end
 
   @doc """
