@@ -33,11 +33,11 @@ defmodule Pelable.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.4"},
+      {:phoenix, "~> 1.5.5"},
       {:phoenix_pubsub, "~> 2.0"},
-      {:phoenix_ecto, "~> 4.2.0"},
+      {:phoenix_ecto, "~> 4.2.1"},
       {:ecto_sql, "~> 3.4.5"},
-      {:postgrex, ">= 0.15.5"},
+      {:postgrex, ">= 0.15.6"},
       {:phoenix_html, "~> 2.14.2"},
       {:phoenix_live_reload, "~> 1.2.4", only: :dev},
       {:gettext, "~> 0.18.1"},
