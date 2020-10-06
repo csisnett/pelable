@@ -527,6 +527,13 @@ defmodule Pelable.Learn do
     Repo.all(Task)
   end
 
+    # %User{} -> [%Task{}, ...]
+  # Produces a list of all (current and archived) user's habits
+  def list_user_tasks(%User{} = user) do
+    query = from t in Task, where: t.creator_id == ^user.id and t.status != "finished", select: t
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single task.
 
