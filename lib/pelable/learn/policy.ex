@@ -2,7 +2,7 @@ defmodule Pelable.Learn.Policy do
     @behaviour Bodyguard.Policy
 
     alias Pelable.Users.User
-    alias Pelable.Learn.Post
+    alias Pelable.Learn.{Post, Task}
 
     #For Posts
 
@@ -21,6 +21,17 @@ defmodule Pelable.Learn.Policy do
     #Authorize admins to do everything
     
     def authorize(action, %User{site_role: "admin"}, _) do
+        true
+    end
+
+
+    #authorize any user to create a new task
+    def authorize(:create_task, _, _) do
+        true
+    end
+    
+        # authorize users to update their taskss
+    def authorize(action, %User{id: user_id}, %Task{creator_id: user_id}) when action in [:update_task] do
         true
     end
 

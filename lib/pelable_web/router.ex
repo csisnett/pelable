@@ -74,6 +74,13 @@ defmodule PelableWeb.Router do
     get "habits/:uuid/edit", HabitController, :edit
     put "habits/:uuid", HabitController, :update
     delete "habits/:uuid", HabitController, :delete
+
+    resources "/tasks", TaskController, except: [:show, :edit, :update, :delete]
+
+    get "/tasks/:slug/:uuid", TaskController, :show
+    get "/tasks/:slug/:uuid/edit", TaskController, :edit
+    put "/tasks/:slug/:uuid", TaskController, :update
+    delete "/tasks/:slug/:uuid", TaskController, :delete
   end
 
   scope "/", PelableWeb do

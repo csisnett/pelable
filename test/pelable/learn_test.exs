@@ -246,4 +246,65 @@ defmodule Pelable.LearnTest do
       assert %Ecto.Changeset{} = Learn.change_thread_post(thread_post)
     end
   end
+
+  describe "tasks" do
+    alias Pelable.Learn.Task
+
+    @valid_attrs %{name: "some name", status: "some status"}
+    @update_attrs %{name: "some updated name", status: "some updated status"}
+    @invalid_attrs %{name: nil, status: nil}
+
+    def task_fixture(attrs \\ %{}) do
+      {:ok, task} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Learn.create_task()
+
+      task
+    end
+
+    test "list_tasks/0 returns all tasks" do
+      task = task_fixture()
+      assert Learn.list_tasks() == [task]
+    end
+
+    test "get_task!/1 returns the task with given id" do
+      task = task_fixture()
+      assert Learn.get_task!(task.id) == task
+    end
+
+    test "create_task/1 with valid data creates a task" do
+      assert {:ok, %Task{} = task} = Learn.create_task(@valid_attrs)
+      assert task.name == "some name"
+      assert task.status == "some status"
+    end
+
+    test "create_task/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Learn.create_task(@invalid_attrs)
+    end
+
+    test "update_task/2 with valid data updates the task" do
+      task = task_fixture()
+      assert {:ok, %Task{} = task} = Learn.update_task(task, @update_attrs)
+      assert task.name == "some updated name"
+      assert task.status == "some updated status"
+    end
+
+    test "update_task/2 with invalid data returns error changeset" do
+      task = task_fixture()
+      assert {:error, %Ecto.Changeset{}} = Learn.update_task(task, @invalid_attrs)
+      assert task == Learn.get_task!(task.id)
+    end
+
+    test "delete_task/1 deletes the task" do
+      task = task_fixture()
+      assert {:ok, %Task{}} = Learn.delete_task(task)
+      assert_raise Ecto.NoResultsError, fn -> Learn.get_task!(task.id) end
+    end
+
+    test "change_task/1 returns a task changeset" do
+      task = task_fixture()
+      assert %Ecto.Changeset{} = Learn.change_task(task)
+    end
+  end
 end
