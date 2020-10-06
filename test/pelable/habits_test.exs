@@ -183,4 +183,67 @@ defmodule Pelable.HabitsTest do
       assert %Ecto.Changeset{} = Habits.change_habit_completion(habit_completion)
     end
   end
+
+  describe "rewards" do
+    alias Pelable.Habits.Reward
+
+    @valid_attrs %{description: "some description", name: "some name", uuid: "7488a646-e31f-11e4-aace-600308960662"}
+    @update_attrs %{description: "some updated description", name: "some updated name", uuid: "7488a646-e31f-11e4-aace-600308960668"}
+    @invalid_attrs %{description: nil, name: nil, uuid: nil}
+
+    def reward_fixture(attrs \\ %{}) do
+      {:ok, reward} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_reward()
+
+      reward
+    end
+
+    test "list_rewards/0 returns all rewards" do
+      reward = reward_fixture()
+      assert Habits.list_rewards() == [reward]
+    end
+
+    test "get_reward!/1 returns the reward with given id" do
+      reward = reward_fixture()
+      assert Habits.get_reward!(reward.id) == reward
+    end
+
+    test "create_reward/1 with valid data creates a reward" do
+      assert {:ok, %Reward{} = reward} = Habits.create_reward(@valid_attrs)
+      assert reward.description == "some description"
+      assert reward.name == "some name"
+      assert reward.uuid == "7488a646-e31f-11e4-aace-600308960662"
+    end
+
+    test "create_reward/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_reward(@invalid_attrs)
+    end
+
+    test "update_reward/2 with valid data updates the reward" do
+      reward = reward_fixture()
+      assert {:ok, %Reward{} = reward} = Habits.update_reward(reward, @update_attrs)
+      assert reward.description == "some updated description"
+      assert reward.name == "some updated name"
+      assert reward.uuid == "7488a646-e31f-11e4-aace-600308960668"
+    end
+
+    test "update_reward/2 with invalid data returns error changeset" do
+      reward = reward_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_reward(reward, @invalid_attrs)
+      assert reward == Habits.get_reward!(reward.id)
+    end
+
+    test "delete_reward/1 deletes the reward" do
+      reward = reward_fixture()
+      assert {:ok, %Reward{}} = Habits.delete_reward(reward)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_reward!(reward.id) end
+    end
+
+    test "change_reward/1 returns a reward changeset" do
+      reward = reward_fixture()
+      assert %Ecto.Changeset{} = Habits.change_reward(reward)
+    end
+  end
 end
