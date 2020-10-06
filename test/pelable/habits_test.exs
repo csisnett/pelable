@@ -246,4 +246,65 @@ defmodule Pelable.HabitsTest do
       assert %Ecto.Changeset{} = Habits.change_reward(reward)
     end
   end
+
+  describe "habitcompletionreward" do
+    alias Pelable.Habits.HabitCompletionReward
+
+    @valid_attrs %{taken?: true, uuid: "7488a646-e31f-11e4-aace-600308960662"}
+    @update_attrs %{taken?: false, uuid: "7488a646-e31f-11e4-aace-600308960668"}
+    @invalid_attrs %{taken?: nil, uuid: nil}
+
+    def habit_completion_reward_fixture(attrs \\ %{}) do
+      {:ok, habit_completion_reward} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_habit_completion_reward()
+
+      habit_completion_reward
+    end
+
+    test "list_habitcompletionreward/0 returns all habitcompletionreward" do
+      habit_completion_reward = habit_completion_reward_fixture()
+      assert Habits.list_habitcompletionreward() == [habit_completion_reward]
+    end
+
+    test "get_habit_completion_reward!/1 returns the habit_completion_reward with given id" do
+      habit_completion_reward = habit_completion_reward_fixture()
+      assert Habits.get_habit_completion_reward!(habit_completion_reward.id) == habit_completion_reward
+    end
+
+    test "create_habit_completion_reward/1 with valid data creates a habit_completion_reward" do
+      assert {:ok, %HabitCompletionReward{} = habit_completion_reward} = Habits.create_habit_completion_reward(@valid_attrs)
+      assert habit_completion_reward.taken? == true
+      assert habit_completion_reward.uuid == "7488a646-e31f-11e4-aace-600308960662"
+    end
+
+    test "create_habit_completion_reward/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_habit_completion_reward(@invalid_attrs)
+    end
+
+    test "update_habit_completion_reward/2 with valid data updates the habit_completion_reward" do
+      habit_completion_reward = habit_completion_reward_fixture()
+      assert {:ok, %HabitCompletionReward{} = habit_completion_reward} = Habits.update_habit_completion_reward(habit_completion_reward, @update_attrs)
+      assert habit_completion_reward.taken? == false
+      assert habit_completion_reward.uuid == "7488a646-e31f-11e4-aace-600308960668"
+    end
+
+    test "update_habit_completion_reward/2 with invalid data returns error changeset" do
+      habit_completion_reward = habit_completion_reward_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_habit_completion_reward(habit_completion_reward, @invalid_attrs)
+      assert habit_completion_reward == Habits.get_habit_completion_reward!(habit_completion_reward.id)
+    end
+
+    test "delete_habit_completion_reward/1 deletes the habit_completion_reward" do
+      habit_completion_reward = habit_completion_reward_fixture()
+      assert {:ok, %HabitCompletionReward{}} = Habits.delete_habit_completion_reward(habit_completion_reward)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_habit_completion_reward!(habit_completion_reward.id) end
+    end
+
+    test "change_habit_completion_reward/1 returns a habit_completion_reward changeset" do
+      habit_completion_reward = habit_completion_reward_fixture()
+      assert %Ecto.Changeset{} = Habits.change_habit_completion_reward(habit_completion_reward)
+    end
+  end
 end

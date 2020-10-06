@@ -577,4 +577,100 @@ defmodule Pelable.Habits do
   def change_reward(%Reward{} = reward, attrs \\ %{}) do
     Reward.changeset(reward, attrs)
   end
+
+  alias Pelable.Habits.HabitCompletionReward
+
+  @doc """
+  Returns the list of habitcompletionreward.
+
+  ## Examples
+
+      iex> list_habitcompletionreward()
+      [%HabitCompletionReward{}, ...]
+
+  """
+  def list_habitcompletionreward do
+    Repo.all(HabitCompletionReward)
+  end
+
+  @doc """
+  Gets a single habit_completion_reward.
+
+  Raises `Ecto.NoResultsError` if the Habit completion reward does not exist.
+
+  ## Examples
+
+      iex> get_habit_completion_reward!(123)
+      %HabitCompletionReward{}
+
+      iex> get_habit_completion_reward!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_habit_completion_reward!(id), do: Repo.get!(HabitCompletionReward, id)
+
+  @doc """
+  Creates a habit_completion_reward.
+
+  ## Examples
+
+      iex> create_habit_completion_reward(%{field: value})
+      {:ok, %HabitCompletionReward{}}
+
+      iex> create_habit_completion_reward(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_habit_completion_reward(attrs \\ %{}) do
+    %HabitCompletionReward{}
+    |> HabitCompletionReward.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a habit_completion_reward.
+
+  ## Examples
+
+      iex> update_habit_completion_reward(habit_completion_reward, %{field: new_value})
+      {:ok, %HabitCompletionReward{}}
+
+      iex> update_habit_completion_reward(habit_completion_reward, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_habit_completion_reward(%HabitCompletionReward{} = habit_completion_reward, attrs) do
+    habit_completion_reward
+    |> HabitCompletionReward.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a habit_completion_reward.
+
+  ## Examples
+
+      iex> delete_habit_completion_reward(habit_completion_reward)
+      {:ok, %HabitCompletionReward{}}
+
+      iex> delete_habit_completion_reward(habit_completion_reward)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_habit_completion_reward(%HabitCompletionReward{} = habit_completion_reward) do
+    Repo.delete(habit_completion_reward)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking habit_completion_reward changes.
+
+  ## Examples
+
+      iex> change_habit_completion_reward(habit_completion_reward)
+      %Ecto.Changeset{data: %HabitCompletionReward{}}
+
+  """
+  def change_habit_completion_reward(%HabitCompletionReward{} = habit_completion_reward, attrs \\ %{}) do
+    HabitCompletionReward.changeset(habit_completion_reward, attrs)
+  end
 end
