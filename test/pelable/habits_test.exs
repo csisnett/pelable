@@ -307,4 +307,61 @@ defmodule Pelable.HabitsTest do
       assert %Ecto.Changeset{} = Habits.change_habit_completion_reward(habit_completion_reward)
     end
   end
+
+  describe "habitreward" do
+    alias Pelable.Habits.HabitReward
+
+    @valid_attrs %{}
+    @update_attrs %{}
+    @invalid_attrs %{}
+
+    def habit_reward_fixture(attrs \\ %{}) do
+      {:ok, habit_reward} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_habit_reward()
+
+      habit_reward
+    end
+
+    test "list_habitreward/0 returns all habitreward" do
+      habit_reward = habit_reward_fixture()
+      assert Habits.list_habitreward() == [habit_reward]
+    end
+
+    test "get_habit_reward!/1 returns the habit_reward with given id" do
+      habit_reward = habit_reward_fixture()
+      assert Habits.get_habit_reward!(habit_reward.id) == habit_reward
+    end
+
+    test "create_habit_reward/1 with valid data creates a habit_reward" do
+      assert {:ok, %HabitReward{} = habit_reward} = Habits.create_habit_reward(@valid_attrs)
+    end
+
+    test "create_habit_reward/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_habit_reward(@invalid_attrs)
+    end
+
+    test "update_habit_reward/2 with valid data updates the habit_reward" do
+      habit_reward = habit_reward_fixture()
+      assert {:ok, %HabitReward{} = habit_reward} = Habits.update_habit_reward(habit_reward, @update_attrs)
+    end
+
+    test "update_habit_reward/2 with invalid data returns error changeset" do
+      habit_reward = habit_reward_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_habit_reward(habit_reward, @invalid_attrs)
+      assert habit_reward == Habits.get_habit_reward!(habit_reward.id)
+    end
+
+    test "delete_habit_reward/1 deletes the habit_reward" do
+      habit_reward = habit_reward_fixture()
+      assert {:ok, %HabitReward{}} = Habits.delete_habit_reward(habit_reward)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_habit_reward!(habit_reward.id) end
+    end
+
+    test "change_habit_reward/1 returns a habit_reward changeset" do
+      habit_reward = habit_reward_fixture()
+      assert %Ecto.Changeset{} = Habits.change_habit_reward(habit_reward)
+    end
+  end
 end

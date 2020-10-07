@@ -679,4 +679,100 @@ defmodule Pelable.Habits do
   def change_habit_completion_reward(%HabitCompletionReward{} = habit_completion_reward, attrs \\ %{}) do
     HabitCompletionReward.changeset(habit_completion_reward, attrs)
   end
+
+  alias Pelable.Habits.HabitReward
+
+  @doc """
+  Returns the list of habitreward.
+
+  ## Examples
+
+      iex> list_habitreward()
+      [%HabitReward{}, ...]
+
+  """
+  def list_habitreward do
+    Repo.all(HabitReward)
+  end
+
+  @doc """
+  Gets a single habit_reward.
+
+  Raises `Ecto.NoResultsError` if the Habit reward does not exist.
+
+  ## Examples
+
+      iex> get_habit_reward!(123)
+      %HabitReward{}
+
+      iex> get_habit_reward!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_habit_reward!(id), do: Repo.get!(HabitReward, id)
+
+  @doc """
+  Creates a habit_reward.
+
+  ## Examples
+
+      iex> create_habit_reward(%{field: value})
+      {:ok, %HabitReward{}}
+
+      iex> create_habit_reward(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_habit_reward(attrs \\ %{}) do
+    %HabitReward{}
+    |> HabitReward.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a habit_reward.
+
+  ## Examples
+
+      iex> update_habit_reward(habit_reward, %{field: new_value})
+      {:ok, %HabitReward{}}
+
+      iex> update_habit_reward(habit_reward, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_habit_reward(%HabitReward{} = habit_reward, attrs) do
+    habit_reward
+    |> HabitReward.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a habit_reward.
+
+  ## Examples
+
+      iex> delete_habit_reward(habit_reward)
+      {:ok, %HabitReward{}}
+
+      iex> delete_habit_reward(habit_reward)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_habit_reward(%HabitReward{} = habit_reward) do
+    Repo.delete(habit_reward)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking habit_reward changes.
+
+  ## Examples
+
+      iex> change_habit_reward(habit_reward)
+      %Ecto.Changeset{data: %HabitReward{}}
+
+  """
+  def change_habit_reward(%HabitReward{} = habit_reward, attrs \\ %{}) do
+    HabitReward.changeset(habit_reward, attrs)
+  end
 end
