@@ -12,7 +12,7 @@ config :pelable,
 
 # Configures the endpoint
 config :pelable, PelableWeb.Endpoint,
-  url: [host: "localhost"],
+  url: [host: System.get_env("RENDER_EXTERNAL_HOSTNAME") || "localhost", port: 4000],
   secret_key_base: "rco4O02JtEqNj3mWNwfw1MpK/tHqZSKMvYRSiYQy1LGTzudZk38ohbHOlBlXEhNd",
   render_errors: [view: PelableWeb.ErrorView, accepts: ~w(html json)],
   pubsub_server: Pelable.PubSub
