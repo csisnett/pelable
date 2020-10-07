@@ -5,6 +5,8 @@ defmodule Pelable.Repo.Migrations.CreateRewards do
     create table(:rewards) do
       add :name, :string, null: false
       add :description, :string
+      add :archived?, :boolean, default: false, null: false
+      add :slug, :string, null: false
       add :uuid, :uuid, null: false
       add :creator_id, references(:users, on_delete: :delete_all), null: false
 
