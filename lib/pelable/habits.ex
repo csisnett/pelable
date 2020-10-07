@@ -531,6 +531,12 @@ defmodule Pelable.Habits do
     |> Repo.insert()
   end
 
+  # %{}, %User{} -> {:ok, %Reward{}}
+  # Creates a new reward for the user with the params given
+  def create_reward(attrs = %{}, %User{} = user) do
+    attrs |> Map.put("creator_id", user.id) |> create_reward
+  end
+
   @doc """
   Updates a reward.
 
