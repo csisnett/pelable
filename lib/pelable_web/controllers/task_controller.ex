@@ -5,8 +5,7 @@ defmodule PelableWeb.TaskController do
   alias Pelable.Learn.Task
 
   def index(conn, _params) do
-    user = conn.assigns.current_user
-    tasks = Learn.list_user_tasks(user)
+    tasks = Learn.list_tasks()
     render(conn, "index.html", tasks: tasks)
   end
 
