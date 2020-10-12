@@ -4,7 +4,7 @@
 
 
   function add_completion_to_streak(habit_uuid){
-    var streak_holder = document.querySelector(`td[habit_uuid="${habit_uuid}"]`)
+    let streak_holder = document.querySelector(`td[habit_uuid="${habit_uuid}"]`)
     let new_count = parseInt(streak_holder.textContent) + 1
     streak_holder.textContent = new_count.toString();
   }
@@ -12,25 +12,25 @@
 
 
   function log_habit(habit_uuid) {
-    var csrf_token = document.querySelector('meta[name="csrf-token"]').content
+    let csrf_token = document.querySelector('meta[name="csrf-token"]').content
 
-  var base_url = "<%= Routes.habit_url(@conn, :log_habit, "") %>" 
-  var url = base_url + habit_uuid;
+    let base_url = "<%= Routes.habit_url(@conn, :log_habit, "") %>" 
+    let url = base_url + habit_uuid;
 
-  var data = {};
-  data._csrf_token = csrf_token;
+    let data = {};
+    data._csrf_token = csrf_token;
 
-  var json = JSON.stringify(data);
+    let json = JSON.stringify(data);
 
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", url, true);
-  xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-  xhr.onload = function () {
-	var response = JSON.parse(xhr.responseText);
-  console.log(response)
-    }
-    xhr.send(json);
-    add_completion_to_streak(habit_uuid)
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+    xhr.onload = function () {
+	  let response = JSON.parse(xhr.responseText);
+    console.log(response)
+      }
+      xhr.send(json);
+      add_completion_to_streak(habit_uuid)
   }
 
 
