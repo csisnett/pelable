@@ -28,9 +28,14 @@
     xhr.onload = function () {
 	  let response = JSON.parse(xhr.responseText);
     console.log(response)
+      if (xhr.status == "200") {
+        add_completion_to_streak(habit_uuid)
+      } else {
+        console.log("Habit wasn't logged!")
+      }
       }
       xhr.send(json);
-      add_completion_to_streak(habit_uuid)
+      
   }
 
 
