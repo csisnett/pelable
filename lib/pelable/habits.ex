@@ -261,6 +261,17 @@ defmodule Pelable.Habits do
     |> Repo.update()
   end
 
+  def update_habit_current_reward(%{"habit_uuid" => habit_uuid, "reward_uuid" => reward_uuid}, %User{} = user) do
+    habit = get_habit_by_uuid(habit_uuid)
+    with :ok <- Bodyguard.permit(Habits.Policy, :update_habit, user, habit) do
+      reward = get_reward_by_uuid(reward_uuid)
+      with :ok <- Bodyguard.permit(Habits.Policy, :update_reward, user, reward) do
+        attrs = %{"current_reward_id" => reward.id}
+        update_habit(habit, attrs)
+      end
+    end
+  end
+
   @doc """
   Deletes a habit.
 
@@ -538,6 +549,8 @@ defmodule Pelable.Habits do
   def create_reward(attrs = %{}, %User{} = user) do
     attrs |> Map.put("creator_id", user.id) |> create_reward
   end
+
+  
 
   @doc """
   Updates a reward.

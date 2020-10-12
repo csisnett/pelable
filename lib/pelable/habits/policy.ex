@@ -2,7 +2,7 @@ defmodule Pelable.Habits.Policy do
     @behaviour Bodyguard.Policy
 
     alias Pelable.Users.User
-    alias Pelable.Habits.{Habit, Streak, HabitCompletion}
+    alias Pelable.Habits.{Habit, Streak, HabitCompletion, Reward}
 
     #For Posts
 
@@ -10,6 +10,11 @@ defmodule Pelable.Habits.Policy do
 
     # authorize users to update and log their own habits
     def authorize(action, %User{id: user_id}, %Habit{user_id: user_id}) when action in [:update_habit, :log_habit] do
+        true
+    end
+
+    # authorize users to update their rewards
+    def authorize(action, %User{id: user_id}, %Reward{creator_id: user_id}) when action in [:update_reward] do
         true
     end
 
