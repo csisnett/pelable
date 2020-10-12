@@ -17,8 +17,12 @@ defmodule PelableWeb.HabitController do
       {:ok, habit_completion} ->
 
         json(conn, %{"completion" => habit_completion})
-        whatever ->
-          json(conn, %{"error" => whatever})
+
+      {:ok, habit_completion, habit_completion_reward} ->
+        json(conn, %{"completion" => habit_completion, "completion_reward" => habit_completion_reward})
+
+      whatever ->
+        json(conn, %{"error" => whatever})
     end
   end
 

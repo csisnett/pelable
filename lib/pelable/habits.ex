@@ -216,30 +216,35 @@ defmodule Pelable.Habits do
     Repo.one(query)
   end
 
-  # %Habit{}, %User{} -> %HabitCompletion{}
+  # %Habit{}, %User{} -> {:ok, %HabitCompletion{}} || {:ok, %HabitCompletion{}, %HabitCompletionReward{}}
   # Adds a log to this user's habit
   # Used for external calls
   def log_habit(%Habit{} = habit, %User{} = user) do
-    create_habit_completion(habit, user)
+    {:ok, habit_completion} = create_habit_completion(habit, user)
+
+    case habit.current_reward_id do
+      nil -> {:ok, habit_completion}
+      _any_id -> maybe_win_reward(habit, habit_completion)
+    end
   end
 
-  # %{}, %User{} -> %HabitCompletion{}
+  # %{}, %User{} -> {:ok, %HabitCompletion{}} || {:error, %Changeset{}}
   #Creates a HabitCompletion from a habit's uuid and a user.
   def create_habit_completion(%Habit{} = habit, %User{} = user) do
 
     with :ok <- Bodyguard.permit(Habits.Policy, :log_habit, user, habit) do
 
-    timezone = get_user_timezone(user)
+      timezone = get_user_timezone(user)
     
-    {_, active_streak} = habit |> get_or_create_active_streak(timezone)
+      {_, active_streak} = habit |> get_or_create_active_streak(timezone)
     
-    local_present_time = create_local_present_time(timezone)
+      local_present_time = create_local_present_time(timezone)
 
-    %{}
-    |> Map.put("streak_id", active_streak.id)
-    |> Map.put("local_timezone", timezone) 
-    |> Map.put("created_at_local_datetime", local_present_time)
-    |> create_habit_completion
+      %{}
+      |> Map.put("streak_id", active_streak.id)
+      |> Map.put("local_timezone", timezone) 
+      |> Map.put("created_at_local_datetime", local_present_time)
+      |> create_habit_completion
     end
   end
 
@@ -550,6 +555,21 @@ defmodule Pelable.Habits do
     attrs |> Map.put("creator_id", user.id) |> create_reward
   end
 
+  # %Habit{}, %HabitCompletion{} -> {:ok, %HabitCompletion{}, %HabitCompletionReward{} } || {:ok, %HabitCompletion{} }
+  # 50% of the time creates a new earned from habit.current_reward and the habit completion given.
+
+  def maybe_win_reward(%Habit{} = habit, %HabitCompletion{} = habit_completion) do
+    random_number = Enum.random(1..100)
+    if random_number > 50 do
+      attrs = %{"reward_id" => habit.current_reward_id, "habit_completion_id" => habit_completion.id}
+      {:ok, habit_completion_reward} = create_habit_completion_reward(attrs)
+      habit_completion_reward = habit_completion_reward |> Repo.preload([:reward])
+      {:ok, habit_completion, habit_completion_reward}
+    else
+      # No reward gained
+      {:ok, habit_completion}
+    end
+  end
   
 
   @doc """

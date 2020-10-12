@@ -4,6 +4,7 @@ defmodule Pelable.Habits.Reward do
 
   alias Pelable.Habits.Reward.{NameSlug}
 
+  @derive {Jason.Encoder, only: [:name, :description, :uuid, :slug]}
   schema "rewards" do
     field :name, :string
     field :description, :string

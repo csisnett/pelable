@@ -2,10 +2,11 @@ defmodule Pelable.Habits.HabitCompletionReward do
   use Ecto.Schema
   import Ecto.Changeset
 
-  #This Schema represents an Earned Reward from a habit completion
+  #This Schema represents an Earned Reward (from a habit completion)
 
   alias Pelable.Habits.{Reward, HabitCompletion}
 
+  @derive {Jason.Encoder, only: [:taken_at_local, :local_timezone, :uuid, :reward]}
   schema "habit_completion_reward" do
     field :taken_at_local, :naive_datetime
     field :local_timezone, :string
