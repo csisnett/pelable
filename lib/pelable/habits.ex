@@ -8,7 +8,7 @@ defmodule Pelable.Habits do
 
   alias Pelable.Users.User
   alias Pelable.Habits
-  alias Pelable.Habits.{Habit, Streak, HabitCompletion, Policy}
+  alias Pelable.Habits.{Habit, Streak, HabitCompletion, Reward, Policy}
   alias Pelable.Accounts
 
   defdelegate authorize(action, user, params), to: Pelable.Habits.Policy
@@ -266,14 +266,21 @@ defmodule Pelable.Habits do
     |> Repo.update()
   end
 
+  # %{}, %User{} -> {:ok, %Habit{}}
+  # Transforms the habit_uuid and reward_uuid into habit and reward structs and passes them to a fn/3
   def update_habit_current_reward(%{"habit_uuid" => habit_uuid, "reward_uuid" => reward_uuid}, %User{} = user) do
     habit = get_habit_by_uuid(habit_uuid)
-    with :ok <- Bodyguard.permit(Habits.Policy, :update_habit, user, habit) do
-      reward = get_reward_by_uuid(reward_uuid)
-      with :ok <- Bodyguard.permit(Habits.Policy, :update_reward, user, reward) do
+    reward = get_reward_by_uuid(reward_uuid)
+    update_habit_current_reward(habit, reward, user)
+  end
+
+  # %Habit{}, %Reward{}, %User{} -> {:ok, %Habit{}}
+  # Updates the habit's current reward to the reward given
+  def update_habit_current_reward(%Habit{} = habit, %Reward{} = reward, %User{} = user) do
+    with :ok <- Bodyguard.permit(Habits.Policy, :update_habit, user, habit),
+         :ok <- Bodyguard.permit(Habits.Policy, :update_reward, user, reward) do
         attrs = %{"current_reward_id" => reward.id}
         update_habit(habit, attrs)
-      end
     end
   end
 
@@ -555,8 +562,19 @@ defmodule Pelable.Habits do
     attrs |> Map.put("creator_id", user.id) |> create_reward
   end
 
+  # %{}, %Habit{}, %User{} -> {:ok, reward} || {:error, unauthorized} || {:error, %Changeset{}}
+  #Creates a reward and assigns it to this habit if the user owns it
+  def create_reward_assign_to_habit(attrs = %{}, %Habit{} = habit, %User{} = user) do
+    attrs = attrs |> Map.put("creator_id", user.id)
+     with :ok <- Bodyguard.permit(Habits.Policy, :update_habit, user, habit),
+     {:ok, reward} <- create_reward(attrs),
+      {:ok, _updated_habit} <- update_habit_current_reward(habit, reward, user) do
+        {:ok, reward}
+    end
+  end
+
   # %Habit{}, %HabitCompletion{} -> {:ok, %HabitCompletion{}, %HabitCompletionReward{} } || {:ok, %HabitCompletion{} }
-  # 50% of the time creates a new earned from habit.current_reward and the habit completion given.
+  # 50% of the time creates a new earned of type habit.current_reward for the habit completion given.
 
   def maybe_win_reward(%Habit{} = habit, %HabitCompletion{} = habit_completion) do
     random_number = Enum.random(1..100)
