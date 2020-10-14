@@ -2,6 +2,7 @@ defmodule Pelable.Habits.Reward do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Pelable.Habits.HabitCompletionReward
   alias Pelable.Habits.Reward.{NameSlug}
 
   @derive {Jason.Encoder, only: [:name, :description, :uuid, :slug]}
@@ -11,7 +12,9 @@ defmodule Pelable.Habits.Reward do
     field :archived?, :boolean, default: false
     field :uuid, Ecto.ShortUUID, autogenerate: true
     field :slug, NameSlug.Type
+    
     belongs_to :creator, User
+    has_many :earned_rewards, HabitCompletionReward
 
     timestamps()
   end
