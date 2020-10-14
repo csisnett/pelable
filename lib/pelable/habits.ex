@@ -583,12 +583,12 @@ defmodule Pelable.Habits do
   end
 
   # %Habit{}, %HabitCompletion{} -> {:ok, %HabitCompletion{}, %HabitCompletionReward{} } || {:ok, %HabitCompletion{} }
-  # 50% of the time creates a new earned of type habit.current_reward for the habit completion given.
+  # 50% of the time creates a new earned reward for the habit completion given.
 
   def maybe_win_reward(%Habit{} = habit, %HabitCompletion{} = habit_completion) do
     random_number = Enum.random(1..100)
     if random_number > 50 do
-      attrs = %{"reward_id" => habit.current_reward_id, "habit_completion_id" => habit_completion.id}
+      attrs = %{"reward_id" => habit.current_reward_id, "habit_completion_id" => habit_completion.id, "creator_id" => habit.user_id}
       {:ok, habit_completion_reward} = create_habit_completion_reward(attrs)
       habit_completion_reward = habit_completion_reward |> Repo.preload([:reward])
       {:ok, habit_completion, habit_completion_reward}
@@ -693,6 +693,29 @@ defmodule Pelable.Habits do
     %HabitCompletionReward{}
     |> HabitCompletionReward.changeset(attrs)
     |> Repo.insert()
+  end
+
+  # %HabitCompletionReward{}, %User{} -> {:ok, %HabitCompletionReward{}} || {:error, %Changeset{}}
+  # Marks an Earned reward as taken with the present local time
+  def take_earned_reward(%HabitCompletionReward{} = earned_reward, %User{} = user) do
+
+   with :ok <- Bodyguard.permit(Habits.Policy, :take_earned_reward, user, earned_reward) do
+    timezone = get_user_timezone(user)
+    local_time_now = create_local_present_time(timezone)
+
+    attrs = %{"taken_at_local" => local_time_now, "local_timezone" => timezone}
+    update_habit_completion_reward(earned_reward, attrs)
+   end
+  end
+
+  # %User{} -> [%Reward{earned_rewards: [%HabitCompletionReward{}, ...]} ...]
+  # Get the user's rewards and their earned rewards
+  def get_user_earned_rewards(%User{} = user) do
+    query = 
+    from e in HabitCompletionReward,
+    where: e.creator_id == ^user.id,
+    select: e
+    Repo.all(query)
   end
 
   @doc """
