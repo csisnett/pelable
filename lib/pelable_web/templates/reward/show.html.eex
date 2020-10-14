@@ -19,5 +19,5 @@
 
 </ul>
 
-<span><%= link "Edit", to: Routes.reward_path(@conn, :edit, @reward) %></span>
+<span><%= link "Edit", to: Routes.reward_path(@conn, :edit, @reward.slug, @reward.uuid) %></span>
 <span><%= link "Back", to: Routes.reward_path(@conn, :index) %></span>
