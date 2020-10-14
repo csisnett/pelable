@@ -26,6 +26,19 @@ defmodule PelableWeb.HabitController do
     end
   end
 
+  def create_reward(conn, %{"habit_uuid" => habit_uuid, "reward_name" => _name} = attrs) do
+    user = conn.assigns.current_user
+    habit = Habits.get_habit_by_uuid(habit_uuid)
+    
+    case Habits.create_reward_assign_to_habit(attrs, habit, user) do
+      {:ok, reward} ->
+        json(conn, %{"created_reward" => reward})
+
+        {:error, :user_doesnt_have_permision} ->
+          json(conn, %{"error" => "User doesn't have permission"})
+    end
+  end
+
   def new(conn, _params) do
     changeset = Habits.change_habit(%Habit{})
     render(conn, "new.html", changeset: changeset)
@@ -53,6 +66,22 @@ defmodule PelableWeb.HabitController do
     habit = Habits.get_habit_by_uuid(uuid)
     changeset = Habits.change_habit(habit)
     render(conn, "edit.html", habit: habit, changeset: changeset)
+  end
+
+  def update_current_reward(conn, %{"uuid" => uuid, "reward_name" => _name} = attrs) do
+    habit = Habits.get_habit_by_uuid(uuid)
+    user = conn.assigns.current_user
+    case Habits.update_or_create_current_reward(attrs, habit, user) do
+      {:ok, reward} ->
+        json(conn, %{"created_reward" => reward})
+
+      {:error, :unauthorized} ->
+        json(conn, %{"error" => "Unauthorized"})
+
+      {:error, changeset} ->
+        json(conn, %{"error" => "Error updating habit"})
+    end
+
   end
 
   def update(conn, %{"uuid" => uuid, "habit" => habit_params}) do

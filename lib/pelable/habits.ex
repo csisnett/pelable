@@ -562,12 +562,21 @@ defmodule Pelable.Habits do
     attrs |> Map.put("creator_id", user.id) |> create_reward
   end
 
-  # %{}, %Habit{}, %User{} -> {:ok, reward} || {:error, unauthorized} || {:error, %Changeset{}}
+  def update_or_create_current_reward(attrs =  %{}, %Habit{} = habit, %User{} = user) do
+    case attrs["reward_uuid"]  do
+      nil -> create_reward_and_assign_to_habit(attrs, habit, user)
+      uuid ->
+        reward = get_reward_by_uuid(uuid)
+        update_habit_current_reward(habit,reward, user)
+    end
+  end
+
+  # %{}, %Habit{}, %User{} -> {:ok, reward} || {:error, :unauthorized} || {:error, %Changeset{}}
   #Creates a reward and assigns it to this habit if the user owns it
-  def create_reward_assign_to_habit(attrs = %{}, %Habit{} = habit, %User{} = user) do
-    attrs = attrs |> Map.put("creator_id", user.id)
+  def create_reward_and_assign_to_habit(attrs = %{}, %Habit{} = habit, %User{} = user) do
+    new_attrs = attrs |> Map.put("creator_id", user.id) |> Map.put("name", attrs["reward_name"]) |> Map.put("description", attrs["reward_description"])
      with :ok <- Bodyguard.permit(Habits.Policy, :update_habit, user, habit),
-     {:ok, reward} <- create_reward(attrs),
+     {:ok, reward} <- create_reward(new_attrs),
       {:ok, _updated_habit} <- update_habit_current_reward(habit, reward, user) do
         {:ok, reward}
     end

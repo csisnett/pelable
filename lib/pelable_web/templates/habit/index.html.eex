@@ -37,11 +37,12 @@
       xhr.send(json);
       
   }
-
-
   
 </script>
 <h1>My Habits</h1>
+
+<!-- Button trigger modal -->
+
 
 <table>
   <thead>
@@ -55,7 +56,30 @@
   </thead>
   <tbody>
 <%= for {habit, {_active_or_created, streak}} <- @habits do %>
-     
+
+
+<!-- Modal Add reward -->
+<div class="modal fade" id='<%= "habit_reward_modal" <> habit.uuid %>' tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"> Create a reward for completing <%= habit.name %></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <%= form_for_new_reward(habit) %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="create_reward_for_habit('<%= habit.uuid %>', '<%= form_name(habit) %>')">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
     <tr>
       <td> <%= habit.name %> </td>
       <td habit_uuid="<%= habit.uuid %>"><%= streak.count %></td>
@@ -63,6 +87,9 @@
 
       <td>
       <button class="btn btn-primary" onclick="log_habit('<%= habit.uuid %>')"> Add log </button>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target='#<%= "habit_reward_modal" <> habit.uuid %>'>
+      add reward
+      </button>
         <span><%= link "Show", to: Routes.habit_path(@conn, :show, habit.uuid) %></span>
         <span><%= link "Edit", to: Routes.habit_path(@conn, :edit, habit.uuid) %></span>
         <span><%= link "Delete", to: Routes.habit_path(@conn, :delete, habit.uuid), method: :delete, data: [confirm: "Are you sure?"] %></span>
@@ -76,6 +103,40 @@
 <span><%= link "New Habit", to: Routes.habit_path(@conn, :new) %></span>
 
 <script>
+function convert_form_to_json(form){
+  result = {}
+  for(i=0; i < form.elements.length; i++){
+    result[form.elements[i].id] = form.elements[i].value
+  }
+  return result;
+}
+
+function create_reward_for_habit(habit_uuid, form_id){
+  let csrf_token = document.querySelector('meta[name="csrf-token"]').content;
+  let form = document.getElementById(form_id);
+  let base_url = '<%= Routes.habit_url(@conn, :update_current_reward, "") %>';
+  let final_url = base_url + habit_uuid;
+  let data = convert_form_to_json(form);
+  data._csrf_token = csrf_token;
+
+  let json = JSON.stringify(data);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("PUT", final_url, true);
+    xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+    xhr.onload = function () {
+	  let response = JSON.parse(xhr.responseText);
+    console.log(response)
+      if (xhr.status == "200") {
+        add_completion_to_streak(habit_uuid)
+      } else {
+        console.log("Habit wasn't logged!")
+      }
+      }
+      xhr.send(json);
+      
+  console.log(data);
+  }
 
 
 </script>

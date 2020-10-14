@@ -73,6 +73,7 @@ defmodule PelableWeb.Router do
     get "habits/:uuid", HabitController, :show
     get "habits/:uuid/edit", HabitController, :edit
     put "habits/:uuid", HabitController, :update
+    put "habits/update-reward/:uuid", HabitController, :update_current_reward
     delete "habits/:uuid", HabitController, :delete
 
     resources "/tasks", TaskController, except: [:show, :edit, :update, :delete]
@@ -81,6 +82,13 @@ defmodule PelableWeb.Router do
     get "/tasks/:slug/:uuid/edit", TaskController, :edit
     put "/tasks/:slug/:uuid", TaskController, :update
     delete "/tasks/:slug/:uuid", TaskController, :delete
+
+    resources "/rewards", RewardController, except: [:show, :edit, :update, :delete]
+
+    get "/rewards/:slug/:uuid", RewardController, :show
+    get "/rewards/:slug/:uuid/edit", RewardController, :edit
+    put "/rewards/:slug/:uuid", RewardController, :update
+    delete "/rewards/:slug/:uuid", RewardController, :delete
   end
 
   scope "/", PelableWeb do
