@@ -89,6 +89,10 @@ defmodule PelableWeb.Router do
     get "/rewards/:slug/:uuid/edit", RewardController, :edit
     put "/rewards/:slug/:uuid", RewardController, :update
     delete "/rewards/:slug/:uuid", RewardController, :delete
+
+    get "/earned-rewards/", HabitCompletionRewardController, :index
+    get "/earned-rewards/:uuid", HabitCompletionRewardController, :show
+    put "/earned-rewards/:uuid", HabitCompletionRewardController, :take_reward
   end
 
   scope "/", PelableWeb do

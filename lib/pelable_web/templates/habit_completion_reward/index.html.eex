@@ -1,0 +1,24 @@
+<h1>Listing Habit completion reward</h1>
+
+<table>
+  <thead>
+    <tr>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for habit_completion_reward <- @habit_completion_reward do %>
+    <tr>
+
+      <td>
+        <span><%= link "Show", to: Routes.habit_completion_reward_path(@conn, :show, habit_completion_reward) %></span>
+        <span><%= link "Edit", to: Routes.habit_completion_reward_path(@conn, :edit, habit_completion_reward) %></span>
+        <span><%= link "Delete", to: Routes.habit_completion_reward_path(@conn, :delete, habit_completion_reward), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Habit completion reward", to: Routes.habit_completion_reward_path(@conn, :new) %></span>

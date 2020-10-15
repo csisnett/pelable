@@ -1,0 +1,8 @@
+<h1>Show Habit completion reward</h1>
+
+<ul>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.habit_completion_reward_path(@conn, :edit, @habit_completion_reward) %></span>
+<span><%= link "Back", to: Routes.habit_completion_reward_path(@conn, :index) %></span>

@@ -677,6 +677,8 @@ defmodule Pelable.Habits do
   """
   def get_habit_completion_reward!(id), do: Repo.get!(HabitCompletionReward, id)
 
+  def get_habit_completion_reward_by_uuid(uuid), do: Repo.get_by(HabitCompletionReward, uuid: uuid)
+
   @doc """
   Creates a habit_completion_reward.
 
@@ -695,7 +697,7 @@ defmodule Pelable.Habits do
     |> Repo.insert()
   end
 
-  # %HabitCompletionReward{}, %User{} -> {:ok, %HabitCompletionReward{}} || {:error, %Changeset{}}
+  # %HabitCompletionReward{}, %User{} -> {:ok, %HabitCompletionReward{}} || {:error, :unauthorized} || {:error, %Changeset{}}
   # Marks an Earned reward as taken with the present local time
   def take_earned_reward(%HabitCompletionReward{} = earned_reward, %User{} = user) do
 
