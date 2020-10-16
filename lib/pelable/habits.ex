@@ -67,7 +67,7 @@ defmodule Pelable.Habits do
 
   
   # %Streak{}-> %Streak{}
-  #Receives a streak, calculates how many HabitCompletion has and records it in the count field
+  #Receives a streak, counts how many HabitCompletion has and records it in the count field
   def count_streak(%Streak{} = streak) do
     count = count_habit_completions(streak)
     streak |> Map.put(:count, count)
@@ -81,7 +81,7 @@ defmodule Pelable.Habits do
   end
 
   # List, List -> List
-  # Returns habits_streaks' list when there's no habits left (base case)
+  # Returns habits_streaks' list when there's no habits left to go through (base case)
   def get_habits_last_streaks([], habits_streaks) when is_list(habits_streaks) do
     habits_streaks
   end
@@ -92,7 +92,7 @@ defmodule Pelable.Habits do
   def get_habits_last_streaks(habits, habits_streaks \\ []) when is_list(habits) do
     [this_habit | rest] = habits
     streak = get_last_streak(this_habit)
-    result = {this_habit, streak}
+    result = {this_habit, count_streak(streak)}
 
     habits_streaks = [result | habits_streaks]
     get_habits_last_streaks(rest, habits_streaks)
@@ -104,7 +104,7 @@ defmodule Pelable.Habits do
   def get_user_habits(%User{} = user) do
     habits = list_user_current_habits(user)
     user_timezone = get_user_timezone(user)
-    Enum.map(habits, fn habit -> {habit, get_or_create_active_streak(habit, user_timezone) }end)
+    get_habits_last_streaks(habits)
   end
 
   @doc """
@@ -161,7 +161,7 @@ defmodule Pelable.Habits do
 
   # %Streak{}, String, String -> Boolean
   # Returns true if the streak is active, otherwise false
-  def is_streak_active?(%Streak{} = streak, timezone, time_frequency = "daily") do
+  def is_streak_current?(%Streak{} = streak, timezone, time_frequency = "daily") do
     habit_completion = get_last_habit_completion(streak)
     local_present_time = create_local_present_time(timezone)
 
@@ -181,9 +181,9 @@ defmodule Pelable.Habits do
 
   # %Habit{} -> %Streak{}
   # Returns the habit's last active streak. If it's inactive it creates a new streak.
-  def get_or_create_active_streak(%Habit{} = habit, timezone) do
+  def get_or_create_current_streak(%Habit{} = habit, timezone) do
     streak = get_last_streak(habit)
-    case is_streak_active?(streak, timezone, habit.time_frequency) do
+    case is_streak_current?(streak, timezone, habit.time_frequency) do
       true ->
         streak = count_streak(streak)
         {:active_streak, streak}
@@ -236,7 +236,7 @@ defmodule Pelable.Habits do
 
       timezone = get_user_timezone(user)
     
-      {_, active_streak} = habit |> get_or_create_active_streak(timezone)
+      {_, active_streak} = habit |> get_or_create_current_streak(timezone)
     
       local_present_time = create_local_present_time(timezone)
 

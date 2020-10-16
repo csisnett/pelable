@@ -6,8 +6,9 @@ defmodule PelableWeb.HabitController do
 
   def index(conn, _params) do
     user = conn.assigns.current_user
+    user_timezone = Habits.get_user_timezone(user)
     habits = Habits.get_user_habits(user)
-    render(conn, "index.html", habits: habits)
+    render(conn, "index.html", habits: habits, user_info: %{"timezone" => user_timezone})
   end
 
   def log_habit(conn, %{"uuid" => uuid} = params) do

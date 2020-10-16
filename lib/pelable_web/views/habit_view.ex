@@ -1,7 +1,15 @@
 defmodule PelableWeb.HabitView do
   use PelableWeb, :view
 
-  alias Pelable.Habits.Habit
+  alias Pelable.Habits
+  alias Pelable.Habits.{Habit, Streak}
+
+  def show_streak_count_or_not(%Streak{} = streak, timezone, habit_frequency) do
+    case Habits.is_streak_current?(streak, timezone, habit_frequency) do
+      true -> streak.count
+      false -> ""
+    end
+  end
 
   def form_name(%Habit{} = habit) do
     name = "form_reward_" <> habit.uuid

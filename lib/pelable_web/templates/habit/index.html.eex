@@ -55,7 +55,7 @@
     </tr>
   </thead>
   <tbody>
-<%= for {habit, {_active_or_created, streak}} <- @habits do %>
+<%= for {habit, streak} <- @habits do %>
 
 
 <!-- Modal Add reward -->
@@ -82,7 +82,7 @@
 
     <tr>
       <td> <%= habit.name %> </td>
-      <td habit_uuid="<%= habit.uuid %>"><%= streak.count %></td>
+      <td habit_uuid="<%= habit.uuid %>"><%= show_streak_count_or_not(streak, @user_info["timezone"], habit.time_frequency) %></td>
       
 
       <td>
