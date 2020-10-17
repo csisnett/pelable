@@ -102,6 +102,59 @@
 
 <span><%= link "New Habit", to: Routes.habit_path(@conn, :new) %></span>
 
+<style>
+.dot {
+  height: 18px;
+  width: 18px;
+  float: right;
+  background-color: #008000;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dot-no {
+  height: 18px;
+  width: 18px;
+  float: right;
+  background-color: gray;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.check{
+  text-align: center;
+}
+.options {
+  text-align: right;
+}
+
+.svg-style {
+  cursor: pointer;
+}
+</style>
+<div class="card" style="width: 18rem;">
+<div class="card-body">
+<h5 class="card-title">Take a walk <span class="dot-no"></span></h5> 
+<br>
+<div class="check">
+
+<svg class="svg-style" onclick="log_habit('aasd')" xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+
+5
+</div>
+<br>
+<br>
+<div class="options">
+<!-- Default dropright button -->
+<div class="btn-group dropright">
+  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    options
+  </button>
+  <div class="dropdown-menu">
+    <a class="dropdown-item" href="/rewards">Add reward </a>
+    <a class="dropdown-item" href="/rewards">Edit</a>
+  </div>
+</div>
+</div>
 <script>
 function convert_form_to_json(form){
   result = {}
