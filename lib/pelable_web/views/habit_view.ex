@@ -15,6 +15,16 @@ defmodule PelableWeb.HabitView do
     name = "form_reward_" <> habit.uuid
   end
 
+  # %Habit{} -> String
+  # Returns "green-habit" if the habit was completed today, otherwise "gray-habit"
+  def green_or_not(%Habit{} = habit) do
+    if habit.completed_today? == true do
+      "green-habit"
+    else
+      "gray-habit"
+    end
+  end
+
   def form_for_new_reward(%Habit{} = habit) do
     name = form_name(habit)
     raw(

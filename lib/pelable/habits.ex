@@ -100,23 +100,23 @@ defmodule Pelable.Habits do
   end
 
   def complete_habit(habit, last_streak, timezone) do
-    complete_now? = complete_this_habit?(habit, last_streak, timezone) 
-    Map.put(habit, :complete_now?, complete_now?)
+    completed_today? = habit_completed_today?(habit, last_streak, timezone) 
+    Map.put(habit, :completed_today?, completed_today?)
   end
 
   # %Habit{} -> Boolean
-  #Returns true if the user should complete the habit at the present time (only works for daily habits so far)
-  def complete_this_habit?(%Habit{} = habit, %Streak{} = last_streak, timezone) do
+  #Returns true if the habit was completed today already, otherwise false
+  def habit_completed_today?(%Habit{} = habit, %Streak{} = last_streak, timezone) do
     IO.puts(timezone)
     habit_completion = get_last_habit_completion(last_streak)
     local_present_time = create_local_present_time(timezone)
     
     case habit_completion do
-      nil -> true
+      nil -> false
       habit_completion -> 
         completion_date = habit_completion.created_at_local_datetime |> add_timezone(timezone) |> DateTime.to_date
         present_date = local_present_time |> DateTime.to_date
-        Date.diff(present_date, completion_date) != 0 #false if completion date is today
+        Date.diff(present_date, completion_date) == 0 #True if completion date is today
     end
   end
 
