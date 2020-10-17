@@ -82,20 +82,42 @@ defmodule Pelable.Habits do
 
   # List, List -> List
   # Returns habits_streaks' list when there's no habits left to go through (base case)
-  def get_habits_last_streaks([], habits_streaks) when is_list(habits_streaks) do
+  def get_habits_last_streaks([], _user_timezone, habits_streaks) when is_list(habits_streaks) do
     habits_streaks
   end
 
   # [%Habit{}] -> [{%Habit{}, %Streak{}}]
   # Gets the last streak for each habit and puts them in a tuple for a new list
   # Gets last streaks without any side effects
-  def get_habits_last_streaks(habits, habits_streaks \\ []) when is_list(habits) do
+  def get_habits_last_streaks(habits, user_timezone, habits_streaks \\ []) when is_list(habits) do
     [this_habit | rest] = habits
     streak = get_last_streak(this_habit)
+    this_habit = complete_habit(this_habit, streak, user_timezone)
     result = {this_habit, count_streak(streak)}
 
     habits_streaks = [result | habits_streaks]
-    get_habits_last_streaks(rest, habits_streaks)
+    get_habits_last_streaks(rest, user_timezone,  habits_streaks)
+  end
+
+  def complete_habit(habit, last_streak, timezone) do
+    complete_now? = complete_this_habit?(habit, last_streak, timezone) 
+    Map.put(habit, :complete_now?, complete_now?)
+  end
+
+  # %Habit{} -> Boolean
+  #Returns true if the user should complete the habit at the present time (only works for daily habits so far)
+  def complete_this_habit?(%Habit{} = habit, %Streak{} = last_streak, timezone) do
+    IO.puts(timezone)
+    habit_completion = get_last_habit_completion(last_streak)
+    local_present_time = create_local_present_time(timezone)
+    
+    case habit_completion do
+      nil -> true
+      habit_completion -> 
+        completion_date = habit_completion.created_at_local_datetime |> add_timezone(timezone) |> DateTime.to_date
+        present_date = local_present_time |> DateTime.to_date
+        Date.diff(present_date, completion_date) != 0 #false if completion date is today
+    end
   end
 
   # %User{} -> [{%Habit{}, %Streak{}}, ...]
@@ -104,7 +126,7 @@ defmodule Pelable.Habits do
   def get_user_habits(%User{} = user) do
     habits = list_user_current_habits(user)
     user_timezone = get_user_timezone(user)
-    get_habits_last_streaks(habits)
+    get_habits_last_streaks(habits, user_timezone)
   end
 
   @doc """
