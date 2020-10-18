@@ -96,10 +96,16 @@
 .svg-style {
   cursor: pointer;
 }
+.card-style{
+  margin-top: 85px;
+}
 </style>
 
+<span><%= link "New Habit", to: Routes.habit_path(@conn, :new) %></span>
+<div class="container">
+<div class="row">
 <%= for {habit, streak} <- @habits do %>
-
+<div class="col">
 
 <!-- Modal Add reward -->
 <div class="modal fade" id='<%= "habit_reward_modal" <> habit.uuid %>' tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -123,7 +129,7 @@
 </div>
 
 
-<div class="card" style="width: 18rem;">
+<div class="card card-style" style="width: 18rem;">
   <div class="card-body">
 <h5 class="card-title"><%= habit.name %><span id="<%= "habit_status" <> habit.uuid %>" class="<%= green_or_not(habit) %>" onmouseout="hide_habit_status_message('<%= habit.uuid %>')" onclick="show_habit_status_message('<%= habit.uuid %>')" onmouseover="show_habit_status_message('<%= habit.uuid %>')" data-container="body" data-toggle="popover" data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></span></h5> 
 <br>
@@ -152,11 +158,8 @@
   </div>
   </div> <!-- card-body -->
 </div> <!-- card -->
-
+</div> <!-- col -->
 <% end %>
-
-<span><%= link "New Habit", to: Routes.habit_path(@conn, :new) %></span>
-
 <script>
 function convert_form_to_json(form){
   result = {}
