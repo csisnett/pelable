@@ -79,14 +79,13 @@
 
 }
 .options {
-  text-align: right;
+  float: right;
 }
 
 .svg-style {
   cursor: pointer;
 }
 </style>
-
 
 <%= for {habit, streak} <- @habits do %>
 
@@ -114,37 +113,36 @@
 
 
 <div class="card" style="width: 18rem;">
-<div class="card-body">
+  <div class="card-body">
 <h5 class="card-title"><%= habit.name %><span id="<%= "habit_status" <> habit.uuid %>" class="<%= green_or_not(habit) %>"></span></h5> 
 <br>
 <br>
-<div class="check">
+    <div class="check">
 
 <svg id="<%= "checkmark" <> habit.uuid %>"class="svg-style" onclick="log_habit('<%= habit.uuid %>')" xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
 <div style="display: inline-block;" id='<%= "streak_for_habit" <> habit.uuid %>'><%= show_streak_count_or_not(streak, @user_info["timezone"], habit.time_frequency) %></div>
-</div>
+    </div>
 <br>
 <br>
-<div class="options">
-<!-- Default dropright button -->
-<div class="btn-group dropright">
+  <div class="options">
+
+  <div class="btn-group">
   <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     options
   </button>
-  <div class="dropdown-menu">
+    <div class="dropdown-menu">
     <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target='#<%= "habit_reward_modal" <> habit.uuid %>' >Add reward </a>
     <a class="dropdown-item" href="/rewards">Edit</a>
     <%= link "Delete", to: Routes.habit_path(@conn, :delete, habit.uuid), class: :"dropdown-item", method: :delete, data: [confirm: "Are you sure?"] %>
+    </div>
+
   </div>
 
-</div>
+  </div>
+  </div> <!-- card-body -->
+</div> <!-- card -->
 
-</div>
-</div>
-</div>
-    
 <% end %>
-
 
 <span><%= link "New Habit", to: Routes.habit_path(@conn, :new) %></span>
 
