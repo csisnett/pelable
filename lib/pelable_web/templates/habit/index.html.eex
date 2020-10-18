@@ -69,7 +69,7 @@
   height: 18px;
   width: 18px;
   float: right;
-  background-color: #D6D1CD;
+  background-color: #E6E3E1;
   border-radius: 50%;
   display: inline-block;
 }
