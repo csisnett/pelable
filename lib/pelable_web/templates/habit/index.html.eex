@@ -21,6 +21,16 @@
     window.setTimeout(() => checkmark.setAttribute("stroke", "currentColor"), 150);
   }
 
+  function show_habit_status_message(habit_uuid){
+    let status_id = "#habit_status" + habit_uuid;
+    $(status_id).popover('show');
+  }
+
+  function hide_habit_status_message(habit_uuid){
+    let status_id = "#habit_status" + habit_uuid;
+    $(status_id).popover('hide');
+  }
+
 
 
   function log_habit(habit_uuid) {
@@ -114,7 +124,7 @@
 
 <div class="card" style="width: 18rem;">
   <div class="card-body">
-<h5 class="card-title"><%= habit.name %><span id="<%= "habit_status" <> habit.uuid %>" class="<%= green_or_not(habit) %>"></span></h5> 
+<h5 class="card-title"><%= habit.name %><span id="<%= "habit_status" <> habit.uuid %>" class="<%= green_or_not(habit) %>" onmouseout="hide_habit_status_message('<%= habit.uuid %>')" onclick="show_habit_status_message('<%= habit.uuid %>')" onmouseover="show_habit_status_message('<%= habit.uuid %>')" data-container="body" data-toggle="popover" data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></span></h5> 
 <br>
 <br>
     <div class="check">

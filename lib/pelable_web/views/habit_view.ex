@@ -25,6 +25,14 @@ defmodule PelableWeb.HabitView do
     end
   end
 
+  def completed_message_or_not(%Habit{} = habit) do
+    if habit.completed_today? == true do
+      "You have completed this habit today"
+    else
+      "You haven't completed this habit today yet"
+    end
+  end
+
   def form_for_new_reward(%Habit{} = habit) do
     name = form_name(habit)
     raw(
