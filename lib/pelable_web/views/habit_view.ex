@@ -4,6 +4,9 @@ defmodule PelableWeb.HabitView do
   alias Pelable.Habits
   alias Pelable.Habits.{Habit, Streak}
 
+  # %Streak{}, String, String -> Integer || String
+  # Use to show the streak count beside the checkmark
+  # If the given streak is current returns its count otherwise empty string
   def show_streak_count_or_not(%Streak{} = streak, timezone, habit_frequency) do
     case Habits.is_streak_current?(streak, timezone, habit_frequency) do
       true -> streak.count
@@ -11,12 +14,15 @@ defmodule PelableWeb.HabitView do
     end
   end
 
+  # %Habit{} -> String
+  # Creates the id for a habit's reward form
   def form_name(%Habit{} = habit) do
     name = "form_reward_" <> habit.uuid
   end
 
   # %Habit{} -> String
-  # Returns "green-habit" if the habit was completed today, otherwise "gray-habit"
+  # Use to show the habit's status as green or gray.
+  #Returns "green-habit" if the habit was completed today, otherwise "gray-habit"
   def green_or_not(%Habit{} = habit) do
     if habit.completed_today? == true do
       "green-habit"
@@ -25,6 +31,8 @@ defmodule PelableWeb.HabitView do
     end
   end
 
+  #%Habit{} -> String
+  # Use to determine the popover message for the habit status
   def completed_message_or_not(%Habit{} = habit) do
     if habit.completed_today? == true do
       "You have completed this habit today"
@@ -33,6 +41,8 @@ defmodule PelableWeb.HabitView do
     end
   end
 
+  # %Habit{} -> IOdata
+  # Creates a form for a new reward for a specific habit
   def form_for_new_reward(%Habit{} = habit) do
     name = form_name(habit)
     raw(
