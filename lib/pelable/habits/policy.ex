@@ -19,9 +19,15 @@ defmodule Pelable.Habits.Policy do
     end
 
      # authorize users to take their rewards
-     def authorize(action, %User{id: user_id}, %HabitCompletionReward{creator_id: user_id}) when action in [:take_earned_reward] do
+    def authorize(action, %User{id: user_id}, %HabitCompletionReward{creator_id: user_id}) when action in [:take_earned_reward] do
         true
     end
+
+    def authorize(action, %User{}, attrs) when action in [:create_reminder] do
+        true
+    end
+
+    
 
     #Authorize admins to do everything
     

@@ -364,4 +364,61 @@ defmodule Pelable.HabitsTest do
       assert %Ecto.Changeset{} = Habits.change_habit_reward(habit_reward)
     end
   end
+
+  describe "reminders" do
+    alias Pelable.Habits.Reminder
+
+    @valid_attrs %{}
+    @update_attrs %{}
+    @invalid_attrs %{}
+
+    def reminder_fixture(attrs \\ %{}) do
+      {:ok, reminder} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_reminder()
+
+      reminder
+    end
+
+    test "list_reminders/0 returns all reminders" do
+      reminder = reminder_fixture()
+      assert Habits.list_reminders() == [reminder]
+    end
+
+    test "get_reminder!/1 returns the reminder with given id" do
+      reminder = reminder_fixture()
+      assert Habits.get_reminder!(reminder.id) == reminder
+    end
+
+    test "create_reminder/1 with valid data creates a reminder" do
+      assert {:ok, %Reminder{} = reminder} = Habits.create_reminder(@valid_attrs)
+    end
+
+    test "create_reminder/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_reminder(@invalid_attrs)
+    end
+
+    test "update_reminder/2 with valid data updates the reminder" do
+      reminder = reminder_fixture()
+      assert {:ok, %Reminder{} = reminder} = Habits.update_reminder(reminder, @update_attrs)
+    end
+
+    test "update_reminder/2 with invalid data returns error changeset" do
+      reminder = reminder_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_reminder(reminder, @invalid_attrs)
+      assert reminder == Habits.get_reminder!(reminder.id)
+    end
+
+    test "delete_reminder/1 deletes the reminder" do
+      reminder = reminder_fixture()
+      assert {:ok, %Reminder{}} = Habits.delete_reminder(reminder)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_reminder!(reminder.id) end
+    end
+
+    test "change_reminder/1 returns a reminder changeset" do
+      reminder = reminder_fixture()
+      assert %Ecto.Changeset{} = Habits.change_reminder(reminder)
+    end
+  end
 end
