@@ -27,27 +27,4 @@ tinymce.init({
         toolbar: "fullscreen | undo redo | styleselect | numlist bullist | bold italic | link | alignleft aligncenter alignright",
         link_default_protocol: "https"
       });
-/*
-var quill = new Quill('#editor-container', {
-  modules: {
-    toolbar: [
-      ['bold', 'italic'],
-      ['link', 'blockquote', 'code-block', 'image'],
-      [{ list: 'ordered' }, { list: 'bullet' }]
-    ]
-  },
-  placeholder: 'Compose an epic...',
-  theme: 'snow'
-});
-
-var form = document.querySelector('form');
-form.onsubmit = function() {
-  // Populate hidden form on submit
-  var about = document.querySelector('#post_body_html');
-  about.value = JSON.stringify(quill.getContents());
-  
-  // No back end to actually submit to!
-  return true;
-};
-*/
 </script>
