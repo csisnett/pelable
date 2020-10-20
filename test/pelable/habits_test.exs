@@ -421,4 +421,61 @@ defmodule Pelable.HabitsTest do
       assert %Ecto.Changeset{} = Habits.change_reminder(reminder)
     end
   end
+
+  describe "habit_reminder" do
+    alias Pelable.Habits.HabitReminder
+
+    @valid_attrs %{}
+    @update_attrs %{}
+    @invalid_attrs %{}
+
+    def habit_reminder_fixture(attrs \\ %{}) do
+      {:ok, habit_reminder} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_habit_reminder()
+
+      habit_reminder
+    end
+
+    test "list_habit_reminder/0 returns all habit_reminder" do
+      habit_reminder = habit_reminder_fixture()
+      assert Habits.list_habit_reminder() == [habit_reminder]
+    end
+
+    test "get_habit_reminder!/1 returns the habit_reminder with given id" do
+      habit_reminder = habit_reminder_fixture()
+      assert Habits.get_habit_reminder!(habit_reminder.id) == habit_reminder
+    end
+
+    test "create_habit_reminder/1 with valid data creates a habit_reminder" do
+      assert {:ok, %HabitReminder{} = habit_reminder} = Habits.create_habit_reminder(@valid_attrs)
+    end
+
+    test "create_habit_reminder/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_habit_reminder(@invalid_attrs)
+    end
+
+    test "update_habit_reminder/2 with valid data updates the habit_reminder" do
+      habit_reminder = habit_reminder_fixture()
+      assert {:ok, %HabitReminder{} = habit_reminder} = Habits.update_habit_reminder(habit_reminder, @update_attrs)
+    end
+
+    test "update_habit_reminder/2 with invalid data returns error changeset" do
+      habit_reminder = habit_reminder_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_habit_reminder(habit_reminder, @invalid_attrs)
+      assert habit_reminder == Habits.get_habit_reminder!(habit_reminder.id)
+    end
+
+    test "delete_habit_reminder/1 deletes the habit_reminder" do
+      habit_reminder = habit_reminder_fixture()
+      assert {:ok, %HabitReminder{}} = Habits.delete_habit_reminder(habit_reminder)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_habit_reminder!(habit_reminder.id) end
+    end
+
+    test "change_habit_reminder/1 returns a habit_reminder changeset" do
+      habit_reminder = habit_reminder_fixture()
+      assert %Ecto.Changeset{} = Habits.change_habit_reminder(habit_reminder)
+    end
+  end
 end
