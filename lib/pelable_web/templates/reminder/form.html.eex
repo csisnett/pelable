@@ -1,3 +1,51 @@
+<script>
+    function transform_hour(hour_string){
+     let object = {};
+     let hour = Number(hour_string);
+     if (hour > 12) {
+       object.afternoon = "PM";
+       object.hour = hour - 12;
+     } else {
+
+     if (hour == 12) {
+       object.afternoon = "PM";
+       object.hour = hour;
+     }
+       else {
+       object.afternoon = "AM";
+       if (hour == 0) {
+       object.hour = 12;
+       } else{
+         object.hour = hour;
+       }
+     };
+     };
+     return object;
+   }
+   
+
+   function transform_minute(minute){
+     if(minute < 10) {
+       return "0" + minute.toString();
+     }
+     else{
+       return minute.toString();
+     }
+   }
+
+function show_hour_format(){
+ 	let hour_input = document.getElementById("hour-input")
+    let minute_input = document.getElementById("minute-input")
+    
+    let transformed_hour = transform_hour(hour_input.value)
+    let formatted_minute = transform_minute(minute_input.value)
+    let final_format = transformed_hour.hour + ":" + formatted_minute + " " + transformed_hour.afternoon
+ 	
+    let new_hour_element = document.getElementById("12-hour-format")
+    new_hour_element.textContent = final_format
+ }
+</script>
+
 <%= form_for @changeset, @action, fn f -> %>
   <%= if @changeset.action do %>
     <div class="alert alert-danger">
@@ -5,6 +53,15 @@
     </div>
   <% end %>
 
+  <%= label f, :name %>
+  <%= text_input f, :name, class: "rounded-input" %>
+  <br>
+  
+  <%= label f, :hour %><%= select f, :time_hour, hour_options, id: "hour-input", class: "custom-select", value: "11", onChange: "show_hour_format()", style: "width: 100px;" %>
+  <%= label f, :minute %>
+  <%= select f, :time_hour, minute_options, class: "custom-select", id: "minute-input", value: "30", onChange: "show_hour_format()", style: "width: 100px;" %>
+  <div id="12-hour-format"> 11:30AM </div>
+  <br>
   <div>
     <%= submit "Save" %>
   </div>
