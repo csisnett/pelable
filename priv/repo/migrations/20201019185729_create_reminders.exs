@@ -6,6 +6,7 @@ defmodule Pelable.Repo.Migrations.CreateReminders do
       add :name, :string, null: false
       add :uuid, :uuid, null: false
       add :local_timezone, :string, null: false
+      add :active?, :boolean, null: false
       add :time_start, :time, null: false
       add :date_start, :date, null: false
       add :date_end, :date

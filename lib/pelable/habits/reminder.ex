@@ -10,7 +10,7 @@ defmodule Pelable.Habits.Reminder do
     field :name, :string
     field :uuid, Ecto.ShortUUID, autogenerate: true
     field :local_timezone, :string
-    field :active?, :boolean, virtual: true
+    field :active?, :boolean, default: true # When creating a new one is automatically active
     field :time_start, :time
     field :date_start, :date
     field :date_end, :date
@@ -24,9 +24,9 @@ defmodule Pelable.Habits.Reminder do
   @doc false
   def changeset(reminder, attrs) do
     reminder
-    |> cast(attrs,[:name, :local_timezone, :time_start, :date_start, :creator_id,
+    |> cast(attrs,[:name, :local_timezone, :time_start, :date_start, :creator_id, :active?,
     :date_end, :repeat_on_days, :time_frequency, :frequency_interval])
-    |> validate_required([:name, :local_timezone, :time_start, :date_start, :creator_id])
+    |> validate_required([:name, :local_timezone, :time_start, :date_start, :creator_id, :active?])
     |> foreign_key_constraint(:creator_id)
   end
 end
