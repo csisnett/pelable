@@ -22,6 +22,21 @@
      };
      return object;
    }
+
+  function special_time(hour_string, minute_string){
+      let hour = Number(hour_string);
+      let minute = Number(minute_string);
+
+     if(hour == 12 & minute == 0){
+       return "(Noon🌞)"
+     } else{
+     	if(hour == 0 & minute == 0){
+       return "(Midnight🌝)"
+     } else{
+       return ""
+     }
+     }
+    }
    
 
    function transform_minute(minute){
@@ -39,7 +54,8 @@ function show_hour_format(){
     
     let transformed_hour = transform_hour(hour_input.value)
     let formatted_minute = transform_minute(minute_input.value)
-    let final_format = transformed_hour.hour + ":" + formatted_minute + " " + transformed_hour.afternoon
+    let special_time_value = special_time(hour_input.value, minute_input.value)
+    let final_format = transformed_hour.hour + ":" + formatted_minute + " " + transformed_hour.afternoon + special_time_value
  	
     let new_hour_element = document.getElementById("12-hour-format")
     new_hour_element.textContent = final_format
@@ -60,9 +76,31 @@ function show_hour_format(){
   <%= label f, :hour %><%= select f, :time_hour, hour_options, id: "hour-input", class: "custom-select", value: "11", onChange: "show_hour_format()", style: "width: 100px;" %>
   <%= label f, :minute %>
   <%= select f, :time_hour, minute_options, class: "custom-select", id: "minute-input", value: "30", onChange: "show_hour_format()", style: "width: 100px;" %>
-  <div id="12-hour-format"> 11:30AM </div>
+  ⏰ <span id="12-hour-format" style=""> 11:30 AM </span>
   <br>
+  <%= checkbox f, :recurrent, value: "check"%>
+  <%= label f, :Repeat, for: "recurrent" %>
+  <br>
+  <%= label f, :time_frequency %>
+  <%= select f, :time_frequency, current_frequency_options, class: "custom-select", style: "width: 130px;" %>
+  <div id="specific_date" style="visibility: hidden">
+  <%= radio_button f, :start_date_option, "today"%>
+  <%= label f, :Today %>
+  <br>
+  <%= radio_button f, :start_date_option, "tomorrow" %>
+  <%= label f, :Tomorrow %>
+  <br>
+    <%= radio_button f, :start_date_option, "specific_date" %>
+  <%= label f, :Date %>
+    
+  <%= date_select f, :start_date%>
+  </div>
+  <br>
+  
+  <br>
+
+  
   <div>
-    <%= submit "Save" %>
+    <%= submit "Save", class: "btn btn-outline-primary" %>
   </div>
 <% end %>
