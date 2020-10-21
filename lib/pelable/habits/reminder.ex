@@ -3,7 +3,7 @@ defmodule Pelable.Habits.Reminder do
   import Ecto.Changeset
 
   @repetition_days ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
-  @time_frequencies ["secondly", "minutely", "hourly", "daily", "weekly", "monthly", "yearly"]
+  @frequency_options ["secondly", "minutely", "hourly", "daily", "weekly", "monthly", "yearly"]
   # To detect if is recurrent or not use time_frequency == nil
 
   schema "reminders" do

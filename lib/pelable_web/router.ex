@@ -93,6 +93,8 @@ defmodule PelableWeb.Router do
     get "/earned-rewards/", HabitCompletionRewardController, :index
     get "/earned-rewards/:uuid", HabitCompletionRewardController, :show
     put "/earned-rewards/:uuid", HabitCompletionRewardController, :take_reward
+    
+    resources "/reminders", ReminderController
   end
 
   scope "/", PelableWeb do
