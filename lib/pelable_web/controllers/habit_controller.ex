@@ -2,13 +2,14 @@ defmodule PelableWeb.HabitController do
   use PelableWeb, :controller
 
   alias Pelable.Habits
-  alias Pelable.Habits.Habit
+  alias Pelable.Habits.{Habit, Reminder}
 
   def index(conn, _params) do
     user = conn.assigns.current_user
     user_timezone = Habits.get_user_timezone(user)
     habits = Habits.get_user_habits(user)
-    render(conn, "index.html", habits: habits, user_info: %{"timezone" => user_timezone})
+    reminder_changeset = Habits.change_reminder(%Reminder{})
+    render(conn, "index.html", habits: habits, user_info: %{"timezone" => user_timezone}, reminder_changeset: reminder_changeset)
   end
 
   def log_habit(conn, %{"uuid" => uuid} = params) do

@@ -21,6 +21,15 @@ defmodule Pelable.Habits.Reminder do
     timestamps()
   end
 
+
+  def recurrent_changeset(reminder, attrs) do
+    reminder
+    |> cast(attrs,[:name, :local_timezone, :time_start, :date_start, :creator_id, :active?,
+    :date_end, :repeat_on_days, :time_frequency, :frequency_interval])
+    |> validate_required([:name, :local_timezone, :time_start, :date_start, :creator_id, :active?, :time_frequency])
+    |> foreign_key_constraint(:creator_id)
+  end
+
   @doc false
   def changeset(reminder, attrs) do
     reminder

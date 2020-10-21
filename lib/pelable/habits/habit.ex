@@ -3,7 +3,7 @@ defmodule Pelable.Habits.Habit do
   import Ecto.Changeset
 
   alias Pelable.Users.User
-  alias Pelable.Habits.Reward
+  alias Pelable.Habits.{Reward, Reminder, HabitReminder}
 
   @time_frequencies ["hourly", "daily", "weekly", "monthly", "quarterly"]
   schema "habits" do
@@ -16,6 +16,8 @@ defmodule Pelable.Habits.Habit do
 
     belongs_to :current_reward, Reward
     belongs_to :user, User
+    many_to_many :reminders, Reminder, join_through: "habit_reminder"
+    has_many :habit_reminder, HabitReminder
     timestamps()
   end
 

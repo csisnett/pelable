@@ -129,9 +129,31 @@
 </div>
 
 
+<!-- Modal Add reminder -->
+<div class="modal fade" id='<%= "habit_reminder_modal" <> habit.uuid %>' tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"> Create a reminder for <%= habit.name %></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <%= render(PelableWeb.ReminderView, "new.html", conn: Plug.Conn.assign(@conn, :habit_uuid, habit.uuid), changeset: @reminder_changeset, action: :create) %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <div class="card card-style" style="width: 18rem;">
   <div class="card-body">
-<h5 class="card-title"><%= habit.name %><span id="<%= "habit_status" <> habit.uuid %>" class="<%= green_or_not(habit) %>" onmouseout="hide_habit_status_message('<%= habit.uuid %>')" onclick="show_habit_status_message('<%= habit.uuid %>')" onmouseover="show_habit_status_message('<%= habit.uuid %>')" data-container="body" data-toggle="popover" data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></span></h5> 
+<h5 class="card-title"><%= habit.name %> <span id="<%= "habit_status" <> habit.uuid %>" class="<%= green_or_not(habit) %>" onmouseout="hide_habit_status_message('<%= habit.uuid %>')" onclick="show_habit_status_message('<%= habit.uuid %>')" onmouseover="show_habit_status_message('<%= habit.uuid %>')" data-container="body" data-toggle="popover" data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></span></h5> 
 <br>
 <br>
     <div class="check">
@@ -141,18 +163,22 @@
     </div>
 <br>
 <br>
-  <div class="options">
+<h2>
 
-  <div class="btn-group">
+</h2>
+  <div class="options_div">
+⏲️
+  <div class="btn-group options">
   <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     options
   </button>
     <div class="dropdown-menu">
     <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target='#<%= "habit_reward_modal" <> habit.uuid %>' >Add reward </a>
+    <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target='#<%= "habit_reminder_modal" <> habit.uuid %>' >Add reminder </a>
     <a class="dropdown-item" href="/rewards">Edit</a>
     <%= link "Delete", to: Routes.habit_path(@conn, :delete, habit.uuid), class: :"dropdown-item", method: :delete, data: [confirm: "Are you sure?"] %>
     </div>
-
+  
   </div>
 
   </div>
@@ -196,6 +222,7 @@ function create_reward_for_habit(habit_uuid, form_id){
   console.log(data);
   }
 
+alert("Kind reminder: start writing now");
 
 </script>
 

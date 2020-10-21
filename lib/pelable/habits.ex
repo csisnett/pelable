@@ -58,11 +58,18 @@ defmodule Pelable.Habits do
     Repo.all(query)
   end
 
-  # %User{} -> [%Habit{}, ...]
-  # Produces a list of a user's current habits
+  # %User{} -> Ecto.Query{}
+  # Produces a query to list a user's current habits
   def list_user_current_habits(%User{} = user) do
-    query = from h in Habit, where: h.user_id == ^user.id and h.archived? == false, select: h
-    Repo.all(query)
+    query = from h in Habit, where: h.user_id == ^user.id and h.archived? == false
+  end
+
+  # Gets a query of habits and produces a new query with their respective reminders
+  def get_reminders(query) do
+    from habit in query,
+    left_join: habit_reminder in assoc(habit, :habit_reminder),
+    left_join: reminder in assoc(habit_reminder, :reminder),
+    preload: [reminders: reminder] 
   end
 
   
@@ -107,7 +114,6 @@ defmodule Pelable.Habits do
   # %Habit{} -> Boolean
   #Returns true if the habit was completed today already, otherwise false
   def habit_completed_today?(%Habit{} = habit, %Streak{} = last_streak, timezone) do
-    IO.puts(timezone)
     habit_completion = get_last_habit_completion(last_streak)
     local_present_time = create_local_present_time(timezone)
     
@@ -124,7 +130,7 @@ defmodule Pelable.Habits do
   # Produces a user's current habits with their respective active streaks
   #(in case the last streak was inactive it creates a new one)
   def get_user_habits(%User{} = user) do
-    habits = list_user_current_habits(user)
+    habits = list_user_current_habits(user) |> Repo.all
     user_timezone = get_user_timezone(user)
     get_habits_last_streaks(habits, user_timezone)
   end
@@ -838,6 +844,28 @@ defmodule Pelable.Habits do
     |> Repo.insert()
   end
 
+
+  def create_date_start(attrs) do
+    with false <- Map.has_key?(attrs, "start_date_option") do
+      datetime = create_local_present_time(attrs["local_timezone"])
+      date = DateTime.to_date(datetime)
+      attrs |> Map.put("date_start", date)
+    end
+  end
+
+  def create_time_start(attrs) do
+    with true <- Map.has_key?(attrs, "time_hour"),
+    true <- Map.has_key?(attrs, "time_minute")
+    do
+      time_hour = String.to_integer(attrs["time_hour"])
+      time_minute = String.to_integer(attrs["time_minute"])
+      {:ok, time_start} = Time.new(time_hour, time_minute, 0)
+      attrs |> Map.put("time_start", time_start)
+    else
+      false -> attrs
+    end
+  end
+
   # %{}, %Habit{}, %User{} -> {:ok, %Reminder{}, %HabitReminder{}} || {:error, :unauthorized}
   # Creates a reminder for the habit given if the user owns the habit.
   def create_reminder_for_habit(%{} = attrs, %Habit{} = habit, %User{} = user) do
@@ -853,8 +881,30 @@ defmodule Pelable.Habits do
   # Creates a reminder for the user given
   def create_reminder(%{} = attrs, %User{} = user) do
     with :ok <- Bodyguard.permit(Habits.Policy, :create_reminder, user, attrs) do
-      create_reminder(attrs)
+      case Map.get(attrs, "recurrent") do
+        "true" -> create_recurrent_reminder(attrs)
+        "false" -> create_one_off_reminder(attrs)
+      end
     end
+  end
+
+  def if_habit_create_reminder(%{"habit_uuid" => uuid} = attrs, %Reminder{} = reminder) do
+    habit = Habits.get_habit_by_uuid(uuid)
+    attrs = %{"habit_id" => habit.id, "reminder_id" => reminder.id}
+    {:ok, habit_reminder} = create_habit_reminder(attrs)
+    habit_reminder
+  end
+
+  def create_recurrent_reminder(%{} = attrs) do
+    attrs = attrs |> create_time_start |> create_date_start
+    {:ok, reminder} = Reminder.recurrent_changeset(%Reminder{}, attrs) |> Repo.insert()
+    habit_reminder = if_habit_create_reminder(attrs, reminder)
+    {:ok, reminder, habit_reminder}
+  end
+
+  def create_one_off_reminder(%{} = attrs) do
+    attrs = Reminder.create_time_start(attrs)
+    create_reminder(attrs)
   end
 
   @doc """
