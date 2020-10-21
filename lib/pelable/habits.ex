@@ -838,9 +838,22 @@ defmodule Pelable.Habits do
     |> Repo.insert()
   end
 
+  # %{}, %Habit{}, %User{} -> {:ok, %Reminder{}, %HabitReminder{}} || {:error, :unauthorized}
+  # Creates a reminder for the habit given if the user owns the habit.
+  def create_reminder_for_habit(%{} = attrs, %Habit{} = habit, %User{} = user) do
+    with :ok <- Bodyguard.permit(Habits.Policy, :update_habit, user, habit) do
+      {:ok, reminder} = create_reminder(attrs, user)
+      habit_reminder_attrs = %{"reminder_id" => reminder.id, "habit_id" => habit.id}
+      {:ok, habit_reminder} = create_habit_reminder(habit_reminder_attrs)
+      {:ok, reminder, habit_reminder}
+    end
+  end
+
+  # %{}, %User{} -> {:ok, %Reminder{}} || {:error, %Ecto.Changeset{}}
+  # Creates a reminder for the user given
   def create_reminder(%{} = attrs, %User{} = user) do
     with :ok <- Bodyguard.permit(Habits.Policy, :create_reminder, user, attrs) do
-      {:ok, reminder} = create_reminder(attrs)
+      create_reminder(attrs)
     end
   end
 
@@ -889,5 +902,101 @@ defmodule Pelable.Habits do
   """
   def change_reminder(%Reminder{} = reminder, attrs \\ %{}) do
     Reminder.changeset(reminder, attrs)
+  end
+
+  alias Pelable.Habits.HabitReminder
+
+  @doc """
+  Returns the list of habit_reminder.
+
+  ## Examples
+
+      iex> list_habit_reminder()
+      [%HabitReminder{}, ...]
+
+  """
+  def list_habit_reminder do
+    Repo.all(HabitReminder)
+  end
+
+  @doc """
+  Gets a single habit_reminder.
+
+  Raises `Ecto.NoResultsError` if the Habit reminder does not exist.
+
+  ## Examples
+
+      iex> get_habit_reminder!(123)
+      %HabitReminder{}
+
+      iex> get_habit_reminder!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_habit_reminder!(id), do: Repo.get!(HabitReminder, id)
+
+  @doc """
+  Creates a habit_reminder.
+
+  ## Examples
+
+      iex> create_habit_reminder(%{field: value})
+      {:ok, %HabitReminder{}}
+
+      iex> create_habit_reminder(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_habit_reminder(attrs \\ %{}) do
+    %HabitReminder{}
+    |> HabitReminder.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a habit_reminder.
+
+  ## Examples
+
+      iex> update_habit_reminder(habit_reminder, %{field: new_value})
+      {:ok, %HabitReminder{}}
+
+      iex> update_habit_reminder(habit_reminder, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_habit_reminder(%HabitReminder{} = habit_reminder, attrs) do
+    habit_reminder
+    |> HabitReminder.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a habit_reminder.
+
+  ## Examples
+
+      iex> delete_habit_reminder(habit_reminder)
+      {:ok, %HabitReminder{}}
+
+      iex> delete_habit_reminder(habit_reminder)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_habit_reminder(%HabitReminder{} = habit_reminder) do
+    Repo.delete(habit_reminder)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking habit_reminder changes.
+
+  ## Examples
+
+      iex> change_habit_reminder(habit_reminder)
+      %Ecto.Changeset{data: %HabitReminder{}}
+
+  """
+  def change_habit_reminder(%HabitReminder{} = habit_reminder, attrs \\ %{}) do
+    HabitReminder.changeset(habit_reminder, attrs)
   end
 end
