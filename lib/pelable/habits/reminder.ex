@@ -12,7 +12,7 @@ defmodule Pelable.Habits.Reminder do
     field :local_timezone, :string
     field :active?, :boolean, default: true # When creating a new one is automatically active
     field :time_start, :time
-    field :date_start, :date
+    field :date_start, :date #Can be used for recurrent or one off. If not recurrent this is the only date the reminder will go off
     field :date_end, :date
     field :repeat_on_days, {:array, :string}
     field :time_frequency, :string
