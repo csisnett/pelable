@@ -65,7 +65,7 @@ defmodule Pelable.Habits do
   end
 
   # Gets a query of habits and produces a new query with their respective reminders
-  def get_reminders(query) do
+  def query_reminders(query) do
     from habit in query,
     left_join: habit_reminder in assoc(habit, :habit_reminder),
     left_join: reminder in assoc(habit_reminder, :reminder),
@@ -130,7 +130,7 @@ defmodule Pelable.Habits do
   # Produces a user's current habits with their respective active streaks
   #(in case the last streak was inactive it creates a new one)
   def get_user_habits(%User{} = user) do
-    habits = list_user_current_habits(user) |> Repo.all
+    habits = list_user_current_habits(user) |> query_reminders |> Repo.all
     user_timezone = get_user_timezone(user)
     get_habits_last_streaks(habits, user_timezone)
   end
@@ -844,7 +844,50 @@ defmodule Pelable.Habits do
     |> Repo.insert()
   end
 
+  # %Reminder{} -> Boolean
+  # Determines whether the reminder is recurrent
+  def recurrent_reminder?(%Reminder{} = reminder) do
+    if reminder.time_frequency == nil do
+      false
+    else
+      true
+    end
+  end
 
+  # Explains when a recurrent reminder goes off
+  def explain_recurrent_reminder(%Reminder{time_frequency: time_frequency} = reminder) do
+    case time_frequency do
+      "daily" ->
+        time_string = Time.to_string(reminder.time_start) |> String.slice(0..4)
+        "every day at " <> time_string
+    end
+  end
+
+  # Explains when a one-off reminder goes off
+  def explain_specific_date_reminder(%Reminder{} = reminder) do
+    local_datetime = create_local_present_time(reminder.local_timezone)
+    local_date = DateTime.to_date(local_datetime)
+    days_ahead = DateTime.diff(reminder.start_date, local_date)
+    time_string = reminder.start_time |> Time.to_string |> String.slice(0..4)
+
+    case days_ahead do
+      0 -> "Today at " <> time_string
+      1 -> "Tomorrow at " <> time_string
+      n -> "In #{n} days at " <> time_string
+    end
+  end
+
+  # Explains when the reminder given will go off
+  def explain_reminder(%Reminder{} = reminder) do
+      case recurrent_reminder?(reminder) do
+        true -> explain_recurrent_reminder(reminder)
+        false -> explain_specific_date_reminder(reminder)
+      end
+  end
+
+  # %{} -> %{}
+  # If a date is not given gets the present date at the local timezone and assigns it to "date_start"
+  # Makes sure there's always a date_start for new reminders
   def create_date_start(attrs) do
     with false <- Map.has_key?(attrs, "start_date_option") do
       datetime = create_local_present_time(attrs["local_timezone"])
@@ -853,6 +896,9 @@ defmodule Pelable.Habits do
     end
   end
 
+  # %{} -> %{}
+  # Creates %Time{} using the attrs time_hour and time_minute and assigns it as "time_start" 
+  # Basically turns incoming data into Time for a new Reminder
   def create_time_start(attrs) do
     with true <- Map.has_key?(attrs, "time_hour"),
     true <- Map.has_key?(attrs, "time_minute")
@@ -866,6 +912,7 @@ defmodule Pelable.Habits do
     end
   end
 
+  #Currently not in use
   # %{}, %Habit{}, %User{} -> {:ok, %Reminder{}, %HabitReminder{}} || {:error, :unauthorized}
   # Creates a reminder for the habit given if the user owns the habit.
   def create_reminder_for_habit(%{} = attrs, %Habit{} = habit, %User{} = user) do
@@ -877,34 +924,57 @@ defmodule Pelable.Habits do
     end
   end
 
-  # %{}, %User{} -> {:ok, %Reminder{}} || {:error, %Ecto.Changeset{}}
-  # Creates a reminder for the user given
+  # %{}, %User{} -> {:ok, %Reminder{}} || {:ok, %Reminder{}, %HabitReminder{}} || {:error, %Ecto.Changeset{}}
+  # Creates a new reminder for the user given
   def create_reminder(%{} = attrs, %User{} = user) do
     with :ok <- Bodyguard.permit(Habits.Policy, :create_reminder, user, attrs) do
       case Map.get(attrs, "recurrent") do
-        "true" -> create_recurrent_reminder(attrs)
-        "false" -> create_one_off_reminder(attrs)
+        "true" -> create_recurrent_reminder(attrs, user)
+        "false" -> create_one_off_reminder(attrs, user)
       end
     end
   end
 
-  def if_habit_create_reminder(%{"habit_uuid" => uuid} = attrs, %Reminder{} = reminder) do
+  # # %{}, %Reminder{}, %User{} -> {:ok, %Reminder{}, %HabitReminder{} || {:ok, %Reminder{}}
+  # Creates a habit_reminder with the Reminder and habit_uuid given
+  # Used when creating reminders for a specific habit
+  def if_habit_create_habit_reminder(%{"habit_uuid" => uuid} = attrs, %Reminder{} = reminder, %User{} = user) do
     habit = Habits.get_habit_by_uuid(uuid)
-    attrs = %{"habit_id" => habit.id, "reminder_id" => reminder.id}
-    {:ok, habit_reminder} = create_habit_reminder(attrs)
-    habit_reminder
+    case habit do
+      nil -> {:ok, reminder}
+      %Habit{} ->
+        with :ok <- Bodyguard.permit(Habits.Policy, :update_habit, user, habit) do
+          attrs = %{"habit_id" => habit.id, "reminder_id" => reminder.id}
+          {:ok, habit_reminder} = create_habit_reminder(attrs)
+          {:ok, reminder, habit_reminder}
+      end
+    end
   end
 
-  def create_recurrent_reminder(%{} = attrs) do
+  # If the above function doesn't match (there's no habit_uuid) just return the reminder itself
+  def if_habit_create_habit_reminder(%{} = _attrs, %Reminder{} = reminder, %User{} = _user) do
+    {:ok, reminder}
+  end
+
+  
+  # %{}, %User{} -> {:ok, %Reminder{}} || {:ok, %Reminder{}, %HabitReminder{}} || {:error, Ecto.Changeset{}}
+  # Used to create recurrent reminders
+  def create_recurrent_reminder(%{} = attrs, user) do
     attrs = attrs |> create_time_start |> create_date_start
-    {:ok, reminder} = Reminder.recurrent_changeset(%Reminder{}, attrs) |> Repo.insert()
-    habit_reminder = if_habit_create_reminder(attrs, reminder)
-    {:ok, reminder, habit_reminder}
+    case Reminder.recurrent_changeset(%Reminder{}, attrs) |> Repo.insert() do
+      {:ok, reminder} -> if_habit_create_habit_reminder(attrs, reminder, user)
+        {:error, changeset} -> {:error, changeset}
+    end
   end
 
-  def create_one_off_reminder(%{} = attrs) do
-    attrs = Reminder.create_time_start(attrs)
-    create_reminder(attrs)
+  # %{}, %User{} -> {:ok, %Reminder{}} || {:ok, %Reminder{}, %HabitReminder{}} || {:error, Ecto.Changeset{}}
+  # Used to create one-off reminders
+  def create_one_off_reminder(%{} = attrs, user) do
+    attrs = attrs |> create_time_start
+    case create_reminder(attrs) do
+      {:ok, reminder} -> if_habit_create_habit_reminder(attrs, reminder, user)
+        {:error, changeset} -> {:error, changeset}
+    end
   end
 
   @doc """

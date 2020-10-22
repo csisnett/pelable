@@ -32,6 +32,16 @@
     $(status_id).popover('hide');
   }
 
+  function show_reminder_message(habit_uuid){
+    let reminder_id = "#reminder_for_habit_" + habit_uuid;
+    $(reminder_id).popover('show');
+  }
+
+  function hide_reminder_message(habit_uuid){
+    let reminder_id = "#reminder_for_habit_" + habit_uuid;
+    $(reminder_id).popover('hide');
+  }
+
 
 
   function log_habit(habit_uuid) {
@@ -153,7 +163,12 @@
 
 <div class="card card-style" style="width: 18rem;">
   <div class="card-body">
-<h5 class="card-title"><%= habit.name %> <span id="<%= "habit_status" <> habit.uuid %>" class="<%= green_or_not(habit) %>" onmouseout="hide_habit_status_message('<%= habit.uuid %>')" onclick="show_habit_status_message('<%= habit.uuid %>')" onmouseover="show_habit_status_message('<%= habit.uuid %>')" data-container="body" data-toggle="popover" data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></span></h5> 
+<h5 class="card-title">
+<%= habit.name %> <span id="<%= "habit_status" <> habit.uuid %>" class="<%= green_or_not(habit) %>"
+onmouseout="hide_habit_status_message('<%= habit.uuid %>')" onclick="show_habit_status_message('<%= habit.uuid %>')"
+onmouseover="show_habit_status_message('<%= habit.uuid %>')" data-container="body" data-toggle="popover"
+data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></span
+></h5> 
 <br>
 <br>
     <div class="check">
@@ -163,11 +178,15 @@
     </div>
 <br>
 <br>
-<h2>
 
-</h2>
   <div class="options_div">
-⏲️
+
+
+
+  <%= if habit.reminders != [] do %>
+  <span id="reminder_for_habit_<%= habit.uuid %>" onmouseout="hide_reminder_message('<%= habit.uuid %>')" onclick="show_reminder_message('<%= habit.uuid %>')" onmouseover="show_reminder_message('<%= habit.uuid %>')" data-container="body" data-toggle="popover"
+   data-placement="top" data-content='<%= reminder_message(habit.reminders, [])%>'> ⏲️ </span>
+  <% end %>
   <div class="btn-group options">
   <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     options
@@ -186,6 +205,7 @@
 </div> <!-- card -->
 </div> <!-- col -->
 <% end %>
+
 <script>
 function convert_form_to_json(form){
   result = {}
@@ -222,7 +242,7 @@ function create_reward_for_habit(habit_uuid, form_id){
   console.log(data);
   }
 
-alert("Kind reminder: start writing now");
+//alert("Kind reminder: start writing now");
 
 </script>
 

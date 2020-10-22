@@ -53,4 +53,24 @@ defmodule PelableWeb.HabitView do
     </textarea>
     </form>")
   end
+
+  def reminder_message([], explanations) do
+    explanations_msg = Enum.join(explanations, " and ")
+    if length(explanations) == 1 do
+    "Reminder: " <> explanations_msg
+    else
+      "Reminders: " <> explanations_msg
+    end
+  end
+
+  # [] -> String
+  def reminder_message(reminders, explanations) when is_list(reminders) do
+    [first_reminder | rest] = reminders
+    first_explanation = Habits.explain_reminder(first_reminder)
+    
+    reminder_message(rest, [first_explanation | explanations])
+  end
+
+ 
+
 end
