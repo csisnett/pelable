@@ -71,6 +71,17 @@ defmodule PelableWeb.HabitView do
     reminder_message(rest, [first_explanation | explanations])
   end
 
+  def show_reminders_times([], times) do
+    #I need to finish it or delete it
+    times
+  end
+
+  def show_reminders_times(reminders, times) when is_list(reminders) do
+    [first_reminder, rest] = reminders
+    time_string = first_reminder.start_time |> Time.to_string
+    times = [time_string | times]
+    show_reminders_times(rest, times)
+  end
  
 
 end

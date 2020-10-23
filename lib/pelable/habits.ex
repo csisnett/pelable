@@ -868,7 +868,7 @@ defmodule Pelable.Habits do
     local_datetime = create_local_present_time(reminder.local_timezone)
     local_date = DateTime.to_date(local_datetime)
     days_ahead = DateTime.diff(reminder.start_date, local_date)
-    time_string = reminder.start_time |> Time.to_string |> String.slice(0..4)
+    time_string = reminder.start_time |> Time.to_string |> String.slice(0..4) #Eliminates seconds from string
 
     case days_ahead do
       0 -> "Today at " <> time_string
