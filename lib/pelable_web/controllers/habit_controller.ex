@@ -9,7 +9,8 @@ defmodule PelableWeb.HabitController do
     user_timezone = Habits.get_user_timezone(user)
     habits = Habits.get_user_habits(user)
     reminder_changeset = Habits.change_reminder(%Reminder{})
-    render(conn, "index.html", habits: habits, user_info: %{"timezone" => user_timezone}, reminder_changeset: reminder_changeset)
+    habit_changeset = Habits.change_habit(%Habit{}, %{"time_frequency" => "daily"})
+    render(conn, "index.html", habits: habits, user_info: %{"timezone" => user_timezone}, habit_changeset: habit_changeset, reminder_changeset: reminder_changeset)
   end
 
   def log_habit(conn, %{"uuid" => uuid} = params) do
@@ -52,7 +53,7 @@ defmodule PelableWeb.HabitController do
       {:ok, habit} ->
         conn
         |> put_flash(:info, "Habit created successfully.")
-        |> redirect(to: Routes.habit_path(conn, :show, habit.uuid))
+        |> redirect(to: Routes.habit_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)

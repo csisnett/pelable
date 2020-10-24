@@ -9,15 +9,10 @@
   <%= text_input f, :name %>
   <%= error_tag f, :name %>
 
-  <%= label f, :time_frequency %>
-  <%= text_input f, :time_frequency %>
+  <%= label f, :frequency %>
+  <%= select f, :time_frequency, [{:daily, "daily"}], class: "custom-select", style: "width: 110px;" %>
   <%= error_tag f, :time_frequency %>
 
-  <%= label f, :archived? %>
-  <%= checkbox f, :archived? %>
-  <%= error_tag f, :archived? %>
-
-  <div>
-    <%= submit "Save" %>
-  </div>
+    <%= submit "Save", class: "btn btn-primary" %>
+ 
 <% end %>
