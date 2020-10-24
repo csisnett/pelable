@@ -35,9 +35,9 @@ defmodule PelableWeb.HabitView do
   # Use to determine the popover message for the habit status
   def completed_message_or_not(%Habit{} = habit) do
     if habit.completed_today? == true do
-      "You have completed this habit today"
+      "You have completed this habit for today"
     else
-      "You haven't completed this habit today yet"
+      "This habit isn't finished for today yet"
     end
   end
 

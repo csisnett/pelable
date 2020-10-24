@@ -13,7 +13,7 @@
   function change_habit_status(habit_uuid){
     let status_ball = document.getElementById(`habit_status${habit_uuid}`);
     status_ball.className = "green-habit";
-    status_ball.setAttribute("data-content", "You have completed this habit today");
+    status_ball.setAttribute("data-content", "You have completed this habit for today");
   }
 
   function green_checkmark(habit_uuid){
@@ -112,6 +112,7 @@
 </style>
 
 <span><%= link "New Habit", to: Routes.habit_path(@conn, :new) %></span>
+<%= render(PelableWeb.HabitView, "new.html", conn: @conn, changeset: @habit_changeset, action: :create) %>
 <div class="container">
 <div class="row">
 <%= for {habit, streak} <- @habits do %>
