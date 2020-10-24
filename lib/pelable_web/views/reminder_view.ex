@@ -36,4 +36,11 @@ defmodule PelableWeb.ReminderView do
     |> create_keyword_list
   end
 
+  def habit_uuid_or_not(assigns) do
+    habit_uuid = Map.get(assigns, :habit_uuid)
+    case habit_uuid do
+      nil -> "no uuid"
+      habit_uuid -> habit_uuid
+    end
+  end
 end

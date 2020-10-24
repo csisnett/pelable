@@ -94,8 +94,8 @@ defmodule Pelable.Habits do
   end
 
   # [%Habit{}] -> [{%Habit{}, %Streak{}}]
-  # Gets the last streak for each habit and puts them in a tuple for a new list
-  # Gets last streaks without any side effects
+  # Gets the last streak for each habit and returns it along with its habit
+  # For streaks it adds how many completions (count), for habits whether they have been completed today (completed_today?)
   def get_habits_last_streaks(habits, user_timezone, habits_streaks \\ []) when is_list(habits) do
     [this_habit | rest] = habits
     streak = get_last_streak(this_habit)
@@ -173,7 +173,7 @@ defmodule Pelable.Habits do
 
   # %NaiveDateTime{}, String -> %DateTime{}
   # Converts a day & time in UTC to the equivalent day & time in another timezone
-  def convert_to_local_time(%NaiveDateTime{} = naive, local_timezone) do
+  def convert_utc_to_local_time(%NaiveDateTime{} = naive, local_timezone) do
     {:ok, date_time} = DateTime.from_naive(naive, "Etc/UTC")
     {:ok, local_datetime} = DateTime.shift_zone(date_time, local_timezone, Tzdata.TimeZoneDatabase)
     local_datetime
@@ -195,7 +195,7 @@ defmodule Pelable.Habits do
 
     case habit_completion do
       nil ->
-        streak_creation_time = convert_to_local_time(streak.inserted_at, timezone)
+        streak_creation_time = convert_utc_to_local_time(streak.inserted_at, timezone)
         streak_creation_time.day == local_present_time.day # true if we're in the same day the streak was created
 
       habit_completion ->
@@ -295,7 +295,7 @@ defmodule Pelable.Habits do
   end
 
   # %{}, %User{} -> {:ok, %Habit{}}
-  # Transforms the habit_uuid and reward_uuid into habit and reward structs and passes them to a fn/3
+  # Gets habit and reward from uuids and update the habit's current reward with the reward given.
   def update_habit_current_reward(%{"habit_uuid" => habit_uuid, "reward_uuid" => reward_uuid}, %User{} = user) do
     habit = get_habit_by_uuid(habit_uuid)
     reward = get_reward_by_uuid(reward_uuid)
@@ -949,6 +949,10 @@ defmodule Pelable.Habits do
           {:ok, reminder, habit_reminder}
       end
     end
+  end
+
+  def if_habit_create_habit_reminder(%{"habit_uuid" => "no uuid"}, reminder, user) do
+    {:ok, reminder}
   end
 
   # If the above function doesn't match (there's no habit_uuid) just return the reminder itself
