@@ -37,7 +37,7 @@ defmodule PelableWeb.HabitView do
     if habit.completed_today? == true do
       "This habit is finished for today"
     else
-      "This habit isn't finished for today yet"
+      "This habit isn't finished for today"
     end
   end
 
