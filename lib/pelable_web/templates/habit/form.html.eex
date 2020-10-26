@@ -6,13 +6,13 @@
   <% end %>
 
   <%= label f, :name %>
-  <%= text_input f, :name %>
+  <%= text_input f, :name, style: "margin-left: 3px;" %>
   <%= error_tag f, :name %>
 
   <%= label f, :frequency %>
-  <%= select f, :time_frequency, [{:daily, "daily"}], class: "custom-select", style: "width: 110px;" %>
+  <%= select f, :time_frequency, [{:daily, "daily"}], class: "custom-select", style: "margin-left: 3px; width: 110px;" %>
   <%= error_tag f, :time_frequency %>
 
-    <%= submit "Save", class: "btn btn-primary" %>
+    <%= submit "Save", class: "btn btn-primary", style: "margin-left: 3px;" %>
  
 <% end %>
