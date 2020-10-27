@@ -5,12 +5,12 @@
     </div>
   <% end %>
 
-  <%= label f, :name %>
-  <%= text_input f, :name, style: "margin-left: 3px;" %>
+  <%= label f, :name, style: "display: inline-block;" %>
+  <%= text_input f, :name, class: "form-control", style: "display: inline-block; margin-left: 10px; width: 250px;" %>
   <%= error_tag f, :name %>
 
-  <%= label f, :frequency %>
-  <%= select f, :time_frequency, [{:daily, "daily"}], class: "custom-select", style: "margin-left: 3px; width: 110px;" %>
+  <%= label f, :frequency, style: "margin-left: 9px;" %>
+  <%= select f, :time_frequency, [{:daily, "daily"}], class: "custom-select", style: "margin-left: 7px; width: 110px;" %>
   <%= error_tag f, :time_frequency %>
 
     <%= submit "Save", class: "btn btn-primary", style: "margin-left: 3px;" %>
