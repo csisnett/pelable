@@ -6,14 +6,8 @@
   <% end %>
 
   <%= label f, :name %>
-  <%= text_input f, :name %>
+  <%= text_input f, :name, style: "margin-left: 3px;" %>
   <%= error_tag f, :name %>
 
-  <%= label f, :status %>
-  <%= text_input f, :status %>
-  <%= error_tag f, :status %>
-
-  <div>
-    <%= submit "Save" %>
-  </div>
+<%= submit "Save", class: "btn btn-primary", style: "margin-left: 3px;" %>
 <% end %>

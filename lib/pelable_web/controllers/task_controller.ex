@@ -7,7 +7,8 @@ defmodule PelableWeb.TaskController do
   def index(conn, _params) do
     user = conn.assigns.current_user
     tasks = Learn.list_user_tasks(user)
-    render(conn, "index.html", tasks: tasks)
+    task_changeset = Learn.change_task(%Task{})
+    render(conn, "index.html", tasks: tasks, task_changeset: task_changeset)
   end
 
   def new(conn, _params) do
@@ -21,7 +22,7 @@ defmodule PelableWeb.TaskController do
       {:ok, task} ->
         conn
         |> put_flash(:info, "Task created successfully.")
-        |> redirect(to: Routes.task_path(conn, :show, task.slug, task.uuid))
+        |> redirect(to: Routes.task_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)

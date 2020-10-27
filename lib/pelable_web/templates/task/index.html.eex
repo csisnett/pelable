@@ -1,5 +1,7 @@
 <h1>Listing Tasks</h1>
-
+<br>
+<%= render(PelableWeb.TaskView, "new.html", conn: @conn, changeset: @task_changeset, action: :create) %>
+<br>
 <table>
   <thead>
     <tr>
