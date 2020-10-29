@@ -10,6 +10,7 @@ defmodule PelableWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug PelableWeb.Pow.Plug, otp_app: :pelable
   end
 
   pipeline :api do
@@ -18,6 +19,7 @@ defmodule PelableWeb.Router do
     plug :fetch_session
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug PelableWeb.Pow.Plug, otp_app: :pelable
   end
 
   pipeline :protected do
