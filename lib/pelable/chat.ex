@@ -336,6 +336,7 @@ defmodule Pelable.Chat do
     Repo.all(query)
   end
 
+  # %Message{} -> [%User{}, ...]
   def get_user_recipients(%Message{} = message) do
     query = from p in Participant, where: p.chatroom_id == ^message.chatroom_id and p.user_id != ^message.sender_id,
     join: u in User,
