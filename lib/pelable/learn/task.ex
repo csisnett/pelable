@@ -4,11 +4,11 @@ defmodule Pelable.Learn.Task do
 
   alias Pelable.Learn.Task.{NameSlug}
 
-  @valid_status ["finished", "unfinished", "in progress"]
+  @valid_status ["finished", "not started", "in progress"]
 
   schema "tasks" do
     field :name, :string
-    field :status, :string, default: "unfinished"
+    field :status, :string, default: "not started"
     field :uuid, Ecto.ShortUUID, autogenerate: true
     field :slug, NameSlug.Type
     belongs_to :creator, User
