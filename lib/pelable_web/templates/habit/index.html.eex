@@ -16,10 +16,17 @@
     status_ball.setAttribute("data-content", "This habit is finished for today");
   }
 
+  function animate_checkmark(habit_uuid){
+    let checkmark = document.getElementById(`checkmark${habit_uuid}`);
+    checkmark.setAttribute("stroke", "green")
+    setTimeout(() => checkmark.setAttribute("stroke", "currentColor"), 1000);
+    console.log("animate checkmark ran")
+  }
+
   function green_checkmark(habit_uuid){
     let checkmark = document.getElementById(`checkmark${habit_uuid}`);
     checkmark.setAttribute("stroke", "green");
-    window.setTimeout(() => checkmark.setAttribute("stroke", "currentColor"), 150);
+    setTimeout(function(){checkmark.setAttribute("stroke", "currentColor");}, 250);
   }
 
   function show_habit_status_message(habit_uuid){
