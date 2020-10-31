@@ -5,6 +5,7 @@ defmodule PelableWeb.TaskController do
   alias Pelable.Learn.Task
 
   def index(conn, _params) do
+    conn = assign(conn, :page_title, "My Tasks - Pelable")
     user = conn.assigns.current_user
     tasks = Learn.list_user_tasks(user)
     task_changeset = Learn.change_task(%Task{})

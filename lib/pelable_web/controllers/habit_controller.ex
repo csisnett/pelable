@@ -5,6 +5,7 @@ defmodule PelableWeb.HabitController do
   alias Pelable.Habits.{Habit, Reminder}
 
   def index(conn, _params) do
+    conn = assign(conn, :page_title, "My Habits - Pelable")
     user = conn.assigns.current_user
     user_timezone = Habits.get_user_timezone(user)
     habits = Habits.get_user_habits(user)
