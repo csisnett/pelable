@@ -5,7 +5,7 @@ defmodule PelableWeb.Pow.Plug do
   
     @session_key :pow_user_token
     @salt "8ArmkGZe/b4Qj+PRgSokuor90wVPyn//yjJaStfPQFbZrE0lhZ2ViZDO7HGvyr5o"
-    @max_age 86400
+    @max_age 5184000 #60 days
   
     def fetch(conn, config) do
       conn  = Plug.Conn.fetch_session(conn)
