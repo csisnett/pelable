@@ -25,7 +25,7 @@ defmodule PelableWeb.HabitView do
   #Returns "green-habit" if the habit was completed today, otherwise "gray-habit"
   def green_or_not(%Habit{} = habit) do
     if habit.completed_today? == true do
-      "green-habit"
+      "paris-habit"
     else
       "gray-habit"
     end
