@@ -73,6 +73,9 @@ viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/>
      </span>
       </div> <!-- card -->
      
-
-  
 <% end %>
+
+<script>
+let task_name_input = document.getElementById('task_name_input');
+task_name_input.focus();
+</script>
