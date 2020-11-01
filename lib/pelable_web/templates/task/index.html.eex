@@ -52,14 +52,13 @@
 <%= render(PelableWeb.TaskView, "new.html", conn: @conn, changeset: @task_changeset, action: :create) %>
 <br>
 <%= for task <- @tasks do %>
-<div class="card border-light" style="width: 25rem;">
+<div class="card border-light" style="width: 25rem; margin-top: 5px;">
 <span>
-<div>
 <svg xmlns="http://www.w3.org/2000/svg" class="task_selector"
 task_uuid="<%= task.uuid %>"
 onclick="update_task('<%= task.slug %>', '<%= task.uuid %>')"
  viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/>
- <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/>
+ <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" fill="#E5E4E2" />
  </svg>
 
  <svg xmlns="http://www.w3.org/2000/svg" hidden
@@ -77,6 +76,3 @@ viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/>
 
   
 <% end %>
-
-
-<span><%= link "New Task", to: Routes.task_path(@conn, :new) %></span>
