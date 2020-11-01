@@ -6,6 +6,7 @@ defmodule PelableWeb.TaskController do
 
   def index(conn, _params) do
     conn = assign(conn, :page_title, "My Tasks - Pelable")
+    conn = put_resp_header(conn, "cache-control", "no-store")
     user = conn.assigns.current_user
     tasks = Learn.list_user_tasks(user)
     task_changeset = Learn.change_task(%Task{})
