@@ -247,6 +247,7 @@ function create_reward_for_habit(habit_uuid, form_id){
   }
 
 //alert("Kind reminder: start writing now");
-
+let habit_name_input = document.getElementById('habit_name_input');
+habit_name_input.focus();
 </script>
 
