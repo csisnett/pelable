@@ -46,12 +46,10 @@ defmodule PelableWeb.TaskController do
 
     case Learn.update_task(task, task_params) do
       {:ok, task} ->
-        conn
-        |> put_flash(:info, "Task updated successfully.")
-        |> redirect(to: Routes.task_path(conn, :show, task.slug, task.uuid))
+          json(conn, %{"updated_task" => task})
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", task: task, changeset: changeset)
+      {:error, changeset} ->
+            json(conn, %{"error" => "Error updating task"})
     end
   end
 

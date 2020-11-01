@@ -103,6 +103,7 @@ defmodule PelableWeb.Router do
     pipe_through [:api, :protected]
 
     post "/log-habit/:uuid", HabitController, :log_habit
+    put "/tasks/:slug/:uuid", TaskController, :update
   end
 
   # Other scopes may use custom stacks.

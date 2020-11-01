@@ -1,30 +1,82 @@
+<%= csrf_meta_tag() %>
+
+<script>
+
+  function replace_selector(task_uuid){
+    let query =  'svg[task_uuid="' + task_uuid + '"]' 
+    let selector = document.querySelector(query)
+    let hidden_query = 'svg[task_hidden_uuid="' + task_uuid + '"]';
+    let hidden_selector = document.querySelector(hidden_query);
+    selector.innerHTML = hidden_selector.innerHTML;
+    
+  }
+  function update_task(slug, task_uuid) {
+     //green_checkmark(task_uuid);
+    let csrf_token = document.querySelector('meta[name="csrf-token"]').content;
+
+    let base_url = "<%= PelableWeb.Endpoint.url() %>";
+    let url = base_url + "/tasks/" + slug + "/" + task_uuid;
+
+    let data = {};
+    data._csrf_token = csrf_token;
+    let task = {status: "finished"};
+    data.task = task;
+    let json = JSON.stringify(data);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("PUT", url, true);
+    xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+    xhr.onload = function () {
+	  let response = JSON.parse(xhr.responseText);
+    console.log(response)
+      if (xhr.status == "200") {
+        replace_selector(task_uuid);
+        console.log("Task was updated!")
+      } else {
+        console.log("Task wasn't updated!");
+      }
+      }
+      xhr.send(json);
+      
+  }
+</script>
+
+<style>
+.task_selector{
+  cursor: pointer;
+}
+</style>
+
 <h1>Listing Tasks</h1>
 <br>
 <%= render(PelableWeb.TaskView, "new.html", conn: @conn, changeset: @task_changeset, action: :create) %>
 <br>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Status</th>
-
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
 <%= for task <- @tasks do %>
-    <tr>
-      <td><%= task.name %></td>
-      <td><%= task.status %></td>
+<div class="card border-light" style="width: 25rem;">
+<span>
+<div>
+<svg xmlns="http://www.w3.org/2000/svg" class="task_selector"
+task_uuid="<%= task.uuid %>"
+onclick="update_task('<%= task.slug %>', '<%= task.uuid %>')"
+ viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/>
+ <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/>
+ </svg>
 
-      <td>
-        <span><%= link "Show", to: Routes.task_path(@conn, :show, task.slug, task.uuid) %></span>
-        <span><%= link "Edit", to: Routes.task_path(@conn, :edit, task.slug, task.uuid) %></span>
-        <span><%= link "Delete", to: Routes.task_path(@conn, :delete, task.slug, task.uuid), method: :delete, data: [confirm: "Are you sure?"] %></span>
-      </td>
-    </tr>
+ <svg xmlns="http://www.w3.org/2000/svg" hidden
+ task_hidden_uuid="<%= task.uuid %>"
+viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/>
+<path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm-.997-4L6.76 11.757l1.414-1.414 2.829 2.829 5.656-5.657 1.415 1.414L11.003 16z" fill="rgba(47,204,113,1)"/></svg>
+        
+     <%= task.name %>
+    <div class="btn btn-outline-primary" style="float: right;">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"/><path d="M5 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm14 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-7 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+ </div> <!-- btn -->
+     </span>
+      </div> <!-- card -->
+     
+
+  
 <% end %>
-  </tbody>
-</table>
+
 
 <span><%= link "New Task", to: Routes.task_path(@conn, :new) %></span>

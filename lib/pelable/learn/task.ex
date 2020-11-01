@@ -5,7 +5,7 @@ defmodule Pelable.Learn.Task do
   alias Pelable.Learn.Task.{NameSlug}
 
   @valid_status ["finished", "not started", "in progress"]
-
+  @derive {Jason.Encoder, only: [:name, :status, :uuid, :slug]}
   schema "tasks" do
     field :name, :string
     field :status, :string, default: "not started"
