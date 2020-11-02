@@ -183,4 +183,299 @@ defmodule Pelable.HabitsTest do
       assert %Ecto.Changeset{} = Habits.change_habit_completion(habit_completion)
     end
   end
+
+  describe "rewards" do
+    alias Pelable.Habits.Reward
+
+    @valid_attrs %{description: "some description", name: "some name", uuid: "7488a646-e31f-11e4-aace-600308960662"}
+    @update_attrs %{description: "some updated description", name: "some updated name", uuid: "7488a646-e31f-11e4-aace-600308960668"}
+    @invalid_attrs %{description: nil, name: nil, uuid: nil}
+
+    def reward_fixture(attrs \\ %{}) do
+      {:ok, reward} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_reward()
+
+      reward
+    end
+
+    test "list_rewards/0 returns all rewards" do
+      reward = reward_fixture()
+      assert Habits.list_rewards() == [reward]
+    end
+
+    test "get_reward!/1 returns the reward with given id" do
+      reward = reward_fixture()
+      assert Habits.get_reward!(reward.id) == reward
+    end
+
+    test "create_reward/1 with valid data creates a reward" do
+      assert {:ok, %Reward{} = reward} = Habits.create_reward(@valid_attrs)
+      assert reward.description == "some description"
+      assert reward.name == "some name"
+      assert reward.uuid == "7488a646-e31f-11e4-aace-600308960662"
+    end
+
+    test "create_reward/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_reward(@invalid_attrs)
+    end
+
+    test "update_reward/2 with valid data updates the reward" do
+      reward = reward_fixture()
+      assert {:ok, %Reward{} = reward} = Habits.update_reward(reward, @update_attrs)
+      assert reward.description == "some updated description"
+      assert reward.name == "some updated name"
+      assert reward.uuid == "7488a646-e31f-11e4-aace-600308960668"
+    end
+
+    test "update_reward/2 with invalid data returns error changeset" do
+      reward = reward_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_reward(reward, @invalid_attrs)
+      assert reward == Habits.get_reward!(reward.id)
+    end
+
+    test "delete_reward/1 deletes the reward" do
+      reward = reward_fixture()
+      assert {:ok, %Reward{}} = Habits.delete_reward(reward)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_reward!(reward.id) end
+    end
+
+    test "change_reward/1 returns a reward changeset" do
+      reward = reward_fixture()
+      assert %Ecto.Changeset{} = Habits.change_reward(reward)
+    end
+  end
+
+  describe "habitcompletionreward" do
+    alias Pelable.Habits.HabitCompletionReward
+
+    @valid_attrs %{taken?: true, uuid: "7488a646-e31f-11e4-aace-600308960662"}
+    @update_attrs %{taken?: false, uuid: "7488a646-e31f-11e4-aace-600308960668"}
+    @invalid_attrs %{taken?: nil, uuid: nil}
+
+    def habit_completion_reward_fixture(attrs \\ %{}) do
+      {:ok, habit_completion_reward} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_habit_completion_reward()
+
+      habit_completion_reward
+    end
+
+    test "list_habitcompletionreward/0 returns all habitcompletionreward" do
+      habit_completion_reward = habit_completion_reward_fixture()
+      assert Habits.list_habitcompletionreward() == [habit_completion_reward]
+    end
+
+    test "get_habit_completion_reward!/1 returns the habit_completion_reward with given id" do
+      habit_completion_reward = habit_completion_reward_fixture()
+      assert Habits.get_habit_completion_reward!(habit_completion_reward.id) == habit_completion_reward
+    end
+
+    test "create_habit_completion_reward/1 with valid data creates a habit_completion_reward" do
+      assert {:ok, %HabitCompletionReward{} = habit_completion_reward} = Habits.create_habit_completion_reward(@valid_attrs)
+      assert habit_completion_reward.taken? == true
+      assert habit_completion_reward.uuid == "7488a646-e31f-11e4-aace-600308960662"
+    end
+
+    test "create_habit_completion_reward/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_habit_completion_reward(@invalid_attrs)
+    end
+
+    test "update_habit_completion_reward/2 with valid data updates the habit_completion_reward" do
+      habit_completion_reward = habit_completion_reward_fixture()
+      assert {:ok, %HabitCompletionReward{} = habit_completion_reward} = Habits.update_habit_completion_reward(habit_completion_reward, @update_attrs)
+      assert habit_completion_reward.taken? == false
+      assert habit_completion_reward.uuid == "7488a646-e31f-11e4-aace-600308960668"
+    end
+
+    test "update_habit_completion_reward/2 with invalid data returns error changeset" do
+      habit_completion_reward = habit_completion_reward_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_habit_completion_reward(habit_completion_reward, @invalid_attrs)
+      assert habit_completion_reward == Habits.get_habit_completion_reward!(habit_completion_reward.id)
+    end
+
+    test "delete_habit_completion_reward/1 deletes the habit_completion_reward" do
+      habit_completion_reward = habit_completion_reward_fixture()
+      assert {:ok, %HabitCompletionReward{}} = Habits.delete_habit_completion_reward(habit_completion_reward)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_habit_completion_reward!(habit_completion_reward.id) end
+    end
+
+    test "change_habit_completion_reward/1 returns a habit_completion_reward changeset" do
+      habit_completion_reward = habit_completion_reward_fixture()
+      assert %Ecto.Changeset{} = Habits.change_habit_completion_reward(habit_completion_reward)
+    end
+  end
+
+  describe "habitreward" do
+    alias Pelable.Habits.HabitReward
+
+    @valid_attrs %{}
+    @update_attrs %{}
+    @invalid_attrs %{}
+
+    def habit_reward_fixture(attrs \\ %{}) do
+      {:ok, habit_reward} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_habit_reward()
+
+      habit_reward
+    end
+
+    test "list_habitreward/0 returns all habitreward" do
+      habit_reward = habit_reward_fixture()
+      assert Habits.list_habitreward() == [habit_reward]
+    end
+
+    test "get_habit_reward!/1 returns the habit_reward with given id" do
+      habit_reward = habit_reward_fixture()
+      assert Habits.get_habit_reward!(habit_reward.id) == habit_reward
+    end
+
+    test "create_habit_reward/1 with valid data creates a habit_reward" do
+      assert {:ok, %HabitReward{} = habit_reward} = Habits.create_habit_reward(@valid_attrs)
+    end
+
+    test "create_habit_reward/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_habit_reward(@invalid_attrs)
+    end
+
+    test "update_habit_reward/2 with valid data updates the habit_reward" do
+      habit_reward = habit_reward_fixture()
+      assert {:ok, %HabitReward{} = habit_reward} = Habits.update_habit_reward(habit_reward, @update_attrs)
+    end
+
+    test "update_habit_reward/2 with invalid data returns error changeset" do
+      habit_reward = habit_reward_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_habit_reward(habit_reward, @invalid_attrs)
+      assert habit_reward == Habits.get_habit_reward!(habit_reward.id)
+    end
+
+    test "delete_habit_reward/1 deletes the habit_reward" do
+      habit_reward = habit_reward_fixture()
+      assert {:ok, %HabitReward{}} = Habits.delete_habit_reward(habit_reward)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_habit_reward!(habit_reward.id) end
+    end
+
+    test "change_habit_reward/1 returns a habit_reward changeset" do
+      habit_reward = habit_reward_fixture()
+      assert %Ecto.Changeset{} = Habits.change_habit_reward(habit_reward)
+    end
+  end
+
+  describe "reminders" do
+    alias Pelable.Habits.Reminder
+
+    @valid_attrs %{}
+    @update_attrs %{}
+    @invalid_attrs %{}
+
+    def reminder_fixture(attrs \\ %{}) do
+      {:ok, reminder} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_reminder()
+
+      reminder
+    end
+
+    test "list_reminders/0 returns all reminders" do
+      reminder = reminder_fixture()
+      assert Habits.list_reminders() == [reminder]
+    end
+
+    test "get_reminder!/1 returns the reminder with given id" do
+      reminder = reminder_fixture()
+      assert Habits.get_reminder!(reminder.id) == reminder
+    end
+
+    test "create_reminder/1 with valid data creates a reminder" do
+      assert {:ok, %Reminder{} = reminder} = Habits.create_reminder(@valid_attrs)
+    end
+
+    test "create_reminder/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_reminder(@invalid_attrs)
+    end
+
+    test "update_reminder/2 with valid data updates the reminder" do
+      reminder = reminder_fixture()
+      assert {:ok, %Reminder{} = reminder} = Habits.update_reminder(reminder, @update_attrs)
+    end
+
+    test "update_reminder/2 with invalid data returns error changeset" do
+      reminder = reminder_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_reminder(reminder, @invalid_attrs)
+      assert reminder == Habits.get_reminder!(reminder.id)
+    end
+
+    test "delete_reminder/1 deletes the reminder" do
+      reminder = reminder_fixture()
+      assert {:ok, %Reminder{}} = Habits.delete_reminder(reminder)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_reminder!(reminder.id) end
+    end
+
+    test "change_reminder/1 returns a reminder changeset" do
+      reminder = reminder_fixture()
+      assert %Ecto.Changeset{} = Habits.change_reminder(reminder)
+    end
+  end
+
+  describe "habit_reminder" do
+    alias Pelable.Habits.HabitReminder
+
+    @valid_attrs %{}
+    @update_attrs %{}
+    @invalid_attrs %{}
+
+    def habit_reminder_fixture(attrs \\ %{}) do
+      {:ok, habit_reminder} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_habit_reminder()
+
+      habit_reminder
+    end
+
+    test "list_habit_reminder/0 returns all habit_reminder" do
+      habit_reminder = habit_reminder_fixture()
+      assert Habits.list_habit_reminder() == [habit_reminder]
+    end
+
+    test "get_habit_reminder!/1 returns the habit_reminder with given id" do
+      habit_reminder = habit_reminder_fixture()
+      assert Habits.get_habit_reminder!(habit_reminder.id) == habit_reminder
+    end
+
+    test "create_habit_reminder/1 with valid data creates a habit_reminder" do
+      assert {:ok, %HabitReminder{} = habit_reminder} = Habits.create_habit_reminder(@valid_attrs)
+    end
+
+    test "create_habit_reminder/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_habit_reminder(@invalid_attrs)
+    end
+
+    test "update_habit_reminder/2 with valid data updates the habit_reminder" do
+      habit_reminder = habit_reminder_fixture()
+      assert {:ok, %HabitReminder{} = habit_reminder} = Habits.update_habit_reminder(habit_reminder, @update_attrs)
+    end
+
+    test "update_habit_reminder/2 with invalid data returns error changeset" do
+      habit_reminder = habit_reminder_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_habit_reminder(habit_reminder, @invalid_attrs)
+      assert habit_reminder == Habits.get_habit_reminder!(habit_reminder.id)
+    end
+
+    test "delete_habit_reminder/1 deletes the habit_reminder" do
+      habit_reminder = habit_reminder_fixture()
+      assert {:ok, %HabitReminder{}} = Habits.delete_habit_reminder(habit_reminder)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_habit_reminder!(habit_reminder.id) end
+    end
+
+    test "change_habit_reminder/1 returns a habit_reminder changeset" do
+      habit_reminder = habit_reminder_fixture()
+      assert %Ecto.Changeset{} = Habits.change_habit_reminder(habit_reminder)
+    end
+  end
 end

@@ -2,12 +2,17 @@ defmodule PelableWeb.HabitController do
   use PelableWeb, :controller
 
   alias Pelable.Habits
-  alias Pelable.Habits.Habit
+  alias Pelable.Habits.{Habit, Reminder}
 
   def index(conn, _params) do
+    conn = assign(conn, :page_title, "My Habits - Pelable")
+    conn = put_resp_header(conn, "cache-control", "no-store")
     user = conn.assigns.current_user
+    user_timezone = Habits.get_user_timezone(user)
     habits = Habits.get_user_habits(user)
-    render(conn, "index.html", habits: habits)
+    reminder_changeset = Habits.change_reminder(%Reminder{})
+    habit_changeset = Habits.change_habit(%Habit{}, %{"time_frequency" => "daily"})
+    render(conn, "index.html", habits: habits, user_info: %{"timezone" => user_timezone}, habit_changeset: habit_changeset, reminder_changeset: reminder_changeset)
   end
 
   def log_habit(conn, %{"uuid" => uuid} = params) do
@@ -17,8 +22,25 @@ defmodule PelableWeb.HabitController do
       {:ok, habit_completion} ->
 
         json(conn, %{"completion" => habit_completion})
-        whatever ->
-          json(conn, %{"error" => whatever})
+
+      {:ok, habit_completion, habit_completion_reward} ->
+        json(conn, %{"completion" => habit_completion, "completion_reward" => habit_completion_reward})
+
+      whatever ->
+        json(conn, %{"error" => whatever})
+    end
+  end
+
+  def create_reward(conn, %{"habit_uuid" => habit_uuid, "reward_name" => _name} = attrs) do
+    user = conn.assigns.current_user
+    habit = Habits.get_habit_by_uuid(habit_uuid)
+    
+    case Habits.create_reward_assign_to_habit(attrs, habit, user) do
+      {:ok, reward} ->
+        json(conn, %{"created_reward" => reward})
+
+        {:error, :user_doesnt_have_permision} ->
+          json(conn, %{"error" => "User doesn't have permission"})
     end
   end
 
@@ -33,7 +55,7 @@ defmodule PelableWeb.HabitController do
       {:ok, habit} ->
         conn
         |> put_flash(:info, "Habit created successfully.")
-        |> redirect(to: Routes.habit_path(conn, :show, habit.uuid))
+        |> redirect(to: Routes.habit_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
@@ -49,6 +71,22 @@ defmodule PelableWeb.HabitController do
     habit = Habits.get_habit_by_uuid(uuid)
     changeset = Habits.change_habit(habit)
     render(conn, "edit.html", habit: habit, changeset: changeset)
+  end
+
+  def update_current_reward(conn, %{"uuid" => uuid, "reward_name" => _name} = attrs) do
+    habit = Habits.get_habit_by_uuid(uuid)
+    user = conn.assigns.current_user
+    case Habits.update_or_create_current_reward(attrs, habit, user) do
+      {:ok, reward} ->
+        json(conn, %{"created_reward" => reward})
+
+      {:error, :unauthorized} ->
+        json(conn, %{"error" => "Unauthorized"})
+
+      {:error, changeset} ->
+        json(conn, %{"error" => "Error updating habit"})
+    end
+
   end
 
   def update(conn, %{"uuid" => uuid, "habit" => habit_params}) do

@@ -4,74 +4,250 @@
 
 
   function add_completion_to_streak(habit_uuid){
-    var streak_holder = document.querySelector(`td[habit_uuid="${habit_uuid}"]`)
-    let new_count = parseInt(streak_holder.textContent) + 1
-    streak_holder.textContent = new_count.toString();
+    let streak_holder = document.getElementById(`streak_for_habit${habit_uuid}`)
+    let old_count = parseInt(streak_holder.innerText) || 0;
+    let new_count = old_count + 1;
+    streak_holder.innerText = new_count.toString();
+  }
+
+  function change_habit_status(habit_uuid, completion_recommendation){
+    let status_ball = document.getElementById(`habit_status${habit_uuid}`);
+    status_ball.className = "paris-habit";
+    status_ball.setAttribute("data-content", completion_recommendation);
+  }
+
+  function green_checkmark(habit_uuid){
+    let checkmark = document.getElementById(`checkmark${habit_uuid}`);
+    checkmark.setAttribute("stroke", "green");
+    setTimeout(function(){checkmark.setAttribute("stroke", "currentColor");}, 250);
+  }
+
+  function show_habit_status_message(habit_uuid){
+    let status_id = "#habit_status" + habit_uuid;
+    $(status_id).popover('show');
+  }
+
+  function hide_habit_status_message(habit_uuid){
+    let status_id = "#habit_status" + habit_uuid;
+    $(status_id).popover('hide');
+  }
+
+  function show_reminder_message(habit_uuid){
+    let reminder_id = "#reminder_for_habit_" + habit_uuid;
+    $(reminder_id).popover('show');
+  }
+
+  function hide_reminder_message(habit_uuid){
+    let reminder_id = "#reminder_for_habit_" + habit_uuid;
+    $(reminder_id).popover('hide');
   }
 
 
 
   function log_habit(habit_uuid) {
-    var csrf_token = document.querySelector('meta[name="csrf-token"]').content
+    green_checkmark(habit_uuid);
+    let csrf_token = document.querySelector('meta[name="csrf-token"]').content;
 
-  var base_url = "<%= Routes.habit_url(@conn, :log_habit, "") %>" 
-  var url = base_url + habit_uuid;
+    let base_url = "<%= Routes.habit_url(@conn, :log_habit, "") %>" ;
+    let url = base_url + habit_uuid;
 
-  var data = {};
-  data._csrf_token = csrf_token;
+    let data = {};
+    data._csrf_token = csrf_token;
 
-  var json = JSON.stringify(data);
+    let json = JSON.stringify(data);
 
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", url, true);
-  xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-  xhr.onload = function () {
-	var response = JSON.parse(xhr.responseText);
-  console.log(response)
-    }
-    xhr.send(json);
-    add_completion_to_streak(habit_uuid)
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+    xhr.onload = function () {
+	  let response = JSON.parse(xhr.responseText);
+    console.log(response)
+      if (xhr.status == "200") {
+        add_completion_to_streak(habit_uuid);
+        change_habit_status(habit_uuid, response.completion.completion_recommendation);
+      } else {
+        console.log("Habit wasn't logged!");
+      }
+      }
+      xhr.send(json);
+      
   }
-
-
   
 </script>
-<h1>My Habits</h1>
+<h2>My Habits</h2>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Streak</th>
-      
+<!-- Button trigger modal -->
+<style>
 
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-<%= for {habit, {_active_or_created, streak}} <- @habits do %>
-     
-    <tr>
-      <td> <%= habit.name %> </td>
-      <td habit_uuid="<%= habit.uuid %>"><%= streak.count %></td>
-      
+.paris-habit {
+  height: 18px;
+  width: 18px;
+  float: right;
+  background-color: #50C878;
+  border-radius: 50%;
+  display: inline-block;
+}
 
-      <td>
-      <button class="btn btn-primary" onclick="log_habit('<%= habit.uuid %>')"> Add log </button>
-        <span><%= link "Show", to: Routes.habit_path(@conn, :show, habit.uuid) %></span>
-        <span><%= link "Edit", to: Routes.habit_path(@conn, :edit, habit.uuid) %></span>
-        <span><%= link "Delete", to: Routes.habit_path(@conn, :delete, habit.uuid), method: :delete, data: [confirm: "Are you sure?"] %></span>
-      </td>
-    </tr>
-    
+.gray-habit {
+  height: 18px;
+  width: 18px;
+  float: right;
+  background-color: #E6E3E1;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.check{
+  text-align: center;
+
+}
+.options {
+  float: right;
+}
+
+.svg-style {
+  cursor: pointer;
+}
+.card-style{
+  margin-top: 85px;
+}
+</style>
+
+<br>
+<br>
+<%= render(PelableWeb.HabitView, "new.html", conn: @conn, changeset: @habit_changeset, action: :create) %>
+<div class="container">
+<div class="row">
+<%= for {habit, streak} <- @habits do %>
+<div class="col">
+
+<!-- Modal Add reward -->
+<div class="modal fade" id='<%= "habit_reward_modal" <> habit.uuid %>' tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"> Create a reward for completing <%= habit.name %></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <%= form_for_new_reward(habit) %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="create_reward_for_habit('<%= habit.uuid %>', '<%= form_name(habit) %>')">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal Add reminder -->
+<div class="modal fade" id='<%= "habit_reminder_modal" <> habit.uuid %>' tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"> Create a reminder for <%= habit.name %></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <%= render(PelableWeb.ReminderView, "new.html", conn: Plug.Conn.assign(@conn, :habit_uuid, habit.uuid), changeset: @reminder_changeset, action: :create) %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="card card-style" style="width: 18rem;">
+  <div class="card-body">
+<h5 class="card-title">
+<%= habit.name %> <span id="<%= "habit_status" <> habit.uuid %>" class="<%= green_or_not(habit) %>"
+onmouseout="hide_habit_status_message('<%= habit.uuid %>')" onclick="show_habit_status_message('<%= habit.uuid %>')"
+onmouseover="show_habit_status_message('<%= habit.uuid %>')" data-container="body" data-toggle="popover"
+data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></span
+></h5> 
+<br>
+<br>
+    <div class="check">
+
+<svg id="<%= "checkmark" <> habit.uuid %>"class="svg-style" onclick="log_habit('<%= habit.uuid %>')" xmlns="http://www.w3.org/2000/svg" width="65" height="65" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+<div style="display: inline-block;" id='<%= "streak_for_habit" <> habit.uuid %>'><%= show_streak_count_or_not(streak, @user_info["timezone"], habit.time_frequency) %></div>
+    </div>
+<br>
+<br>
+
+  <div class="options_div">
+
+
+
+  <%= if habit.reminders != [] do %>
+  <span id="reminder_for_habit_<%= habit.uuid %>" onmouseout="hide_reminder_message('<%= habit.uuid %>')" onclick="show_reminder_message('<%= habit.uuid %>')" onmouseover="show_reminder_message('<%= habit.uuid %>')" data-container="body" data-toggle="popover"
+   data-placement="top" data-content='<%= reminder_message(habit.reminders, [])%>'> ⏲️ </span>
+  <% end %>
+  <div class="btn-group options">
+  <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    options
+  </button>
+    <div class="dropdown-menu">
+    <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target='#<%= "habit_reward_modal" <> habit.uuid %>' >Add reward </a>
+    <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target='#<%= "habit_reminder_modal" <> habit.uuid %>' >Add reminder </a>
+    <a class="dropdown-item" href="/rewards">Edit</a>
+    <%= link "Delete", to: Routes.habit_path(@conn, :delete, habit.uuid), class: :"dropdown-item", method: :delete, data: [confirm: "Are you sure?"] %>
+    </div>
+  
+  </div>
+
+  </div>
+  </div> <!-- card-body -->
+</div> <!-- card -->
+</div> <!-- col -->
 <% end %>
-  </tbody>
-</table>
-
-<span><%= link "New Habit", to: Routes.habit_path(@conn, :new) %></span>
 
 <script>
+function convert_form_to_json(form){
+  result = {}
+  for(i=0; i < form.elements.length; i++){
+    result[form.elements[i].id] = form.elements[i].value
+  }
+  return result;
+}
 
+function create_reward_for_habit(habit_uuid, form_id){
+  let csrf_token = document.querySelector('meta[name="csrf-token"]').content;
+  let form = document.getElementById(form_id);
+  let base_url = '<%= Routes.habit_url(@conn, :update_current_reward, "") %>';
+  let final_url = base_url + habit_uuid;
+  let data = convert_form_to_json(form);
+  data._csrf_token = csrf_token;
 
+  let json = JSON.stringify(data);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("PUT", final_url, true);
+    xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+    xhr.onload = function () {
+	  let response = JSON.parse(xhr.responseText);
+    console.log(response)
+      if (xhr.status == "200") {
+        add_completion_to_streak(habit_uuid)
+      } else {
+        console.log("Habit wasn't logged!")
+      }
+      }
+      xhr.send(json);
+      
+  console.log(data);
+  }
+
+//alert("Kind reminder: start writing now");
+let habit_name_input = document.getElementById('habit_name_input');
+habit_name_input.focus();
 </script>
 

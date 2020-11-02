@@ -336,6 +336,7 @@ defmodule Pelable.Chat do
     Repo.all(query)
   end
 
+  # %Message{} -> [%User{}, ...]
   def get_user_recipients(%Message{} = message) do
     query = from p in Participant, where: p.chatroom_id == ^message.chatroom_id and p.user_id != ^message.sender_id,
     join: u in User,
@@ -360,8 +361,8 @@ defmodule Pelable.Chat do
     preload: [sender: u]
   end
 
-  # Number -> [%{}]
-  #Gets chatroom id, returns a list of messages with its users
+  # Id -> Ecto.Query
+  #Gets chatroom id, returns a query of list of messages with its users
   # Chatroom's show.html.eex and clear_chatroom depend on this
   def list_messages_by_chatroom(id) do
     query = from m in Message,
@@ -371,6 +372,8 @@ defmodule Pelable.Chat do
     preload: [sender: u]
   end
 
+  # Ecto.Query -> Ecto.Query
+  # Get messages's mentions
   def get_mentions(query) do
     from message in query,
     left_join: mentions in assoc(message, :mentions),

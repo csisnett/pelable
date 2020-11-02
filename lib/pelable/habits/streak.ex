@@ -3,6 +3,9 @@ defmodule Pelable.Habits.Streak do
   import Ecto.Changeset
   alias Pelable.Habits.Habit
 
+  #A streak is created when a habit is created first and later whenever a habit completion is done and the last streak isn't alive
+  # In the second case the habit completion of course belongs to the newly created streak
+
   schema "streaks" do
     field :count, :integer, virtual: true
     belongs_to :habit, Habit

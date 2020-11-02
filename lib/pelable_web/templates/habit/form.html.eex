@@ -5,19 +5,14 @@
     </div>
   <% end %>
 
-  <%= label f, :name %>
-  <%= text_input f, :name %>
+  <%= label f, :name, style: "display: inline-block;" %>
+  <%= text_input f, :name, id: "habit_name_input", class: "form-control", style: "display: inline-block; margin-left: 10px; width: 250px;" %>
   <%= error_tag f, :name %>
 
-  <%= label f, :time_frequency %>
-  <%= text_input f, :time_frequency %>
+  <%= label f, :frequency, style: "margin-left: 9px;" %>
+  <%= select f, :time_frequency, [{:daily, "daily"}, {:weekly, "weekly"}], class: "custom-select", style: "margin-left: 7px; width: 110px;" %>
   <%= error_tag f, :time_frequency %>
 
-  <%= label f, :archived? %>
-  <%= checkbox f, :archived? %>
-  <%= error_tag f, :archived? %>
-
-  <div>
-    <%= submit "Save" %>
-  </div>
+    <%= submit "Save", class: "btn btn-primary", style: "margin-left: 3px;" %>
+ 
 <% end %>

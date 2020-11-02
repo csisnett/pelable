@@ -5,8 +5,12 @@ defmodule PelableWeb.TaskController do
   alias Pelable.Learn.Task
 
   def index(conn, _params) do
-    tasks = Learn.list_tasks()
-    render(conn, "index.html", tasks: tasks)
+    conn = assign(conn, :page_title, "My Tasks - Pelable")
+    conn = put_resp_header(conn, "cache-control", "no-store")
+    user = conn.assigns.current_user
+    tasks = Learn.list_user_tasks(user)
+    task_changeset = Learn.change_task(%Task{})
+    render(conn, "index.html", tasks: tasks, task_changeset: task_changeset)
   end
 
   def new(conn, _params) do
@@ -20,7 +24,7 @@ defmodule PelableWeb.TaskController do
       {:ok, task} ->
         conn
         |> put_flash(:info, "Task created successfully.")
-        |> redirect(to: Routes.task_path(conn, :show, task.slug, task.uuid))
+        |> redirect(to: Routes.task_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
@@ -43,12 +47,10 @@ defmodule PelableWeb.TaskController do
 
     case Learn.update_task(task, task_params) do
       {:ok, task} ->
-        conn
-        |> put_flash(:info, "Task updated successfully.")
-        |> redirect(to: Routes.task_path(conn, :show, task.slug, task.uuid))
+          json(conn, %{"updated_task" => task})
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", task: task, changeset: changeset)
+      {:error, changeset} ->
+            json(conn, %{"error" => "Error updating task"})
     end
   end
 

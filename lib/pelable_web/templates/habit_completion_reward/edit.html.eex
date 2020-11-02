@@ -1,0 +1,5 @@
+<h1>Edit Habit completion reward</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.habit_completion_reward_path(@conn, :update, @habit_completion_reward)) %>
+
+<span><%= link "Back", to: Routes.habit_completion_reward_path(@conn, :index) %></span>

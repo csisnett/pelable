@@ -1,0 +1,23 @@
+<h1>Show Reward</h1>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @reward.name %>
+  </li>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @reward.description %>
+  </li>
+
+  <li>
+    <strong>Uuid:</strong>
+    <%= @reward.uuid %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.reward_path(@conn, :edit, @reward.slug, @reward.uuid) %></span>
+<span><%= link "Back", to: Routes.reward_path(@conn, :index) %></span>

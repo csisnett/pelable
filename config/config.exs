@@ -12,7 +12,7 @@ config :pelable,
 
 # Configures the endpoint
 config :pelable, PelableWeb.Endpoint,
-  url: [host: System.get_env("RENDER_EXTERNAL_HOSTNAME") || "localhost", port: 4000],
+  url: ["localhost", port: 4000],
   secret_key_base: "rco4O02JtEqNj3mWNwfw1MpK/tHqZSKMvYRSiYQy1LGTzudZk38ohbHOlBlXEhNd",
   render_errors: [view: PelableWeb.ErrorView, accepts: ~w(html json)],
   pubsub_server: Pelable.PubSub
@@ -29,7 +29,6 @@ config :pelable, :pow,
   user: Pelable.Users.User,
   repo: Pelable.Repo,
   web_module: PelableWeb,
-  cache_store_backend: PelableWeb.PowRedisCache,
   extensions: [PowResetPassword, PowPersistentSession],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
   mailer_backend: PelableWeb.PowMailer,

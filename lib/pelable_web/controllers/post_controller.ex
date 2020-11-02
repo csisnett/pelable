@@ -5,7 +5,9 @@ defmodule PelableWeb.PostController do
   alias Pelable.Learn.Post
 
   def index(conn, _params) do
-    posts = Learn.list_posts()
+    conn = assign(conn, :page_title, "My Posts - Pelable")
+    user = conn.assigns.current_user
+    posts = Learn.list_user_posts(user)
     render(conn, "index.html", posts: posts)
   end
 

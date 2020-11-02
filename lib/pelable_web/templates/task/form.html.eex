@@ -5,15 +5,9 @@
     </div>
   <% end %>
 
-  <%= label f, :name %>
-  <%= text_input f, :name %>
+  <%= label f, :name, style: "display: inline-block;" %>
+  <%= text_input f, :name, id: "task_name_input" , style: "display: inline-block; margin-left: 12px; width: 250px;", class: "form-control" %>
   <%= error_tag f, :name %>
 
-  <%= label f, :status %>
-  <%= text_input f, :status %>
-  <%= error_tag f, :status %>
-
-  <div>
-    <%= submit "Save" %>
-  </div>
+<%= submit "Save", class: "btn btn-primary", style: "margin-left: 3px;" %>
 <% end %>

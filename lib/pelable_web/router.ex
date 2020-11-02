@@ -10,6 +10,7 @@ defmodule PelableWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug PelableWeb.Pow.Plug, otp_app: :pelable
   end
 
   pipeline :api do
@@ -18,6 +19,7 @@ defmodule PelableWeb.Router do
     plug :fetch_session
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug PelableWeb.Pow.Plug, otp_app: :pelable
   end
 
   pipeline :protected do
@@ -73,6 +75,7 @@ defmodule PelableWeb.Router do
     get "habits/:uuid", HabitController, :show
     get "habits/:uuid/edit", HabitController, :edit
     put "habits/:uuid", HabitController, :update
+    put "habits/update-reward/:uuid", HabitController, :update_current_reward
     delete "habits/:uuid", HabitController, :delete
 
     resources "/tasks", TaskController, except: [:show, :edit, :update, :delete]
@@ -81,12 +84,26 @@ defmodule PelableWeb.Router do
     get "/tasks/:slug/:uuid/edit", TaskController, :edit
     put "/tasks/:slug/:uuid", TaskController, :update
     delete "/tasks/:slug/:uuid", TaskController, :delete
+
+    resources "/rewards", RewardController, except: [:show, :edit, :update, :delete]
+
+    get "/rewards/:slug/:uuid", RewardController, :show
+    get "/rewards/:slug/:uuid/edit", RewardController, :edit
+    put "/rewards/:slug/:uuid", RewardController, :update
+    delete "/rewards/:slug/:uuid", RewardController, :delete
+
+    get "/earned-rewards/", HabitCompletionRewardController, :index
+    get "/earned-rewards/:uuid", HabitCompletionRewardController, :show
+    put "/earned-rewards/:uuid", HabitCompletionRewardController, :take_reward
+    
+    resources "/reminders", ReminderController
   end
 
   scope "/", PelableWeb do
     pipe_through [:api, :protected]
 
     post "/log-habit/:uuid", HabitController, :log_habit
+    put "/tasks/:slug/:uuid", TaskController, :update
   end
 
   # Other scopes may use custom stacks.

@@ -227,6 +227,15 @@ defmodule Pelable.Learn do
     Repo.all(Post)
   end
 
+  # %User{} -> [%Post{}, ...]
+  def list_user_posts(%User{} = user) do
+    query = 
+    from p in Post,
+    where: p.creator_id == ^user.id,
+    select: p
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single post.
 
