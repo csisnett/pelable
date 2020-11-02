@@ -48,17 +48,33 @@
      }
    }
 
+
+
 function show_hour_format(this_element){
- 	  let hour_input = this_element.childNodes[2]
-    let minute_input = this_element.childNodes[5]
+   let children = this_element.children;
+   let minute_input;
+   let hour_input;
+    for(var i = 0; i< children.length;i++)
+  {
+    if(children[i].getAttribute('name') == 'reminder[time_minute]'){
+      minute_input = children[i];
+    }
+
+    if(children[i].getAttribute('name') == 'reminder[time_hour]'){
+      hour_input = children[i];
+    }
+
+    if(children[i].getAttribute('name') == '12hour'){
+      new_hour = children[i];
+    }
+  }
     
     let transformed_hour = transform_hour(hour_input.value)
     let formatted_minute = transform_minute(minute_input.value)
     let special_time_value = special_time(hour_input.value, minute_input.value)
     let final_format = transformed_hour.hour + ":" + formatted_minute + " " + transformed_hour.afternoon + " " + special_time_value
  	
-    let new_hour_element = this_element.childNodes[9]
-    new_hour_element.textContent = final_format
+    new_hour.textContent = final_format
  }
 </script>
 
@@ -73,11 +89,11 @@ function show_hour_format(this_element){
   <%= text_input f, :name, class: "rounded-input" %>
   <br>
   <div id="hour-insertion" onChange="show_hour_format(this)">
-  <%= label f, :hour %><%= select f, :time_hour, hour_options, id: "hour-input", class: "custom-select", value: "11", style: "width: 100px;" %>
+  <%= label f, :hour %><%= select f, :time_hour, hour_options,  class: "custom-select", value: "11", style: "width: 100px;" %>
   <%= label f, :minute %>
-  <%= select f, :time_minute, minute_options, class: "custom-select", id: "minute-input", value: "30", style: "width: 100px;" %>
+  <%= select f, :time_minute, minute_options, class: "custom-select", value: "30", style: "width: 100px;" %>
   <br>
-  ⏰ <span id="12-hour-format" style=""> 11:30 AM </span>
+  ⏰ <span name="12hour" style=""> 11:30 AM </span>
   </div>
   <br>
   <%= checkbox f, :recurrent, value: "check"%>
