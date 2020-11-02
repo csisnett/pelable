@@ -12,7 +12,7 @@ defmodule Pelable.Habits.Habit do
     field :time_frequency, :string
     field :archived?, :boolean, default: false
     field :uuid, Ecto.ShortUUID, autogenerate: true
-    field :completed_today?, :boolean, virtual: true
+    field :complete_now?, :boolean, virtual: true
 
     belongs_to :current_reward, Reward
     belongs_to :user, User

@@ -8,7 +8,7 @@ defmodule PelableWeb.HabitView do
   # Use to show the streak count beside the checkmark
   # If the given streak is current returns its count otherwise empty string
   def show_streak_count_or_not(%Streak{} = streak, timezone, habit_frequency) do
-    case Habits.is_streak_current?(streak, timezone, habit_frequency) do
+    case Habits.is_streak_alive?(streak, timezone, habit_frequency) do
       true -> streak.count
       false -> ""
     end
@@ -24,20 +24,30 @@ defmodule PelableWeb.HabitView do
   # Use to show the habit's status as green or gray.
   #Returns "green-habit" if the habit was completed today, otherwise "gray-habit"
   def green_or_not(%Habit{} = habit) do
-    if habit.completed_today? == true do
-      "paris-habit"
-    else
+    if habit.complete_now? == true do
       "gray-habit"
+    else
+      "paris-habit"
     end
   end
 
   #%Habit{} -> String
-  # Use to determine the popover message for the habit status
-  def completed_message_or_not(%Habit{} = habit) do
-    if habit.completed_today? == true do
-      "This habit is finished for today"
-    else
+  # Used to determine the popover message for the habit status
+  def completed_message_or_not(%Habit{time_frequency: "daily"} = habit) do
+    if habit.complete_now? == true do
       "This habit isn't finished for today"
+    else
+      "This habit is finished for today"
+    end
+  end
+
+  #%Habit{} -> String
+  # Used to determine the popover message for the habit status
+  def completed_message_or_not(%Habit{time_frequency: "weekly"} = habit) do
+    if habit.complete_now? == true do
+      "This habit isn't finished for this week"
+    else
+      "This habit is finished for this week"
     end
   end
 

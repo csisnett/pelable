@@ -99,30 +99,46 @@ defmodule Pelable.Habits do
   def get_habits_last_streaks(habits, user_timezone, habits_streaks \\ []) when is_list(habits) do
     [this_habit | rest] = habits
     streak = get_last_streak(this_habit)
-    this_habit = complete_habit(this_habit, streak, user_timezone)
+    this_habit = complete_habit_now(this_habit, streak, user_timezone)
     result = {this_habit, count_streak(streak)}
 
     habits_streaks = [result | habits_streaks]
     get_habits_last_streaks(rest, user_timezone,  habits_streaks)
   end
 
-  def complete_habit(habit, last_streak, timezone) do
-    completed_today? = habit_completed_today?(habit, last_streak, timezone) 
-    Map.put(habit, :completed_today?, completed_today?)
+  def complete_habit_now(habit, last_streak, timezone) do
+    complete_now? = complete_this_habit?(habit, last_streak, timezone) 
+    Map.put(habit, :complete_now?, complete_now?)
   end
 
-  # %Habit{} -> Boolean
-  #Returns true if the habit was completed today already, otherwise false
-  def habit_completed_today?(%Habit{} = habit, %Streak{} = last_streak, timezone) do
-    habit_completion = get_last_habit_completion(last_streak)
-    local_present_time = create_local_present_time(timezone)
+  # %Habit{}, %Streak{}, String -> Boolean
+  #Returns true if the user should complete this habit right now otherwise false
+
+  def complete_this_habit?(%Habit{time_frequency: "weekly"} = habit, %Streak{} = last_streak, timezone) do
+    last_habit_completion = get_last_habit_completion(last_streak)
+    local_present_datetime = create_local_present_datetime(timezone)
+
+    case last_habit_completion do
+      nil -> true # true if the habit has never been completed
+      last_habit_completion ->
+        last_completion_date = last_habit_completion.created_at_local_datetime |> add_timezone(timezone) |> DateTime.to_date
+        present_date = local_present_datetime |> DateTime.to_date
+        Date.end_of_week(last_completion_date) != Date.end_of_week(present_date) # True if we're not in the same week of the last habit completion
+    end
     
-    case habit_completion do
-      nil -> false
-      habit_completion -> 
-        completion_date = habit_completion.created_at_local_datetime |> add_timezone(timezone) |> DateTime.to_date
-        present_date = local_present_time |> DateTime.to_date
-        Date.diff(present_date, completion_date) == 0 #True if completion date is today
+  end
+  # %Habit{}, %Streak{}, String -> Boolean
+  #Returns true if the user should complete this habit today otherwise false
+  def complete_this_habit?(%Habit{time_frequency: "daily"} = habit, %Streak{} = last_streak, timezone) do
+    last_habit_completion = get_last_habit_completion(last_streak)
+    local_present_datetime = create_local_present_datetime(timezone)
+    
+    case last_habit_completion do
+      nil -> true # true if the habit has never been completed
+      last_habit_completion ->
+        last_completion_date = last_habit_completion.created_at_local_datetime |> add_timezone(timezone) |> DateTime.to_date
+        present_date = local_present_datetime |> DateTime.to_date
+        Date.diff(present_date, last_completion_date) != 0 #True if the completion date wasn't today
     end
   end
 
@@ -155,9 +171,9 @@ defmodule Pelable.Habits do
 
   # String -> %DateTime{}
   # Creates a DateTime for the present in the timezone given.
-  def create_local_present_time(timezone) do
-    {:ok, local_present_time} = DateTime.now(timezone, Tzdata.TimeZoneDatabase)
-    local_present_time
+  def create_local_present_datetime(timezone) do
+    {:ok, local_present_datetime} = DateTime.now(timezone, Tzdata.TimeZoneDatabase)
+    local_present_datetime
   end
 
 
@@ -173,7 +189,7 @@ defmodule Pelable.Habits do
 
   # %NaiveDateTime{}, String -> %DateTime{}
   # Converts a day & time in UTC to the equivalent day & time in another timezone
-  def convert_utc_to_local_time(%NaiveDateTime{} = naive, local_timezone) do
+  def convert_utc_to_local_datetime(%NaiveDateTime{} = naive, local_timezone) do
     {:ok, date_time} = DateTime.from_naive(naive, "Etc/UTC")
     {:ok, local_datetime} = DateTime.shift_zone(date_time, local_timezone, Tzdata.TimeZoneDatabase)
     local_datetime
@@ -188,30 +204,51 @@ defmodule Pelable.Habits do
   end
 
   # %Streak{}, String, String -> Boolean
-  # Returns true if the streak is active, otherwise false
-  def is_streak_current?(%Streak{} = streak, timezone, time_frequency = "daily") do
-    habit_completion = get_last_habit_completion(streak)
-    local_present_time = create_local_present_time(timezone)
+  # Returns true if the streak is alive, otherwise false
+  def is_streak_alive?(%Streak{} = streak, timezone, time_frequency = "daily") do
+    last_habit_completion = get_last_habit_completion(streak)
+    local_present_datetime = create_local_present_datetime(timezone)
 
-    case habit_completion do
+    case last_habit_completion do
       nil ->
-        streak_creation_time = convert_utc_to_local_time(streak.inserted_at, timezone)
-        streak_creation_time.day == local_present_time.day # true if we're in the same day the streak was created
+        streak_creation_datetime = convert_utc_to_local_datetime(streak.inserted_at, timezone)
+        streak_creation_datetime.day == local_present_datetime.day # true if we're in the same day the streak was created
 
-      habit_completion ->
-        completion_date = habit_completion.created_at_local_datetime |> add_timezone(timezone) |> DateTime.to_date
-        present_date = local_present_time |> DateTime.to_date
+      last_habit_completion ->
+        last_completion_date = last_habit_completion.created_at_local_datetime |> add_timezone(timezone) |> DateTime.to_date
+        present_date = local_present_datetime |> DateTime.to_date
 
-        Date.diff(present_date, completion_date) <= 1 # true if habit completion was today or yesterday
+        Date.diff(present_date, last_completion_date) <= 1 # true if habit completion was today or yesterday
     end
 
+  end
+
+  # %Streak{}, String, String -> Boolean
+  # Returns true if the streak is alive, otherwise false
+  def is_streak_alive?(%Streak{} = streak, timezone, time_frequency = "weekly") do
+    last_habit_completion = get_last_habit_completion(streak)
+    local_present_datetime = create_local_present_datetime(timezone)
+    present_date = local_present_datetime |> DateTime.to_date
+
+    case last_habit_completion do
+      nil ->
+        streak_creation_date = convert_utc_to_local_datetime(streak.inserted_at, timezone) |> DateTime.to_date
+        Date.end_of_week(streak_creation_date) == Date.end_of_week(present_date) # true if we're in the same week the streak was created
+
+      last_habit_completion ->
+        last_completion_date = last_habit_completion.created_at_local_datetime |> add_timezone(timezone) |> DateTime.to_date
+    
+        last_day_of_the_week = Date.end_of_week(last_completion_date, :default) #default: the week starts on monday
+
+        Date.diff(present_date, last_day_of_the_week) <= 7 # true if we're on the next week from the last habit completion date
+      end
   end
 
   # %Habit{} -> %Streak{}
   # Returns the habit's last active streak. If it's inactive it creates a new streak.
   def get_or_create_current_streak(%Habit{} = habit, timezone) do
     streak = get_last_streak(habit)
-    case is_streak_current?(streak, timezone, habit.time_frequency) do
+    case is_streak_alive?(streak, timezone, habit.time_frequency) do
       true ->
         streak = count_streak(streak)
         {:active_streak, streak}
@@ -266,12 +303,12 @@ defmodule Pelable.Habits do
     
       {_, active_streak} = habit |> get_or_create_current_streak(timezone)
     
-      local_present_time = create_local_present_time(timezone)
+      local_present_datetime = create_local_present_datetime(timezone)
 
       %{}
       |> Map.put("streak_id", active_streak.id)
       |> Map.put("local_timezone", timezone) 
-      |> Map.put("created_at_local_datetime", local_present_time)
+      |> Map.put("created_at_local_datetime", local_present_datetime)
       |> create_habit_completion
     end
   end
@@ -731,7 +768,7 @@ defmodule Pelable.Habits do
 
    with :ok <- Bodyguard.permit(Habits.Policy, :take_earned_reward, user, earned_reward) do
     timezone = get_user_timezone(user)
-    local_time_now = create_local_present_time(timezone)
+    local_time_now = create_local_present_datetime(timezone)
 
     attrs = %{"taken_at_local" => local_time_now, "local_timezone" => timezone}
     update_habit_completion_reward(earned_reward, attrs)
@@ -865,7 +902,7 @@ defmodule Pelable.Habits do
 
   # Explains when a one-off reminder goes off
   def explain_specific_date_reminder(%Reminder{} = reminder) do
-    local_datetime = create_local_present_time(reminder.local_timezone)
+    local_datetime = create_local_present_datetime(reminder.local_timezone)
     local_date = DateTime.to_date(local_datetime)
     days_ahead = DateTime.diff(reminder.start_date, local_date)
     time_string = reminder.start_time |> Time.to_string |> String.slice(0..4) #Eliminates seconds from string
@@ -890,7 +927,7 @@ defmodule Pelable.Habits do
   # Makes sure there's always a date_start for new reminders
   def create_date_start(attrs) do
     with false <- Map.has_key?(attrs, "start_date_option") do
-      datetime = create_local_present_time(attrs["local_timezone"])
+      datetime = create_local_present_datetime(attrs["local_timezone"])
       date = DateTime.to_date(datetime)
       attrs |> Map.put("date_start", date)
     end
