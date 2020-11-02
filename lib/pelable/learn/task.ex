@@ -17,6 +17,14 @@ defmodule Pelable.Learn.Task do
     timestamps()
   end
 
+  def validate_status(changeset) do
+        {_, status} = fetch_field(changeset, :status)
+        case Enum.member?(@valid_status, status) do
+          true -> changeset
+          false -> add_error(changeset, :status, "Not a valid status")
+        end
+      end
+
   @doc false
   def changeset(task, attrs) do
     task
@@ -24,5 +32,6 @@ defmodule Pelable.Learn.Task do
     |> validate_required([:name, :status, :creator_id])
     |> foreign_key_constraint(:creator_id)
     |> NameSlug.maybe_generate_slug
+    |> validate_status
   end
 end
