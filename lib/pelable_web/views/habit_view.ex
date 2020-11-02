@@ -33,22 +33,8 @@ defmodule PelableWeb.HabitView do
 
   #%Habit{} -> String
   # Used to determine the popover message for the habit status
-  def completed_message_or_not(%Habit{time_frequency: "daily"} = habit) do
-    if habit.complete_now? == true do
-      "This habit isn't finished for today"
-    else
-      "This habit is finished for today"
-    end
-  end
-
-  #%Habit{} -> String
-  # Used to determine the popover message for the habit status
-  def completed_message_or_not(%Habit{time_frequency: "weekly"} = habit) do
-    if habit.complete_now? == true do
-      "This habit isn't finished for this week"
-    else
-      "This habit is finished for this week"
-    end
+  def completed_message_or_not(%Habit{complete_now?: _boolean} = habit) do
+    Habits.explain_completion_recommendation(habit)
   end
 
   # %Habit{} -> IOdata

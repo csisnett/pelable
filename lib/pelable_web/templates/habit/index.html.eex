@@ -10,10 +10,10 @@
     streak_holder.innerText = new_count.toString();
   }
 
-  function change_habit_status(habit_uuid){
+  function change_habit_status(habit_uuid, completion_recommendation){
     let status_ball = document.getElementById(`habit_status${habit_uuid}`);
     status_ball.className = "paris-habit";
-    status_ball.setAttribute("data-content", "This habit is finished for today");
+    status_ball.setAttribute("data-content", completion_recommendation);
   }
 
   function green_checkmark(habit_uuid){
@@ -64,7 +64,7 @@
     console.log(response)
       if (xhr.status == "200") {
         add_completion_to_streak(habit_uuid);
-        change_habit_status(habit_uuid);
+        change_habit_status(habit_uuid, response.completion.completion_recommendation);
       } else {
         console.log("Habit wasn't logged!");
       }

@@ -95,26 +95,31 @@ defmodule Pelable.Habits do
 
   # [%Habit{}] -> [{%Habit{}, %Streak{}}]
   # Gets the last streak for each habit and returns it along with its habit
-  # For streaks it adds how many completions (count), for habits whether they have been completed today (completed_today?)
+  # For streaks it adds how many  habit completions (count), for habits whether they should be completed today (complete_now?)
   def get_habits_last_streaks(habits, user_timezone, habits_streaks \\ []) when is_list(habits) do
     [this_habit | rest] = habits
-    streak = get_last_streak(this_habit)
-    this_habit = complete_habit_now(this_habit, streak, user_timezone)
-    result = {this_habit, count_streak(streak)}
+    
+    this_habit = complete_habit_now(this_habit, user_timezone)
+    last_streak = get_last_streak(this_habit)
+    result = {this_habit, count_streak(last_streak)}
 
     habits_streaks = [result | habits_streaks]
     get_habits_last_streaks(rest, user_timezone,  habits_streaks)
   end
 
-  def complete_habit_now(habit, last_streak, timezone) do
-    complete_now? = complete_this_habit?(habit, last_streak, timezone) 
+
+  # %Habit{}, String -> %Habit{}
+  # fills in habit's complete_now? with true if the user should complete the habit right now
+  # Used when sending habits to a user 
+  def complete_habit_now(%Habit{} = habit, timezone) when is_binary(timezone) do
+    complete_now? = complete_this_habit?(habit, timezone) 
     Map.put(habit, :complete_now?, complete_now?)
   end
 
-  # %Habit{}, %Streak{}, String -> Boolean
+  # %Habit{}, String -> Boolean
   #Returns true if the user should complete this habit right now otherwise false
-
-  def complete_this_habit?(%Habit{time_frequency: "weekly"} = habit, %Streak{} = last_streak, timezone) do
+  def complete_this_habit?(%Habit{time_frequency: "weekly"} = habit, timezone) do
+    last_streak = get_last_streak(habit)
     last_habit_completion = get_last_habit_completion(last_streak)
     local_present_datetime = create_local_present_datetime(timezone)
 
@@ -127,9 +132,10 @@ defmodule Pelable.Habits do
     end
     
   end
-  # %Habit{}, %Streak{}, String -> Boolean
+  # %Habit{}, String -> Boolean
   #Returns true if the user should complete this habit today otherwise false
-  def complete_this_habit?(%Habit{time_frequency: "daily"} = habit, %Streak{} = last_streak, timezone) do
+  def complete_this_habit?(%Habit{time_frequency: "daily"} = habit,  timezone) do
+    last_streak = get_last_streak(habit)
     last_habit_completion = get_last_habit_completion(last_streak)
     local_present_datetime = create_local_present_datetime(timezone)
     
@@ -138,7 +144,7 @@ defmodule Pelable.Habits do
       last_habit_completion ->
         last_completion_date = last_habit_completion.created_at_local_datetime |> add_timezone(timezone) |> DateTime.to_date
         present_date = local_present_datetime |> DateTime.to_date
-        Date.diff(present_date, last_completion_date) != 0 #True if the completion date wasn't today
+        Date.diff(present_date, last_completion_date) != 0 # true if the completion date wasn't today
     end
   end
 
@@ -220,7 +226,6 @@ defmodule Pelable.Habits do
 
         Date.diff(present_date, last_completion_date) <= 1 # true if habit completion was today or yesterday
     end
-
   end
 
   # %Streak{}, String, String -> Boolean
@@ -286,11 +291,27 @@ defmodule Pelable.Habits do
   # Used for external calls
   def log_habit(%Habit{} = habit, %User{} = user) do
     {:ok, habit_completion} = create_habit_completion(habit, user)
-
+    
     case habit.current_reward_id do
       nil -> {:ok, habit_completion}
       _any_id -> maybe_win_reward(habit, habit_completion)
     end
+  end
+
+  def explain_completion_recommendation(%Habit{complete_now?: true, time_frequency: "daily"} = habit) do
+    "This habit isn't finished for today"
+  end
+
+  def explain_completion_recommendation(%Habit{complete_now?: false, time_frequency: "daily"} = habit) do
+    "This habit is finished for today"
+  end
+
+  def explain_completion_recommendation(%Habit{complete_now?: true, time_frequency: "weekly"} = habit) do
+    "This habit isn't finished for the week"
+  end
+
+  def explain_completion_recommendation(%Habit{complete_now?: false, time_frequency: "weekly"} = habit) do
+    "This habit is finished for the week"
   end
 
   # %{}, %User{} -> {:ok, %HabitCompletion{}} || {:error, %Changeset{}}
@@ -301,15 +322,22 @@ defmodule Pelable.Habits do
 
       timezone = get_user_timezone(user)
     
-      {_, active_streak} = habit |> get_or_create_current_streak(timezone)
+      {_, alive_streak} = habit |> get_or_create_current_streak(timezone)
     
       local_present_datetime = create_local_present_datetime(timezone)
 
+      {:ok, habit_completion} = 
       %{}
-      |> Map.put("streak_id", active_streak.id)
+      |> Map.put("streak_id", alive_streak.id)
       |> Map.put("local_timezone", timezone) 
       |> Map.put("created_at_local_datetime", local_present_datetime)
       |> create_habit_completion
+
+      habit = complete_habit_now(habit, timezone)
+      completion_recommendation = explain_completion_recommendation(habit)
+      habit_completion = habit_completion |> Map.put(:completion_recommendation, completion_recommendation)
+
+      {:ok, habit_completion}
     end
   end
 
