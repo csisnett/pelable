@@ -39,6 +39,11 @@ config :pelable, :pow,
   adapter: Swoosh.Adapters.Sendgrid,
   api_key: "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"
 
+  config :pelable, Oban,
+  repo: Pelable.Repo,
+  plugins: [Oban.Plugins.Pruner],
+  queues: [default: 1, events: 5, media: 2]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

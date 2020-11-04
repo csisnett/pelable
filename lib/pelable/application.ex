@@ -26,7 +26,8 @@ defmodule Pelable.Application do
 
       PelableWeb.Presence,
       
-      {PlugAttack.Storage.Ets, name: Pelable.PlugAttack.Storage, clean_period: 60_000}
+      {PlugAttack.Storage.Ets, name: Pelable.PlugAttack.Storage, clean_period: 60_000},
+      {Oban, oban_config()}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -40,5 +41,9 @@ defmodule Pelable.Application do
   def config_change(changed, _new, removed) do
     PelableWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp oban_config do
+    Application.get_env(:pelable, Oban)
   end
 end
