@@ -891,6 +891,8 @@ defmodule Pelable.Habits do
   """
   def get_reminder!(id), do: Repo.get!(Reminder, id)
 
+  def get_reminder_by_uuid(uuid), do: Repo.get_by(Reminder, uuid: uuid)
+
   @doc """
   Creates a reminder.
 
@@ -1000,6 +1002,10 @@ defmodule Pelable.Habits do
     end
   end
 
+  def if_habit_create_habit_reminder(%{"habit_uuid" => "no uuid"}, reminder, user) do
+    {:ok, reminder}
+  end
+
   # # %{}, %Reminder{}, %User{} -> {:ok, %Reminder{}, %HabitReminder{} || {:ok, %Reminder{}}
   # Creates a habit_reminder with the Reminder and habit_uuid given
   # Used when creating reminders for a specific habit
@@ -1014,10 +1020,6 @@ defmodule Pelable.Habits do
           {:ok, reminder, habit_reminder}
       end
     end
-  end
-
-  def if_habit_create_habit_reminder(%{"habit_uuid" => "no uuid"}, reminder, user) do
-    {:ok, reminder}
   end
 
   # If the above function doesn't match (there's no habit_uuid) just return the reminder itself
@@ -1062,6 +1064,71 @@ defmodule Pelable.Habits do
     reminder
     |> Reminder.changeset(attrs)
     |> Repo.update()
+  end
+
+  # %Reminder{} -> Integer
+  # Returns the # of seconds for the reminder to go off
+  def time_for_reminder(%Reminder{} = reminder) do
+    {:ok, datetime} = DateTime.new(reminder.date_start, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
+    {:ok, reminder_utc_datetime} = DateTime.shift_zone(datetime, "Etc/UTC", Tzdata.TimeZoneDatabase)
+    {:ok, present_datetime} = DateTime.now("Etc/UTC")
+    DateTime.diff(reminder_utc_datetime, present_datetime, :second) # if > 0 reminder is in the future. 
+  end
+
+  # %Reminder{} -> String
+  # Converts the date time the reminder will go off to a string
+   # This just illustrates one date time if it's recurrent there will be more
+  # Not in used currently
+  def reminder_to_datetime_string(%Reminder{} = reminder) do
+    {:ok, datetime} = DateTime.new(reminder.date_start, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
+    DateTime.to_string(datetime)
+  end
+
+  def push_test(uuid) do
+    reminder = get_reminder_by_uuid(uuid)
+    send_reminder_to_one_signal(reminder)
+  end
+
+  def schedule_reminder(%Reminder{uuid: uuid} = reminder) do
+    time_for_reminder = time_for_reminder(reminder)
+    params = %{"reminder_uuid" => uuid}
+    params |> Pelable.PushNotification.new(schedule_in: time_for_reminder) |> Oban.insert()
+  end
+
+  # Used to push notification of one signal (pass it to send_push_notification)
+  def test_notification do
+    {:ok, dt } = DateTime.now("America/Panama", Tzdata.TimeZoneDatabase)
+    dt = dt |> DateTime.add(180, :second, Tzdata.TimeZoneDatabase)
+    time_string = dt |> DateTime.to_time |> Time.to_string |> String.slice(0..4)
+    %{"title" => "Test notification",
+    "content" => "message here",
+    "timezone" => "America/Panama",
+    "delivery_time" => time_string,
+    "user_id" => 1}
+  end
+
+  def send_reminder_to_one_signal(%Reminder{} = reminder) do
+    time_string = reminder.time_start |> Time.to_string |> String.slice(0..4)
+    params = %{"user_id" => reminder.creator_id, "timezone" => reminder.local_timezone, "delivery_time" => time_string, "title" => "Kind reminder", "content" => reminder.name}
+    send_push_notification(params)
+  end
+
+  # Takes params and sends to one signal
+  def send_push_notification(%{"user_id" => user_id, "timezone" => timezone, "delivery_time" => time, "title" => title, "content" => content} = args) do
+    api_key = System.get_env("ONESIGNAL_API_KEY")
+    default =
+    %{"app_id" => "277bc59b-8037-4702-8a45-66cb485da805",
+    "headings" => %{"en" => title},
+    "url" => "https://pelable.com/reminders",
+    "data" => %{"foo" => "bar"},
+    "include_external_user_ids" => [user_id],
+    "contents" => %{"en" => content},
+    "delayed_option" => timezone,
+    "delivery_time_of_day" => time,
+    "priority" => 10} #highest priority 
+
+    encoded_json = Jason.encode!(default)
+    HTTPoison.post("https://onesignal.com/api/v1/notifications", encoded_json, [{"Content-Type", "application/json"}, {"charset", "utf-8"}, {"Authorization", "Basic " <> api_key}])
   end
 
   @doc """

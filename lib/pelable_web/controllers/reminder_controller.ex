@@ -21,6 +21,7 @@ defmodule PelableWeb.ReminderController do
     reminder_params = reminder_params |> Map.put("local_timezone", timezone) |> Map.put("creator_id", user.id)
     case Habits.create_reminder(reminder_params, user) do
       {:ok, reminder} ->
+        Habits.schedule_reminder(reminder)
         conn
         |> put_flash(:info, "Reminder created successfully.")
         |> redirect(to: Routes.reminder_path(conn, :show, reminder))
