@@ -1068,11 +1068,28 @@ defmodule Pelable.Habits do
 
   # %Reminder{} -> Integer
   # Returns the # of seconds for the reminder to go off
-  def time_for_reminder(%Reminder{} = reminder) do
+  def time_for_reminder(%Reminder{time_frequency: nil} = reminder) do
     {:ok, datetime} = DateTime.new(reminder.date_start, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
     {:ok, reminder_utc_datetime} = DateTime.shift_zone(datetime, "Etc/UTC", Tzdata.TimeZoneDatabase)
     {:ok, present_datetime} = DateTime.now("Etc/UTC")
     DateTime.diff(reminder_utc_datetime, present_datetime, :second) # if > 0 reminder is in the future. 
+  end
+
+  # Recurrent first time is calculated like a one off
+  def time_for_reminder(%Reminder{time_frequency: "daily"} = reminder, "first_day") do
+    {:ok, datetime} = DateTime.new(reminder.date_start, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
+    {:ok, reminder_utc_datetime} = DateTime.shift_zone(datetime, "Etc/UTC", Tzdata.TimeZoneDatabase)
+    {:ok, present_datetime} = DateTime.now("Etc/UTC")
+    DateTime.diff(reminder_utc_datetime, present_datetime, :second) # if > 0 reminder is in the future. 
+  end
+
+  # Recurrent following times you need to calculate the time for the next day not the current day oh it depends on the day start actually.
+  def time_for_reminder(%Reminder{time_frequency: "daily"} = reminder) do
+    local_present_datetime = create_local_present_datetime(reminder.local_timezone)
+    next_date = DateTime.to_date(local_present_datetime) |> Date.add(1)
+    {:ok, next_datetime} = DateTime.new(next_date, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
+
+    DateTime.diff(next_datetime, local_present_datetime, :second)
   end
 
   # %Reminder{} -> String
@@ -1089,10 +1106,18 @@ defmodule Pelable.Habits do
     send_reminder_to_one_signal(reminder)
   end
 
-  def schedule_reminder(%Reminder{uuid: uuid} = reminder) do
+  # Used for one off reminders
+  def schedule_reminder(%Reminder{uuid: uuid, time_frequency: nil} = reminder) do
     time_for_reminder = time_for_reminder(reminder)
     params = %{"reminder_uuid" => uuid}
     params |> Pelable.PushNotification.new(schedule_in: time_for_reminder) |> Oban.insert()
+  end
+
+  # Used for recurrent reminders
+  def schedule_reminder(%Reminder{uuid: uuid, time_frequency: _frequency} = reminder) do
+    time_for_reminder = time_for_reminder(reminder, "first_day")
+    params = %{"reminder_uuid" => uuid}
+    params |> Pelable.RecurrentPushNotification.new(schedule_in: time_for_reminder) |> Oban.insert()
   end
 
   # Used to push notification of one signal (pass it to send_push_notification)
