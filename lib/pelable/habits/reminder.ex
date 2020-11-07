@@ -15,7 +15,7 @@ defmodule Pelable.Habits.Reminder do
     field :time_start_string, :string, virtual: true
     field :date_start, :date #Can be used for recurrent or one off. If not recurrent this is the only date the reminder will go off
     field :date_end, :date
-    field :repeat_on_days, {:array, :string}
+    field :repeat_on_days, {:array, :string} # When time_frequency == "weekly", they may choose specific days
     field :time_frequency, :string
     field :frequency_interval, :integer # this + time_frequency determines the time between recurrent reminders
     belongs_to :creator, User
