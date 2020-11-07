@@ -307,4 +307,63 @@ defmodule Pelable.LearnTest do
       assert %Ecto.Changeset{} = Learn.change_task(task)
     end
   end
+
+  describe "resources" do
+    alias Pelable.Learn.Resource
+
+    @valid_attrs %{url: "some url"}
+    @update_attrs %{url: "some updated url"}
+    @invalid_attrs %{url: nil}
+
+    def resource_fixture(attrs \\ %{}) do
+      {:ok, resource} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Learn.create_resource()
+
+      resource
+    end
+
+    test "list_resources/0 returns all resources" do
+      resource = resource_fixture()
+      assert Learn.list_resources() == [resource]
+    end
+
+    test "get_resource!/1 returns the resource with given id" do
+      resource = resource_fixture()
+      assert Learn.get_resource!(resource.id) == resource
+    end
+
+    test "create_resource/1 with valid data creates a resource" do
+      assert {:ok, %Resource{} = resource} = Learn.create_resource(@valid_attrs)
+      assert resource.url == "some url"
+    end
+
+    test "create_resource/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Learn.create_resource(@invalid_attrs)
+    end
+
+    test "update_resource/2 with valid data updates the resource" do
+      resource = resource_fixture()
+      assert {:ok, %Resource{} = resource} = Learn.update_resource(resource, @update_attrs)
+      assert resource.url == "some updated url"
+    end
+
+    test "update_resource/2 with invalid data returns error changeset" do
+      resource = resource_fixture()
+      assert {:error, %Ecto.Changeset{}} = Learn.update_resource(resource, @invalid_attrs)
+      assert resource == Learn.get_resource!(resource.id)
+    end
+
+    test "delete_resource/1 deletes the resource" do
+      resource = resource_fixture()
+      assert {:ok, %Resource{}} = Learn.delete_resource(resource)
+      assert_raise Ecto.NoResultsError, fn -> Learn.get_resource!(resource.id) end
+    end
+
+    test "change_resource/1 returns a resource changeset" do
+      resource = resource_fixture()
+      assert %Ecto.Changeset{} = Learn.change_resource(resource)
+    end
+  end
 end
