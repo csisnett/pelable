@@ -1,0 +1,18 @@
+<h1>Show Bookmark</h1>
+
+<ul>
+
+  <li>
+    <strong>Title:</strong>
+    <%= @bookmark.title %>
+  </li>
+
+    <li>
+    <strong>url: </strong>
+    <%= @bookmark.resource.url %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.bookmark_path(@conn, :edit, @bookmark.uuid) %></span>
+<span><%= link "Back", to: Routes.bookmark_path(@conn, :index) %></span>

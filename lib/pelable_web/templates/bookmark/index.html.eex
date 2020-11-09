@@ -1,0 +1,26 @@
+<h1>Listing Bookmarks</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+
+      <th> url </th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for bookmark <- @bookmarks do %>
+    <tr>
+      <td><%= bookmark.title %></td>
+      <td><%= bookmark.resource.url %></td>
+      <td>
+        <span><%= link "Show", to: Routes.bookmark_path(@conn, :show, bookmark.uuid) %></span>
+        <span><%= link "Edit", to: Routes.bookmark_path(@conn, :edit, bookmark.uuid) %></span>
+        <span><%= link "Delete", to: Routes.bookmark_path(@conn, :delete, bookmark.uuid), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Bookmark", to: Routes.bookmark_path(@conn, :new) %></span>

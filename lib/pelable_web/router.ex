@@ -95,6 +95,13 @@ defmodule PelableWeb.Router do
     get "/earned-rewards/", HabitCompletionRewardController, :index
     get "/earned-rewards/:uuid", HabitCompletionRewardController, :show
     put "/earned-rewards/:uuid", HabitCompletionRewardController, :take_reward
+
+    resources "/bookmarks", BookmarkController, except: [:show, :edit, :update, :delete]
+    
+    get "/bookmarks/:uuid", BookmarkController, :show
+    get "/bookmarks/:uuid/edit", BookmarkController, :edit
+    put "/bookmarks/:uuid", BookmarkController, :update
+    delete "/bookmarks/:uuid", BookmarkController, :delete
     
     resources "/reminders", ReminderController
   end

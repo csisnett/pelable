@@ -2,7 +2,7 @@ defmodule Pelable.Learn.Policy do
     @behaviour Bodyguard.Policy
 
     alias Pelable.Users.User
-    alias Pelable.Learn.{Post, Task}
+    alias Pelable.Learn.{Post, Task, Bookmark}
 
     #For Posts
 
@@ -26,15 +26,25 @@ defmodule Pelable.Learn.Policy do
 
 
     #authorize any user to create a new task
-    def authorize(:create_task, _, _) do
+    def authorize(:create_task, %User{}, _) do
         true
     end
-    
+
+        
         # authorize users to update their taskss
     def authorize(action, %User{id: user_id}, %Task{creator_id: user_id}) when action in [:update_task] do
         true
     end
 
+
+    #authorize any user to create a new bookmark
+    def authorize(:create_bookmark,%User{}, %Bookmark{}) do
+        true
+    end
+
+    def authorize(action, %User{id: user_id}, %Bookmark{creator_id: user_id}) when action in [:update_bookmark] do
+        true
+    end
     
 
     #Deny every other scenario
