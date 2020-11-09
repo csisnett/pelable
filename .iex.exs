@@ -2,7 +2,7 @@ alias Pelable.Projects
 alias Pelable.Repo
 alias Pelable.Users.User
 alias Pelable.Learn
-alias Pelable.Learn.{Project, ProjectMember, Post, Thread, ThreadPost, Task}
+alias Pelable.Learn.{Project, ProjectMember, Post, Thread, ThreadPost, Task, Resource, Bookmark}
 alias Pelable.Accounts
 alias Pelable.Accounts.{Setting}
 alias Pelable.Chat
