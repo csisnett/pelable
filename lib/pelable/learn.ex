@@ -677,6 +677,8 @@ defmodule Pelable.Learn do
   """
   def get_resource!(id), do: Repo.get!(Resource, id)
 
+  def get_resource_by_url(url), do: Repo.get_by(Resource, url: url)
+
   @doc """
   Creates a resource.
 
@@ -740,5 +742,174 @@ defmodule Pelable.Learn do
   """
   def change_resource(%Resource{} = resource, attrs \\ %{}) do
     Resource.changeset(resource, attrs)
+  end
+
+  alias Pelable.Learn.Bookmark
+
+  @doc """
+  Returns the list of bookmarks.
+
+  ## Examples
+
+      iex> list_bookmarks()
+      [%Bookmark{}, ...]
+
+  """
+  def list_bookmarks do
+    query_bookmarks |> Repo.all()
+  end
+
+  def query_bookmarks do
+    query = 
+    from bookmark in Bookmark,
+    left_join: resource in assoc(bookmark, :resource),
+    preload: [resource: resource],
+    select: bookmark
+  end
+
+  @doc """
+  Gets a single bookmark.
+
+  Raises `Ecto.NoResultsError` if the Bookmark does not exist.
+
+  ## Examples
+
+      iex> get_bookmark!(123)
+      %Bookmark{}
+
+      iex> get_bookmark!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_bookmark!(id), do: Repo.get!(Bookmark, id)
+
+  def get_bookmark_by_uuid(uuid) do
+    query = 
+    from bookmark in Bookmark,
+    where: bookmark.uuid == ^uuid,
+    left_join: resource in assoc(bookmark, :resource),
+    preload: [resource: resource],
+    select: bookmark
+    Repo.one(query)
+  end
+
+  @doc """
+  Creates a bookmark.
+
+  ## Examples
+
+      iex> create_bookmark(%{field: value})
+      {:ok, %Bookmark{}}
+
+      iex> create_bookmark(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_bookmark(attrs \\ %{}) do
+    %Bookmark{}
+    |> Bookmark.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def create_bookmark(attrs, "no resource match") do
+    {:ok, resource} = create_resource(attrs)
+    attrs = attrs |> Map.put("resource_id", resource.id)
+    {:ok, bookmark} = create_bookmark(attrs)
+  end
+
+  def create_bookmark(attrs, %Resource{} = resource) do
+    attrs = attrs |> Map.put("resource_id", resource.id)
+    {:ok, bookmark} = create_bookmark(attrs)
+  end
+
+  def create_bookmark(attrs, %User{} = user) do
+    with :ok <- Bodyguard.permit(Learn.Policy, :create_bookmark, user, %Bookmark{}) do
+      attrs = attrs |> Map.put("creator_id", user.id)
+
+      case Repo.get_by(Resource, url: attrs["url"]) do
+          nil -> create_bookmark(attrs, "no resource match")
+          resource -> create_bookmark(attrs, resource)
+      end
+    end
+  end
+
+  @doc """
+  Updates a bookmark.
+
+  ## Examples
+
+      iex> update_bookmark(bookmark, %{field: new_value})
+      {:ok, %Bookmark{}}
+
+      iex> update_bookmark(bookmark, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_bookmark(%Bookmark{} = bookmark, attrs) do
+    bookmark
+    |> Bookmark.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def update_bookmark(%Bookmark{} = bookmark, attrs, "url change") do
+    task = Elixir.Task.async(fn -> get_resource_by_url(attrs["url"])end)
+    resource = Elixir.Task.await(task)
+
+    case resource do
+      nil ->
+        create_resource_task = Elixir.Task.async(fn -> create_resource(attrs) end)
+        tuple = Elixir.Task.await(create_resource_task)
+
+        case tuple do
+          {:ok, resource} ->
+          attrs = attrs |> Map.put("resource_id", resource.id)
+          update_bookmark(bookmark, attrs)
+
+          {:error, changeset} -> {:error, changeset}
+        end
+
+      resource ->
+            attrs = attrs |> Map.put("resource_id", resource.id)
+            update_bookmark(bookmark, attrs)
+    end
+  end
+
+  def update_bookmark(%Bookmark{} = bookmark, attrs, %User{} = user) do
+    with :ok <- Bodyguard.permit(Learn.Policy, :update_bookmark, user, bookmark) do
+      attrs = attrs |> Map.put("creator_id", user.id)
+      case attrs["url"] do
+        nil -> update_bookmark(bookmark, attrs)
+        _url -> update_bookmark(bookmark, attrs, "url change")
+      end
+    end
+  end
+
+  @doc """
+  Deletes a bookmark.
+
+  ## Examples
+
+      iex> delete_bookmark(bookmark)
+      {:ok, %Bookmark{}}
+
+      iex> delete_bookmark(bookmark)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_bookmark(%Bookmark{} = bookmark) do
+    Repo.delete(bookmark)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking bookmark changes.
+
+  ## Examples
+
+      iex> change_bookmark(bookmark)
+      %Ecto.Changeset{data: %Bookmark{}}
+
+  """
+  def change_bookmark(%Bookmark{} = bookmark, attrs \\ %{}) do
+    Bookmark.changeset(bookmark, attrs)
   end
 end
