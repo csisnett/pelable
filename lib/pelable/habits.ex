@@ -1069,18 +1069,18 @@ defmodule Pelable.Habits do
   # %Reminder{} -> Integer
   # Returns the # of seconds for the reminder to go off
   def time_for_reminder(%Reminder{time_frequency: nil} = reminder) do
-    {:ok, datetime} = DateTime.new(reminder.date_start, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
-    {:ok, reminder_utc_datetime} = DateTime.shift_zone(datetime, "Etc/UTC", Tzdata.TimeZoneDatabase)
-    {:ok, present_datetime} = DateTime.now("Etc/UTC")
-    DateTime.diff(reminder_utc_datetime, present_datetime, :second) # if > 0 reminder is in the future. 
+    present_datetime = create_local_present_datetime(reminder.local_timezone)
+    {:ok, reminder_datetime} = DateTime.new(reminder.date_start, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
+
+    DateTime.diff(reminder_datetime, present_datetime, :second) # when > 0 reminder is in the future. (as it should)
   end
 
   # Recurrent first time is calculated like a one off
   def time_for_reminder(%Reminder{time_frequency: "daily"} = reminder, "first_day") do
-    {:ok, datetime} = DateTime.new(reminder.date_start, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
-    {:ok, reminder_utc_datetime} = DateTime.shift_zone(datetime, "Etc/UTC", Tzdata.TimeZoneDatabase)
-    {:ok, present_datetime} = DateTime.now("Etc/UTC")
-    DateTime.diff(reminder_utc_datetime, present_datetime, :second) # if > 0 reminder is in the future. 
+    present_datetime = create_local_present_datetime(reminder.local_timezone)
+    {:ok, reminder_datetime} = DateTime.new(reminder.date_start, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
+
+    DateTime.diff(reminder_datetime, present_datetime, :second) # when > 0 reminder is in the future. (as it should)
   end
 
   # Recurrent following times you need to calculate the time for the next day not the current day oh it depends on the day start actually.
@@ -1090,15 +1090,6 @@ defmodule Pelable.Habits do
     {:ok, next_datetime} = DateTime.new(next_date, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
 
     DateTime.diff(next_datetime, local_present_datetime, :second)
-  end
-
-  # %Reminder{} -> String
-  # Converts the date time the reminder will go off to a string
-   # This just illustrates one date time if it's recurrent there will be more
-  # Not in used currently
-  def reminder_to_datetime_string(%Reminder{} = reminder) do
-    {:ok, datetime} = DateTime.new(reminder.date_start, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
-    DateTime.to_string(datetime)
   end
 
   def push_test(uuid) do
