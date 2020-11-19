@@ -1069,18 +1069,18 @@ defmodule Pelable.Habits do
   # %Reminder{} -> Integer
   # Returns the # of seconds for the reminder to go off
   def time_for_reminder(%Reminder{time_frequency: nil} = reminder) do
-    {:ok, datetime} = DateTime.new(reminder.date_start, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
-    {:ok, reminder_utc_datetime} = DateTime.shift_zone(datetime, "Etc/UTC", Tzdata.TimeZoneDatabase)
-    {:ok, present_datetime} = DateTime.now("Etc/UTC")
-    DateTime.diff(reminder_utc_datetime, present_datetime, :second) # if > 0 reminder is in the future. 
+    present_datetime = create_local_present_datetime(reminder.local_timezone)
+    {:ok, reminder_datetime} = DateTime.new(reminder.date_start, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
+
+    DateTime.diff(reminder_datetime, present_datetime, :second) # when > 0 reminder is in the future. (as it should)
   end
 
   # Recurrent first time is calculated like a one off
   def time_for_reminder(%Reminder{time_frequency: "daily"} = reminder, "first_day") do
-    {:ok, datetime} = DateTime.new(reminder.date_start, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
-    {:ok, reminder_utc_datetime} = DateTime.shift_zone(datetime, "Etc/UTC", Tzdata.TimeZoneDatabase)
-    {:ok, present_datetime} = DateTime.now("Etc/UTC")
-    DateTime.diff(reminder_utc_datetime, present_datetime, :second) # if > 0 reminder is in the future. 
+    present_datetime = create_local_present_datetime(reminder.local_timezone)
+    {:ok, reminder_datetime} = DateTime.new(reminder.date_start, reminder.time_start, reminder.local_timezone, Tzdata.TimeZoneDatabase)
+
+    DateTime.diff(reminder_datetime, present_datetime, :second) # when > 0 reminder is in the future. (as it should)
   end
 
   # Recurrent following times you need to calculate the time for the next day not the current day oh it depends on the day start actually.
@@ -1102,7 +1102,7 @@ defmodule Pelable.Habits do
   end
 
   def create_test_reminder(user = %User{}) do
-    reminder_params = %{"name" => "test reminder", "recurrent" => "true", "start_date" => %{"day" => "1", "month" => "1", "year" => "2015"}, "time_frequency" => "daily", "time_hour" => "18", "time_minute" => "15"}
+    reminder_params = %{"name" => "test reminder", "recurrent" => "true", "start_date" => %{"day" => "1", "month" => "1", "year" => "2015"}, "time_frequency" => "daily", "time_hour" => "18", "time_minute" => "18"}
     timezone = Habits.get_user_timezone(user)
     reminder_params = reminder_params |> Map.put("local_timezone", timezone) |> Map.put("creator_id", user.id)
     {:ok, reminder} = create_reminder(reminder_params, user)
