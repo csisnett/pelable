@@ -42,7 +42,7 @@ config :pelable, :pow,
   config :pelable, Oban,
   repo: Pelable.Repo,
   plugins: [Oban.Plugins.Pruner],
-  queues: [default: 5]
+  queues: [default: 2, events: 2]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
