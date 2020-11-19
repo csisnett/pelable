@@ -1101,6 +1101,14 @@ defmodule Pelable.Habits do
     DateTime.to_string(datetime)
   end
 
+  def create_test_reminder(user = %User{}) do
+    reminder_params = %{"name" => "test reminder", "recurrent" => "true", "start_date" => %{"day" => "1", "month" => "1", "year" => "2015"}, "time_frequency" => "daily", "time_hour" => "18", "time_minute" => "15"}
+    timezone = Habits.get_user_timezone(user)
+    reminder_params = reminder_params |> Map.put("local_timezone", timezone) |> Map.put("creator_id", user.id)
+    {:ok, reminder} = create_reminder(reminder_params, user)
+    reminder
+  end
+
   def push_test(uuid) do
     reminder = get_reminder_by_uuid(uuid)
     send_reminder_to_one_signal(reminder)
