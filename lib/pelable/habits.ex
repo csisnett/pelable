@@ -335,7 +335,11 @@ defmodule Pelable.Habits do
 
       habit = complete_habit_now(habit, timezone)
       completion_recommendation = explain_completion_recommendation(habit)
-      habit_completion = habit_completion |> Map.put(:completion_recommendation, completion_recommendation)
+      streak = count_streak(alive_streak)
+      habit_completion = 
+      habit_completion 
+      |> Map.put(:completion_recommendation, completion_recommendation) 
+      |> Map.put(:streak_count, streak.count)
 
       {:ok, habit_completion}
     end

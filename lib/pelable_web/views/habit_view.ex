@@ -8,9 +8,9 @@ defmodule PelableWeb.HabitView do
   # Use to show the streak count beside the checkmark
   # If the given streak is current returns its count otherwise empty string
   def show_streak_count_or_not(%Streak{} = streak, timezone, habit_frequency) do
-    case Habits.is_streak_alive?(streak, timezone, habit_frequency) do
-      true -> streak.count
-      false -> ""
+    case Habits.is_streak_alive?(streak, timezone, habit_frequency) and streak.count >=4 do
+      true -> "display: inline-block;"
+      false -> "display: inline-block; visibility: hidden;"
     end
   end
 

@@ -3,11 +3,12 @@
 <script>
 
 
-  function add_completion_to_streak(habit_uuid){
+  function add_completion_to_streak(habit_uuid, response){
     let streak_holder = document.getElementById(`streak_for_habit${habit_uuid}`)
-    let old_count = parseInt(streak_holder.innerText) || 0;
-    let new_count = old_count + 1;
-    streak_holder.innerText = new_count.toString();
+    streak_holder.innerText = response.completion.streak_count.toString();
+    if (response.completion.streak_count >= 4) {
+    streak_holder.style.visibility = "visible";
+    }
   }
 
   function change_habit_status(habit_uuid, completion_recommendation){
@@ -63,7 +64,7 @@
 	  let response = JSON.parse(xhr.responseText);
     console.log(response)
       if (xhr.status == "200") {
-        add_completion_to_streak(habit_uuid);
+        add_completion_to_streak(habit_uuid, response);
         change_habit_status(habit_uuid, response.completion.completion_recommendation);
       } else {
         console.log("Habit wasn't logged!");
@@ -178,7 +179,7 @@ data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></spa
     <div class="check">
 
 <svg id="<%= "checkmark" <> habit.uuid %>"class="svg-style" onclick="log_habit('<%= habit.uuid %>')" xmlns="http://www.w3.org/2000/svg" width="65" height="65" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-<div style="display: inline-block;" id='<%= "streak_for_habit" <> habit.uuid %>'><%= show_streak_count_or_not(streak, @user_info["timezone"], habit.time_frequency) %></div>
+<div style='<%= show_streak_count_or_not(streak, @user_info["timezone"], habit.time_frequency) %>' id='<%= "streak_for_habit" <> habit.uuid %>'> <%= streak.count %> </div>
     </div>
 <br>
 <br>

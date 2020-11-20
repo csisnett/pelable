@@ -3,7 +3,7 @@ defmodule Pelable.Habits.HabitCompletion do
   import Ecto.Changeset
   alias Pelable.Habits.Streak
 
-  @derive {Jason.Encoder, only: [:created_at_local_datetime, :local_timezone, :completion_recommendation]}
+  @derive {Jason.Encoder, only: [:created_at_local_datetime, :local_timezone, :completion_recommendation, :streak_count]}
   schema "habit_completion" do
     field :created_at_local_datetime, :naive_datetime
     field :local_timezone, :string
