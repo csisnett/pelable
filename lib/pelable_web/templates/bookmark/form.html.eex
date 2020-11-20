@@ -1,18 +1,57 @@
-<%= form_for @changeset, @action, fn f -> %>
+<script>
+
+function populate_url_field(text){
+  let url_field = document.getElementById('url_field')
+  url_field.value = text;
+}
+
+function populate_title(title){
+  let title_field = document.getElementById('title_field')
+  title_field.value = title;
+}
+
+function get_title(url){
+  let xhr = new XMLHttpRequest();
+  xhr.open("GET", url, true);
+  xhr.onreadystatechange = function() { 
+  if (xhr.readyState == 4) {
+    let title = (/<title>(.*?)<\/title>/m).exec(xhr.responseText)[1];
+    populate_title(title);
+  }
+}
+xhr.send();
+}
+
+function get_clipboard() {
+  navigator.clipboard.readText().then(
+    text => {
+      populate_url_field(text)
+      get_title(text)
+    }
+  )
+}
+</script>
+  
+ <%= form_for @changeset, @action, fn f -> %>
   <%= if @changeset.action do %>
     <div class="alert alert-danger">
       <p>Oops, something went wrong! Please check the errors below.</p>
     </div>
   <% end %>
 
+  <%= label f, :url %>
+  <%= url_input f, :url, id: "url_field" %>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" onclick="get_clipboard()" fill="#89CFF0" width="18px" height="18px"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 2h-4.18C14.4.84 13.3 0 12 0c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm7 18H5V4h2v3h10V4h2v16z"/></svg>
+ 
+
+<br>
+<br>
   <%= label f, :title %>
-  <%= text_input f, :title %>
+  <%= text_input f, :title, id: "title_field" %>
   <%= error_tag f, :title %>
 
-  <%= label f, :url %>
-  <%= url_input f, :url %>
 
   <div>
-    <%= submit "Save" %>
+    <%=  submit "Save", class: "btn btn-primary" %>
   </div>
 <% end %>
