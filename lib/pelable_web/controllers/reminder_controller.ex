@@ -27,6 +27,7 @@ defmodule PelableWeb.ReminderController do
         |> redirect(to: Routes.reminder_path(conn, :show, reminder))
 
       {:ok, reminder, habit_reminder} ->
+        Habits.schedule_reminder(reminder)
         habit_reminder = habit_reminder |> Repo.preload([:habit])
         conn
         |> put_flash(:info, "Reminder created succesfully for " <> habit_reminder.habit.name)
