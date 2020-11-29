@@ -8,7 +8,7 @@ defmodule Pelable.Habits do
 
   alias Pelable.Users.User
   alias Pelable.Habits
-  alias Pelable.Habits.{Habit, Streak, HabitCompletion, Reward, Policy}
+  alias Pelable.Habits.{Habit, Streak, HabitCompletion, Reward, HabitCompletionReward, Policy, StreakSaver}
   alias Pelable.Accounts
 
   defdelegate authorize(action, user, params), to: Pelable.Habits.Policy
@@ -264,15 +264,20 @@ defmodule Pelable.Habits do
     end
   end
 
-  # %Habit{} -> %Streak{}
-  # Returns the habit's last streak
-  def get_last_streak(%Habit{} = habit) do
+  def query_last_streak(%Habit{} = habit) do
     query = 
     from s in Streak,
     where: s.habit_id == ^habit.id,
     order_by: [desc: s.id],
     limit: 1
     Repo.one(query)
+  end
+
+  # %Habit{} -> %Streak{}
+  # Returns the habit's last streak
+  def get_last_streak(%Habit{} = habit) do
+    last_streak = query_last_streak(habit)
+    last_streak = Repo.preload(last_streak, :streak_savers)
   end
 
   # %Streak{} -> %HabitCompletion{}
@@ -1291,5 +1296,107 @@ defmodule Pelable.Habits do
   """
   def change_habit_reminder(%HabitReminder{} = habit_reminder, attrs \\ %{}) do
     HabitReminder.changeset(habit_reminder, attrs)
+  end
+
+  
+
+  @doc """
+  Returns the list of streak_saver.
+
+  ## Examples
+
+      iex> list_streak_saver()
+      [%StreakSaver{}, ...]
+
+  """
+  def list_streak_saver do
+    Repo.all(StreakSaver)
+  end
+
+  @doc """
+  Gets a single streak_saver.
+
+  Raises `Ecto.NoResultsError` if the Streak saver does not exist.
+
+  ## Examples
+
+      iex> get_streak_saver!(123)
+      %StreakSaver{}
+
+      iex> get_streak_saver!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_streak_saver!(id), do: Repo.get!(StreakSaver, id)
+
+  @doc """
+  Creates a streak_saver.
+
+  ## Examples
+
+      iex> create_streak_saver(%{field: value})
+      {:ok, %StreakSaver{}}
+
+      iex> create_streak_saver(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_streak_saver(attrs \\ %{}) do
+    %StreakSaver{}
+    |> StreakSaver.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def is_streak_saver_current?(%StreakSaver{} = streak_saver, local_timezone) do
+    current_date = create_local_present_datetime(local_timezone) |> DateTime.to_date()
+    possible_dates = Date.range(streak_saver.start_date, streak_saver.end_date)
+    Enum.member?(possible_dates, current_date)
+  end
+
+  @doc """
+  Updates a streak_saver.
+
+  ## Examples
+
+      iex> update_streak_saver(streak_saver, %{field: new_value})
+      {:ok, %StreakSaver{}}
+
+      iex> update_streak_saver(streak_saver, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_streak_saver(%StreakSaver{} = streak_saver, attrs) do
+    streak_saver
+    |> StreakSaver.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a streak_saver.
+
+  ## Examples
+
+      iex> delete_streak_saver(streak_saver)
+      {:ok, %StreakSaver{}}
+
+      iex> delete_streak_saver(streak_saver)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_streak_saver(%StreakSaver{} = streak_saver) do
+    Repo.delete(streak_saver)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking streak_saver changes.
+
+  ## Examples
+
+      iex> change_streak_saver(streak_saver)
+      %Ecto.Changeset{data: %StreakSaver{}}
+
+  """
+  def change_streak_saver(%StreakSaver{} = streak_saver, attrs \\ %{}) do
+    StreakSaver.changeset(streak_saver, attrs)
   end
 end

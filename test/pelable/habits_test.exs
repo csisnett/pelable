@@ -478,4 +478,65 @@ defmodule Pelable.HabitsTest do
       assert %Ecto.Changeset{} = Habits.change_habit_reminder(habit_reminder)
     end
   end
+
+  describe "streak_saver" do
+    alias Pelable.Habits.StreakSaver
+
+    @valid_attrs %{end_date: ~D[2010-04-17], start_date: ~D[2010-04-17]}
+    @update_attrs %{end_date: ~D[2011-05-18], start_date: ~D[2011-05-18]}
+    @invalid_attrs %{end_date: nil, start_date: nil}
+
+    def streak_saver_fixture(attrs \\ %{}) do
+      {:ok, streak_saver} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_streak_saver()
+
+      streak_saver
+    end
+
+    test "list_streak_saver/0 returns all streak_saver" do
+      streak_saver = streak_saver_fixture()
+      assert Habits.list_streak_saver() == [streak_saver]
+    end
+
+    test "get_streak_saver!/1 returns the streak_saver with given id" do
+      streak_saver = streak_saver_fixture()
+      assert Habits.get_streak_saver!(streak_saver.id) == streak_saver
+    end
+
+    test "create_streak_saver/1 with valid data creates a streak_saver" do
+      assert {:ok, %StreakSaver{} = streak_saver} = Habits.create_streak_saver(@valid_attrs)
+      assert streak_saver.end_date == ~D[2010-04-17]
+      assert streak_saver.start_date == ~D[2010-04-17]
+    end
+
+    test "create_streak_saver/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_streak_saver(@invalid_attrs)
+    end
+
+    test "update_streak_saver/2 with valid data updates the streak_saver" do
+      streak_saver = streak_saver_fixture()
+      assert {:ok, %StreakSaver{} = streak_saver} = Habits.update_streak_saver(streak_saver, @update_attrs)
+      assert streak_saver.end_date == ~D[2011-05-18]
+      assert streak_saver.start_date == ~D[2011-05-18]
+    end
+
+    test "update_streak_saver/2 with invalid data returns error changeset" do
+      streak_saver = streak_saver_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_streak_saver(streak_saver, @invalid_attrs)
+      assert streak_saver == Habits.get_streak_saver!(streak_saver.id)
+    end
+
+    test "delete_streak_saver/1 deletes the streak_saver" do
+      streak_saver = streak_saver_fixture()
+      assert {:ok, %StreakSaver{}} = Habits.delete_streak_saver(streak_saver)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_streak_saver!(streak_saver.id) end
+    end
+
+    test "change_streak_saver/1 returns a streak_saver changeset" do
+      streak_saver = streak_saver_fixture()
+      assert %Ecto.Changeset{} = Habits.change_streak_saver(streak_saver)
+    end
+  end
 end
