@@ -13,6 +13,7 @@ defmodule Pelable.Habits.Habit do
     field :archived?, :boolean, default: false
     field :uuid, Ecto.ShortUUID, autogenerate: true
     field :complete_now?, :boolean, virtual: true
+    field :streak_saver_status, :boolean, virtual: true
 
     belongs_to :current_reward, Reward
     belongs_to :user, User
