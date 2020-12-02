@@ -99,26 +99,36 @@ defmodule Pelable.Habits do
   def get_habits_last_streaks(habits, user_timezone, habits_streaks \\ []) when is_list(habits) do
     [this_habit | rest] = habits
     
-    this_habit = complete_habit_now(this_habit, user_timezone)
     last_streak = get_last_streak(this_habit)
-    result = {this_habit, count_streak(last_streak)}
+    this_habit = complete_habit_now(this_habit, last_streak, user_timezone)
+    
+    result = {this_habit, prepare_streak(last_streak)}
 
     habits_streaks = [result | habits_streaks]
     get_habits_last_streaks(rest, user_timezone,  habits_streaks)
   end
 
 
-  # %Habit{}, String -> %Habit{}
+  # %Habit{}, %Streak{} String -> %Habit{}
   # fills in habit's complete_now? with true if the user should complete the habit right now
-  # Used when sending habits to a user 
-  def complete_habit_now(%Habit{} = habit, timezone) when is_binary(timezone) do
-    complete_now? = complete_this_habit?(habit, timezone) 
-    Map.put(habit, :complete_now?, complete_now?)
+  # Used when sending habits to a user
+  # It requires the caller to send the habit's last streak!
+  def complete_habit_now(%Habit{} = habit, %Streak{} = streak, timezone) when is_binary(timezone) do
+    habit = put_streak_saver_status(habit, streak, timezone)
+    complete_now? = complete_this_habit?(habit, timezone)
+    habit = Map.put(habit, :complete_now?, complete_now?)
+  end
+
+  def put_streak_saver_status(%Habit{} = habit, %Streak{} = streak, timezone) do
+    case is_last_streak_saver_current?(streak, timezone) do
+      true -> Map.put(habit, :streak_saver_status, true)
+      false -> Map.put(habit, :streak_saver_status, false)
+    end
   end
 
   # %Habit{}, String -> Boolean
   #Returns true if the user should complete this habit right now otherwise false
-  def complete_this_habit?(%Habit{time_frequency: "weekly"} = habit, timezone) do
+  def complete_this_habit?(%Habit{time_frequency: "weekly", streak_saver_status: false} = habit, timezone) do
     last_streak = get_last_streak(habit)
     last_habit_completion = get_last_habit_completion(last_streak)
     local_present_datetime = create_local_present_datetime(timezone)
@@ -132,9 +142,10 @@ defmodule Pelable.Habits do
     end
     
   end
+
   # %Habit{}, String -> Boolean
   #Returns true if the user should complete this habit today otherwise false
-  def complete_this_habit?(%Habit{time_frequency: "daily"} = habit,  timezone) do
+  def complete_this_habit?(%Habit{time_frequency: "daily", streak_saver_status: false} = habit,  timezone) do
     last_streak = get_last_streak(habit)
     last_habit_completion = get_last_habit_completion(last_streak)
     local_present_datetime = create_local_present_datetime(timezone)
@@ -148,9 +159,12 @@ defmodule Pelable.Habits do
     end
   end
 
+  def complete_this_habit?(%Habit{streak_saver_status: true} = habit, _timezone) do
+    habit = Map.put(habit, :complete_now?, false)
+  end
+
   # %User{} -> [{%Habit{}, %Streak{}}, ...]
   # Produces a user's current habits with their respective active streaks
-  #(in case the last streak was inactive it creates a new one)
   def get_user_habits(%User{} = user) do
     habits = list_user_current_habits(user) |> query_reminders |> Repo.all
     user_timezone = get_user_timezone(user)
@@ -215,15 +229,16 @@ defmodule Pelable.Habits do
     last_habit_completion = get_last_habit_completion(streak)
     local_present_datetime = create_local_present_datetime(timezone)
 
-    case last_habit_completion do
-      nil ->
+    cond do
+      is_last_streak_saver_current?(streak, timezone) ->
+        true
+      last_habit_completion == nil ->
         streak_creation_datetime = convert_utc_to_local_datetime(streak.inserted_at, timezone)
         streak_creation_datetime.day == local_present_datetime.day # true if we're in the same day the streak was created
 
-      last_habit_completion ->
+      true ->
         last_completion_date = last_habit_completion.created_at_local_datetime |> add_timezone(timezone) |> DateTime.to_date
         present_date = local_present_datetime |> DateTime.to_date
-
         Date.diff(present_date, last_completion_date) <= 1 # true if habit completion was today or yesterday
     end
   end
@@ -235,22 +250,26 @@ defmodule Pelable.Habits do
     local_present_datetime = create_local_present_datetime(timezone)
     present_date = local_present_datetime |> DateTime.to_date
 
-    case last_habit_completion do
-      nil ->
+    cond do
+      is_last_streak_saver_current?(streak, timezone) ->
+        true
+
+      last_habit_completion == nil ->
         streak_creation_date = convert_utc_to_local_datetime(streak.inserted_at, timezone) |> DateTime.to_date
         Date.end_of_week(streak_creation_date) == Date.end_of_week(present_date) # true if we're in the same week the streak was created
-
-      last_habit_completion ->
+      
+      true ->
         last_completion_date = last_habit_completion.created_at_local_datetime |> add_timezone(timezone) |> DateTime.to_date
     
         last_day_of_the_week = Date.end_of_week(last_completion_date, :default) #default: the week starts on monday
 
         Date.diff(present_date, last_day_of_the_week) <= 7 # true if we're on the next week from the last habit completion date
-      end
+
+    end
   end
 
   # %Habit{} -> %Streak{}
-  # Returns the habit's last active streak. If it's inactive it creates a new streak.
+  # Returns the habit's last active streak. If it's not alive it creates a new streak.
   def get_or_create_current_streak(%Habit{} = habit, timezone) do
     streak = get_last_streak(habit)
     case is_streak_alive?(streak, timezone, habit.time_frequency) do
@@ -303,19 +322,23 @@ defmodule Pelable.Habits do
     end
   end
 
-  def explain_completion_recommendation(%Habit{complete_now?: true, time_frequency: "daily"} = habit) do
+  def explain_completion_recommendation(%Habit{streak_saver_status: true} = habit) do
+    "This habit is paused. No need to complete it today" 
+  end
+
+  def explain_completion_recommendation(%Habit{complete_now?: true, time_frequency: "daily", streak_saver_status: false} = habit) do
     "This habit isn't finished for today"
   end
 
-  def explain_completion_recommendation(%Habit{complete_now?: false, time_frequency: "daily"} = habit) do
+  def explain_completion_recommendation(%Habit{complete_now?: false, time_frequency: "daily", streak_saver_status: false} = habit) do
     "This habit is finished for today"
   end
 
-  def explain_completion_recommendation(%Habit{complete_now?: true, time_frequency: "weekly"} = habit) do
+  def explain_completion_recommendation(%Habit{complete_now?: true, time_frequency: "weekly", streak_saver_status: false} = habit) do
     "This habit isn't finished for the week"
   end
 
-  def explain_completion_recommendation(%Habit{complete_now?: false, time_frequency: "weekly"} = habit) do
+  def explain_completion_recommendation(%Habit{complete_now?: false, time_frequency: "weekly", streak_saver_status: false} = habit) do
     "This habit is finished for the week"
   end
 
@@ -338,7 +361,7 @@ defmodule Pelable.Habits do
       |> Map.put("created_at_local_datetime", local_present_datetime)
       |> create_habit_completion
 
-      habit = complete_habit_now(habit, timezone)
+      habit = complete_habit_now(habit, alive_streak, timezone)
       completion_recommendation = explain_completion_recommendation(habit)
       streak = count_streak(alive_streak)
       habit_completion = 
@@ -462,6 +485,20 @@ defmodule Pelable.Habits do
     %Streak{}
     |> Streak.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def prepare_streak(%Streak{} = streak) do
+    streak
+    |> count_streak
+    |> last_streak_saver
+  end
+
+  def last_streak_saver(%Streak{} = streak) do
+    case get_last_streak_saver(streak) do
+      nil -> Map.put(streak, :last_streak_saver, nil)
+      streak_saver -> 
+        Map.put(streak, :last_streak_saver, streak_saver)
+    end
   end
 
   @doc """
@@ -1347,6 +1384,31 @@ defmodule Pelable.Habits do
     |> Repo.insert()
   end
 
+
+  # %Streak{} -> %StreakSaver{}
+  # Gets a streak's last streak saver
+  def get_last_streak_saver(%Streak{} = streak) do
+    query = 
+    from s in StreakSaver,
+    where: s.streak_id == ^streak.id,
+    order_by: [desc: s.id],
+    limit: 1
+    Repo.one(query)
+  end
+
+  # %Streak{}, String -> Boolean
+  # If a streak saver doesn't exist then returns false.
+  # Otherwise checks whether the streak saver is current. If it is return true, if not return false
+  def is_last_streak_saver_current?(%Streak{} = streak, local_timezone) do
+    case get_last_streak_saver(streak) do
+      nil -> false
+      last_streak_saver -> is_streak_saver_current?(last_streak_saver, local_timezone)
+    end
+  end
+
+
+  # %StreakSaver{}, String -> Boolean
+  # Returns true if the present date is in the range of the StreakSaver dates
   def is_streak_saver_current?(%StreakSaver{} = streak_saver, local_timezone) do
     current_date = create_local_present_datetime(local_timezone) |> DateTime.to_date()
     possible_dates = Date.range(streak_saver.start_date, streak_saver.end_date)
