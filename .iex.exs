@@ -11,4 +11,4 @@ alias Pelable.Chat.{Chatroom, Message, Participant, Invitation, Mention}
 alias Pelable.Monitor
 alias Pelable.Notifications
 alias Pelable.Habits
-alias Pelable.Habits.{Habit, Streak, HabitCompletion, Reward, HabitCompletionReward, Reminder, HabitReminder}
+alias Pelable.Habits.{Habit, Streak, StreakSaver, HabitCompletion, Reward, HabitCompletionReward, Reminder, HabitReminder}
