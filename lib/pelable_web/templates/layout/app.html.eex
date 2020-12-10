@@ -156,7 +156,7 @@ function myFunction() {
 </div>
         </nav>
         <a href="https://pelable.com/" class="">
-          <img src="<%= Routes.static_path(@conn, "/images/side.png") %>" alt="Pelable Community Logo"/>
+          <img src="<%= Routes.static_path(@conn, "/images/side.png") %>" alt="Pelable Logo"/>
         </a>
       </section>
     </header>
