@@ -269,8 +269,8 @@ defmodule Pelable.Habits do
   end
 
   # %Habit{} -> %Streak{}
-  # Returns the habit's last active streak. If it's not alive it creates a new streak.
-  def get_or_create_current_streak(%Habit{} = habit, timezone) do
+  # Returns the habit's last alive streak. If it's not alive it creates a new streak.
+  def get_or_create_alive_streak(%Habit{} = habit, timezone) do
     streak = get_last_streak(habit)
     case is_streak_alive?(streak, timezone, habit.time_frequency) do
       true ->
@@ -350,7 +350,7 @@ defmodule Pelable.Habits do
 
       timezone = get_user_timezone(user)
     
-      {_, alive_streak} = habit |> get_or_create_current_streak(timezone)
+      {_, alive_streak} = habit |> get_or_create_alive_streak(timezone)
     
       local_present_datetime = create_local_present_datetime(timezone)
 
@@ -1382,6 +1382,28 @@ defmodule Pelable.Habits do
     %StreakSaver{}
     |> StreakSaver.changeset(attrs)
     |> Repo.insert()
+  end
+
+  # Map -> Map
+  # Converts start_date_string and end_date_string to their respective Date structs and adds them to start_date & end_date
+  def convert_date_strings(%{} = attrs) do
+    {:ok, start_date} = Date.from_iso8601(attrs["start_date_string"])
+    {:ok, end_date} = Date.from_iso8601(attrs["start_date_string"])
+    Map.put(attrs, "start_date", start_date) |> Map.put("end_date", end_date)
+  end
+
+
+  # %User{}, Map -> {:ok, %StreakSaver{}} || {:error, %StreakSaver{}}
+  # Creates a streak saver.
+  def create_streak_saver(%User{} = user, %Habit{} = habit, %{} = attrs) do
+    with :ok <- Bodyguard.permit(Habits.Policy, :create_streak_saver, user, habit) do
+      {_, alive_streak} = get_or_create_alive_streak(habit, attrs["user_timezone"])
+        attrs
+        |> Map.put("creator_id", user.id)
+        |> Map.put("streak_id", alive_streak.id)
+        |> convert_date_strings
+        |> create_streak_saver
+    end
   end
 
 

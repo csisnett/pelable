@@ -32,7 +32,7 @@ defmodule Pelable.Habits.StreakSaver do
 
   def validate_start_date(changeset, timezone) do
     start_date = get_field(changeset, :start_date)
-    case is_date_in_the_future?(start_date, timezone) and 
+    case is_date_in_the_future?(start_date, timezone) do
       true -> changeset
       false -> add_error(changeset, :start_date, "Date is in the past of the given timezone")
     end
@@ -40,7 +40,7 @@ defmodule Pelable.Habits.StreakSaver do
 
   def validate_end_date(changeset, timezone) do
     end_date = get_field(changeset, :end_date)
-    case is_date_in_the_future?(end_date, timezone) and 
+    case is_date_in_the_future?(end_date, timezone) do
       true -> changeset
       false -> add_error(changeset, :end_date, "Date is in the past of the given timezone")
     end
@@ -49,8 +49,8 @@ defmodule Pelable.Habits.StreakSaver do
   @doc false
   def changeset(streak_saver, attrs) do
     streak_saver
-    |> cast(attrs, [:start_date, :end_date])
-    |> validate_required([:start_date, :end_date])
+    |> cast(attrs, [:start_date, :end_date, :streak_id, :creator_id])
+    |> validate_required([:start_date, :end_date, :streak_id, :creator_id])
     |> validate_start_date(attrs["user_timezone"])
     |> validate_end_date(attrs["user_timezone"])
     |> foreign_key_constraint(:streak_id)
