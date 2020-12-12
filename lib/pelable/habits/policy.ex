@@ -27,6 +27,10 @@ defmodule Pelable.Habits.Policy do
         true
     end
 
+    def authorize(action, %User{id: user_id}, %Habit{user_id: user_id}) when action in [:create_streak_saver] do
+        true
+    end
+
     
 
     #Authorize admins to do everything
