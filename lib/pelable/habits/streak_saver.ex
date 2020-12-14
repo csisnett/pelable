@@ -19,30 +19,40 @@ defmodule Pelable.Habits.StreakSaver do
   end
 
   # %Date{}, String -> Boolean
-  # Returns true if the date is in the present or the future of the timezone
-  def is_date_in_the_future?(date, timezone) do
+  # Returns true if the date is in the present or the future of the present date at that timezone
+  def is_date_in_the_present_or_future?(date, timezone) do
     local_date = Habits.create_local_present_datetime(timezone) |> DateTime.to_date
     case Date.compare(date, local_date) do
-      :gt -> true # If the date is in the future is valid
-      :eq -> true # If the same date it's valid
-      :lt -> false # If the date is in the past is invalid
+      :gt -> true # Date is in the future
+      :eq -> true # Date is in the present
+      :lt -> false # Date is in the past
     end
   end
 
 
   def validate_start_date(changeset, timezone) do
     start_date = get_field(changeset, :start_date)
-    case is_date_in_the_future?(start_date, timezone) do
+    case is_date_in_the_present_or_future?(start_date, timezone) do
       true -> changeset
-      false -> add_error(changeset, :start_date, "Date is in the past of the given timezone")
+      false -> add_error(changeset, :start_date, "The Start date is in the past of the present date at the given timezone")
     end
   end
 
   def validate_end_date(changeset, timezone) do
     end_date = get_field(changeset, :end_date)
-    case is_date_in_the_future?(end_date, timezone) do
+    case is_date_in_the_present_or_future?(end_date, timezone) do
       true -> changeset
-      false -> add_error(changeset, :end_date, "Date is in the past of the given timezone")
+      false -> add_error(changeset, :end_date, "The End date is in the past of the present date at the given timezone")
+    end
+  end
+
+  def validate_start_is_before_end(changeset) do
+    start_date = get_field(changeset, :start_date)
+    end_date = get_field(changeset, :end_date)
+    case Date.compare(start_date, end_date) do
+      :gt -> add_error(changeset, :start_date, "Start date can't be after the end date")
+      :eq -> changeset
+      :lt -> changeset
     end
   end
 
@@ -53,6 +63,7 @@ defmodule Pelable.Habits.StreakSaver do
     |> validate_required([:start_date, :end_date, :streak_id, :creator_id])
     |> validate_start_date(attrs["user_timezone"])
     |> validate_end_date(attrs["user_timezone"])
+    |> validate_start_is_before_end
     |> foreign_key_constraint(:streak_id)
     |> foreign_key_constraint(:creator_id)
   end
