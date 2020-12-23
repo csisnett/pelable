@@ -1193,6 +1193,7 @@ defmodule Pelable.Habits do
   end
 
   # Takes params and sends to one signal
+  # delayed_option with timezone wasn't working for some reason..
   def send_push_notification(%{"user_id" => user_id, "timezone" => timezone, "delivery_time" => time, "title" => title, "content" => content} = args) do
     api_key = System.get_env("ONESIGNAL_API_KEY")
     default =
@@ -1207,6 +1208,21 @@ defmodule Pelable.Habits do
     "priority" => 10} #highest priority 
 
     encoded_json = Jason.encode!(default)
+    HTTPoison.post("https://onesignal.com/api/v1/notifications", encoded_json, [{"Content-Type", "application/json"}, {"charset", "utf-8"}, {"Authorization", "Basic " <> api_key}])
+  end
+
+  def send_present_push_notification(%{"user_id" => user_id, "title" => title, "content" => content} = args) do
+    api_key = System.get_env("ONESIGNAL_API_KEY")
+    payload =
+    %{"app_id" => "277bc59b-8037-4702-8a45-66cb485da805",
+    "headings" => %{"en" => title},
+    "url" => "https://pelable.com/reminders",
+    "data" => %{"foo" => "bar"},
+    "include_external_user_ids" => [user_id],
+    "contents" => %{"en" => content},
+    "priority" => 10} #highest priority 
+
+    encoded_json = Jason.encode!(payload)
     HTTPoison.post("https://onesignal.com/api/v1/notifications", encoded_json, [{"Content-Type", "application/json"}, {"charset", "utf-8"}, {"Authorization", "Basic " <> api_key}])
   end
 
