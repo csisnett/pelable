@@ -1176,25 +1176,26 @@ defmodule Pelable.Habits do
 
   # Used to push notification of one signal (pass it to send_push_notification)
   def test_notification do
-    {:ok, dt } = DateTime.now("America/Panama", Tzdata.TimeZoneDatabase)
-    dt = dt |> DateTime.add(180, :second, Tzdata.TimeZoneDatabase)
-    time_string = dt |> DateTime.to_time |> Time.to_string |> String.slice(0..4)
     %{"title" => "Test notification",
-    "content" => "message here",
-    "timezone" => "America/Panama",
-    "delivery_time" => time_string,
+    "content" => "content here",
     "user_id" => 1}
   end
 
   def send_reminder_to_one_signal(%Reminder{} = reminder) do
+    params = %{"user_id" => reminder.creator_id,  "title" => "Kind reminder", "content" => reminder.name}
+    send_push_notification_now(params)
+  end
+
+  # Does not work at the moment delayed option problem!!
+  def send_future_reminder_to_one_signal(%Reminder{} = reminder) do
     time_string = reminder.time_start |> Time.to_string |> String.slice(0..4)
     params = %{"user_id" => reminder.creator_id, "timezone" => reminder.local_timezone, "delivery_time" => time_string, "title" => "Kind reminder", "content" => reminder.name}
-    send_push_notification(params)
+    send_future_push_notification(params)
   end
 
   # Takes params and sends to one signal
-  # delayed_option with timezone wasn't working for some reason..
-  def send_push_notification(%{"user_id" => user_id, "timezone" => timezone, "delivery_time" => time, "title" => title, "content" => content} = args) do
+  # Does not work at the moment delayed option problem!! (timezone)
+  def send_future_push_notification(%{"user_id" => user_id, "timezone" => timezone, "delivery_time" => time, "title" => title, "content" => content} = args) do
     api_key = System.get_env("ONESIGNAL_API_KEY")
     default =
     %{"app_id" => "277bc59b-8037-4702-8a45-66cb485da805",
@@ -1211,7 +1212,7 @@ defmodule Pelable.Habits do
     HTTPoison.post("https://onesignal.com/api/v1/notifications", encoded_json, [{"Content-Type", "application/json"}, {"charset", "utf-8"}, {"Authorization", "Basic " <> api_key}])
   end
 
-  def send_present_push_notification(%{"user_id" => user_id, "title" => title, "content" => content} = args) do
+  def send_push_notification_now(%{"user_id" => user_id, "title" => title, "content" => content} = args) do
     api_key = System.get_env("ONESIGNAL_API_KEY")
     payload =
     %{"app_id" => "277bc59b-8037-4702-8a45-66cb485da805",
