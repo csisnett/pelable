@@ -17,6 +17,7 @@ defmodule PelableWeb.Router do
     plug :accepts, ["json"]
     plug Pelable.PlugAttack
     plug :fetch_session
+    plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug PelableWeb.Pow.Plug, otp_app: :pelable
@@ -58,6 +59,8 @@ defmodule PelableWeb.Router do
     
   end
 
+
+
   scope "/", PelableWeb do
     pipe_through [:browser, :protected]
     post "chat/:uuid/new_participant", ChatroomController, :new_participant
@@ -74,7 +77,6 @@ defmodule PelableWeb.Router do
     
     get "habits/:uuid", HabitController, :show
     get "habits/:uuid/edit", HabitController, :edit
-    put "habits/:uuid", HabitController, :update
     put "habits/update-reward/:uuid", HabitController, :update_current_reward
     delete "habits/:uuid", HabitController, :delete
 
@@ -111,7 +113,9 @@ defmodule PelableWeb.Router do
 
     post "/log-habit/:uuid", HabitController, :log_habit
     put "/tasks/:slug/:uuid", TaskController, :update
+    put "/habits/:uuid", HabitController, :update_habit
   end
+
 
   # Other scopes may use custom stacks.
   # scope "/api", PelableWeb do

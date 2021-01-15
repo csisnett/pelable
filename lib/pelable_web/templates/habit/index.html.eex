@@ -77,7 +77,6 @@
 </script>
 <h2>My Habits</h2>
 
-<!-- Button trigger modal -->
 <style>
 
 .paris-habit {
@@ -117,9 +116,19 @@
 <br>
 <br>
 <%= render(PelableWeb.HabitView, "new.html", conn: @conn, changeset: @habit_changeset, action: :create) %>
-<div class="container">
+
+
+
+
+
+
+<div id="app_basic" class="container">
+
 <div class="row">
 <%= for {habit, streak} <- @habits do %>
+
+
+
 <div class="col">
 
 <!-- Modal Add reward -->
@@ -165,6 +174,33 @@
   </div>
 </div>
 
+<!-- Modal Pause habit -->
+<div class="modal fade" id='<%= "habit_pause_modal" <> habit.uuid %>' tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"> Pause <%= habit.name %></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Your streak will remain alive while your habit is paused. <br> <br>
+          <pause-form
+          habit_uuid="<%= habit.uuid %>"
+          >
+        </pause-form>
+         
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <div class="card card-style" style="width: 18rem;">
   <div class="card-body">
@@ -180,6 +216,7 @@ data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></spa
 
 <svg id="<%= "checkmark" <> habit.uuid %>"class="svg-style" onclick="log_habit('<%= habit.uuid %>')" xmlns="http://www.w3.org/2000/svg" width="65" height="65" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
 <div style='<%= show_streak_count_or_not(streak, @user_info["timezone"], habit.time_frequency) %>' id='<%= "streak_for_habit" <> habit.uuid %>'> <%= streak.count %> </div>
+<%= show_streak_shield(streak.last_streak_saver) %>
     </div>
 <br>
 <br>
@@ -192,6 +229,7 @@ data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></spa
   <span id="reminder_for_habit_<%= habit.uuid %>" onmouseout="hide_reminder_message('<%= habit.uuid %>')" onclick="show_reminder_message('<%= habit.uuid %>')" onmouseover="show_reminder_message('<%= habit.uuid %>')" data-container="body" data-toggle="popover"
    data-placement="top" data-content='<%= reminder_message(habit.reminders, [])%>'> ⏲️ </span>
   <% end %>
+
   <div class="btn-group options">
   <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     options
@@ -199,17 +237,112 @@ data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></spa
     <div class="dropdown-menu">
     <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target='#<%= "habit_reward_modal" <> habit.uuid %>' >Add reward </a>
     <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target='#<%= "habit_reminder_modal" <> habit.uuid %>' >Add reminder </a>
+    <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target='#<%= "habit_pause_modal" <> habit.uuid %>' >Pause </a>
     <a class="dropdown-item" href="/rewards">Edit</a>
     <%= link "Delete", to: Routes.habit_path(@conn, :delete, habit.uuid), class: :"dropdown-item", method: :delete, data: [confirm: "Are you sure?"] %>
     </div>
   
   </div>
 
+  
+
   </div>
   </div> <!-- card-body -->
 </div> <!-- card -->
 </div> <!-- col -->
 <% end %>
+
+<script>
+    function data(){
+      const now = new Date()
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+      return {
+        message: '🐵 Hello World 🔮',
+        timestamp: `Timestamp ${new Date().toLocaleString()}`,
+        pause_select: '',
+        pause_start_date: today,
+        pause_end_date: '',
+        min_start_date: today,
+        min_end_date: today
+      }
+    }
+
+    Vue.component('button-counter', {
+    data: function () {
+      return {
+        count: 0
+      }
+    },
+    template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+    })
+
+    Vue.component('pause-form', {
+    data: function () {
+      const now = new Date()
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+      return {
+        form: {
+        pause_select: 'today',
+        pause_start_date: today,
+        pause_end_date: '',
+        min_start_date: today,
+        min_end_date: today
+        }
+      }
+    },
+    computed: {
+
+              show_date_range: function() {
+                return (this.form.pause_select == 'date-range')
+              }
+            },
+    methods: {
+
+      
+      update_habit: function(data, habit_uuid){
+      let csrf_token = document.querySelector('meta[name="csrf-token"]').content;
+      data._csrf_token = csrf_token;
+      data.method = "post";
+      data.resource = "streak_saver";
+      let json = JSON.stringify(data);
+      console.log(json)
+      let url = window.location.href + "/" + habit_uuid;
+      let xhr = new XMLHttpRequest();
+      xhr.open("PUT", url, true);
+      xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+      xhr.onload = function () {
+	    let response = JSON.parse(xhr.responseText);
+        console.log(response)
+      if (xhr.status == "200") {
+        console.log("Pause successfully saved")
+      } else {
+        console.log("Pause wasn't successful!")
+        }
+      }
+      xhr.send(json);
+      
+      console.log(data);
+      },
+
+      onSubmit: function(event) {
+        event.preventDefault()
+        let habit_uuid = event.target.getAttribute("habit_uuid");
+        console.log(this.form)
+        this.update_habit(this.form, habit_uuid)
+      }
+    },
+    template: ' <b-form @submit="onSubmit"> <b-form-group label="How long do you want to pause?"> <b-form-radio v-model="form.pause_select" name="today" value="today">Today only</b-form-radio> <b-form-radio v-model="form.pause_select" name="date range" value="date-range">Select date range </b-form-radio> </b-form-group> <div v-if="show_date_range"> <label for="datepicker">from</label> <b-form-datepicker  v-model="form.pause_start_date" :min="form.min_start_date" class="mb-2"></b-form-datepicker> <label for="datepicker">until</label> <b-form-datepicker v-model="form.pause_end_date" :min="form.min_end_date" class="mb-2"></b-form-datepicker> </div><b-button type="submit" variant="primary">Pause</b-button></b-form>'
+    })
+
+    var app = new Vue(
+        {
+            el: '#app_basic'
+        });
+
+  
+</script>
 
 <script>
 function convert_form_to_json(form){

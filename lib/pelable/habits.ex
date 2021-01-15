@@ -1401,11 +1401,26 @@ defmodule Pelable.Habits do
     |> Repo.insert()
   end
 
+  def convert_pause_select(%{"pause_select" => "today"} = attrs) do
+    todays_date = create_local_present_datetime(attrs["user_timezone"]) |> DateTime.to_date
+    attrs 
+    |> Map.put("start_date", todays_date) 
+    |> Map.put("end_date", todays_date)
+  end
+
+  def convert_pause_select(%{"pause_select" => "date-range"} = attrs) do
+    {:ok, start_date} = Date.from_iso8601(attrs["pause_start_date"])
+    {:ok, end_date} = Date.from_iso8601(attrs["pause_end_date"])
+    attrs
+    |> Map.put("start_date", start_date) 
+    |> Map.put("end_date", end_date)
+  end
+
   # Map -> Map
   # Converts start_date_string and end_date_string to their respective Date structs and adds them to start_date & end_date
   def convert_date_strings(%{} = attrs) do
-    {:ok, start_date} = Date.from_iso8601(attrs["start_date_string"])
-    {:ok, end_date} = Date.from_iso8601(attrs["start_date_string"])
+    {:ok, start_date} = Date.from_iso8601(attrs["pause_start_date"])
+    {:ok, end_date} = Date.from_iso8601(attrs["pause_end_date"])
     Map.put(attrs, "start_date", start_date) |> Map.put("end_date", end_date)
   end
 
@@ -1418,7 +1433,7 @@ defmodule Pelable.Habits do
         attrs
         |> Map.put("creator_id", user.id)
         |> Map.put("streak_id", alive_streak.id)
-        |> convert_date_strings
+        |> convert_pause_select
         |> create_streak_saver
     end
   end

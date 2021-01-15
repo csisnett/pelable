@@ -4,7 +4,6 @@ defmodule Pelable.Learn.Task do
 
   alias Pelable.Learn.Task.{NameSlug}
 
-
   @valid_status ["finished", "not started", "in progress"]
   @derive {Jason.Encoder, only: [:name, :status, :uuid, :slug]}
   schema "tasks" do
@@ -23,7 +22,7 @@ defmodule Pelable.Learn.Task do
           true -> changeset
           false -> add_error(changeset, :status, "Not a valid status")
         end
-      end
+  end
 
   @doc false
   def changeset(task, attrs) do

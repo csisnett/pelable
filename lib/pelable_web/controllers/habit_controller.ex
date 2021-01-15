@@ -89,7 +89,35 @@ defmodule PelableWeb.HabitController do
 
   end
 
-  def update(conn, %{"uuid" => uuid, "habit" => habit_params}) do
+  def create_streak_saver(conn, %{"uuid" => habit_uuid} = habit_params) do
+    user = conn.assigns.current_user
+    user_timezone = Habits.get_user_timezone(user)
+    habit = Habits.get_habit_by_uuid(habit_uuid)
+    habit_params = habit_params |> Map.put("user_timezone", user_timezone)
+    case Habits.create_streak_saver(user, habit, habit_params) do
+      {:ok, streak_saver} ->
+        json(conn, %{"created_streak_saver" => streak_saver})
+
+      {:error, :unauthorized} ->
+        json(conn, %{"error" => "Unauthorized"})
+
+      {:error, changeset} ->
+        json(conn, %{"error" => "Error updating habit"})
+
+    end
+  end
+
+  def update_habit(conn, %{"uuid" => uuid} = params) do
+    method = params["method"]
+    resource = params["resource"]
+
+    case {method, resource} do
+      {"post", "streak_saver"} -> create_streak_saver(conn, params)
+      {"put", "habit"} -> update(conn, params)
+    end
+  end
+
+  def update(conn, %{"uuid" => uuid} = habit_params) do
     habit = Habits.get_habit_by_uuid(uuid)
 
     case Habits.update_habit(habit, habit_params) do

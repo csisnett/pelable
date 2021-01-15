@@ -2,7 +2,7 @@ defmodule PelableWeb.HabitView do
   use PelableWeb, :view
 
   alias Pelable.Habits
-  alias Pelable.Habits.{Habit, Streak}
+  alias Pelable.Habits.{Habit, Streak, StreakSaver}
 
   # %Streak{}, String, String -> Integer || String
   # Use to show the streak count beside the checkmark
@@ -48,6 +48,14 @@ defmodule PelableWeb.HabitView do
     <label for='reward_description'>Description (optional)</label><textarea id='reward_description' name='reward[description]'>
     </textarea>
     </form>")
+  end
+
+  def show_streak_shield(%StreakSaver{} = streak_saver) do
+    "🛡"
+  end
+
+  def show_streak_shield(nil) do
+    ""
   end
 
   def reminder_message([], explanations) do

@@ -9,6 +9,7 @@ defmodule Pelable.Habits.StreakSaver do
   # Users can still log habits during this period but it doesn't change the state of the streak saver
   # If a  user resumes a habit the end_date is changed to the present date. The start_date and end_date are inclusive.
   # This means that the streak is alive until end_date. If the user dodesn't log the habit the day after end_date then the streak dies.
+  @derive {Jason.Encoder, only: [:start_date, :end_date]}
   schema "streak_saver" do
     field :start_date, :date
     field :end_date, :date
