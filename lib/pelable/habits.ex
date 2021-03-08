@@ -1565,6 +1565,12 @@ defmodule Pelable.Habits do
     |> Repo.insert()
   end
 
+  def create_tracker!(attrs \\ %{}) do
+    %Tracker{}
+    |> Tracker.changeset(attrs)
+    |> Repo.insert!()
+  end
+
   def prepare_tracker(%{} = attrs, %User{} = user) do
     attrs
     |> Map.put("name", "tracker_name")
@@ -1573,9 +1579,11 @@ defmodule Pelable.Habits do
 
   #%{"activity" => "name of activity"}
   def create_tracker_and_first_activity(%{"tracker_name" => _, "activity_name" => _} = attrs, %User{} = user) do
-    {:ok, tracker} = attrs |> prepare_tracker(user) |> create_tracker
-    {:ok, activity} = attrs |> Map.put("tracker_id", tracker.id) |> create_activity!(user)
-    {:ok, tracker, activity}
+    Repo.transaction(fn -> 
+    tracker = attrs |> prepare_tracker(user) |> create_tracker!()
+    activity = attrs |> Map.put("tracker_id", tracker.id) |> create_activity!(user)
+    %{"tracker" => tracker, "activity" => activity}
+    end)
   end
 
   def create_activity!(%{"tracker_id" => _id} = attrs, %User{} = user) do
