@@ -8,7 +8,7 @@ defmodule Pelable.Habits do
 
   alias Pelable.Users.User
   alias Pelable.Habits
-  alias Pelable.Habits.{Habit, Streak, HabitCompletion, Reward, HabitCompletionReward, Policy, StreakSaver}
+  alias Pelable.Habits.{Habit, Streak, HabitCompletion, Reward, HabitCompletionReward, Policy, StreakSaver, Tracker, Activity}
   alias Pelable.Accounts
 
   defdelegate authorize(action, user, params), to: Pelable.Habits.Policy
@@ -1516,8 +1516,6 @@ defmodule Pelable.Habits do
     StreakSaver.changeset(streak_saver, attrs)
   end
 
-  alias Pelable.Habits.Tracker
-
   @doc """
   Returns the list of trackers.
 
@@ -1547,6 +1545,8 @@ defmodule Pelable.Habits do
   """
   def get_tracker!(id), do: Repo.get!(Tracker, id)
 
+  def get_tracker_by_uuid(uuid), do: Repo.get_by(Tracker, uuid: uuid)
+
   @doc """
   Creates a tracker.
 
@@ -1563,6 +1563,60 @@ defmodule Pelable.Habits do
     %Tracker{}
     |> Tracker.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def prepare_tracker(%{} = attrs, %User{} = user) do
+    attrs
+    |> Map.put("name", "tracker_name")
+    |> Map.put("tracking_user_id", user.id)
+  end
+
+  #%{"activity" => "name of activity"}
+  def create_tracker_and_first_activity(%{"tracker_name" => _, "activity_name" => _} = attrs, %User{} = user) do
+    {:ok, tracker} = attrs |> prepare_tracker(user) |> create_tracker
+    {:ok, activity} = attrs |> Map.put("tracker_id", tracker.id) |> create_activity(user)
+    {:ok, tracker, activity}
+  end
+
+  def create_activity(%{"tracker_id" => _id} = attrs, %User{} = user) do
+    timezone = get_user_timezone(user)
+    started_at = create_local_present_datetime(timezone)
+
+    attrs 
+    |> Map.put("local_timezone", timezone) 
+    |> Map.put("started_at_local", started_at)
+    |> Map.put("name", attrs["activity_name"])
+    |> create_activity
+  end
+
+  def create_activity(%{"tracker_uuid" => uuid} = attrs, %User{} = user) do
+    tracker = get_tracker_by_uuid(uuid)
+
+    attrs |> Map.put("tracker_id", tracker.id) |> create_activity(user)
+  end
+
+  def end_activity(%Activity{} = activity) do
+    current_datetime = create_local_present_datetime(activity.local_timezone)
+    update_activity(activity, %{"terminated_at_local" => current_datetime})
+  end
+
+  def add_new_activity(%{"tracker_uuid" => uuid} = attrs, %User{} = user) do
+    tracker = get_tracker_by_uuid(uuid)
+    last_activity = get_last_activity(tracker)
+
+    Repo.transaction(fn ->
+    end_activity(last_activity)
+    create_activity(attrs, user)
+    end)
+  end
+
+  def get_last_activity(%Tracker{} = tracker) do
+    query = 
+    from a in Activity,
+    where: a.tracker_id == ^tracker.id,
+    order_by: [desc: a.id],
+    limit: 1
+    Repo.one(query)
   end
 
   @doc """
@@ -1611,8 +1665,6 @@ defmodule Pelable.Habits do
   def change_tracker(%Tracker{} = tracker, attrs \\ %{}) do
     Tracker.changeset(tracker, attrs)
   end
-
-  alias Pelable.Habits.Activity
 
   @doc """
   Returns the list of activities.
