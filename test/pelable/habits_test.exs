@@ -539,4 +539,122 @@ defmodule Pelable.HabitsTest do
       assert %Ecto.Changeset{} = Habits.change_streak_saver(streak_saver)
     end
   end
+
+  describe "trackers" do
+    alias Pelable.Habits.Tracker
+
+    @valid_attrs %{name: "some name"}
+    @update_attrs %{name: "some updated name"}
+    @invalid_attrs %{name: nil}
+
+    def tracker_fixture(attrs \\ %{}) do
+      {:ok, tracker} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_tracker()
+
+      tracker
+    end
+
+    test "list_trackers/0 returns all trackers" do
+      tracker = tracker_fixture()
+      assert Habits.list_trackers() == [tracker]
+    end
+
+    test "get_tracker!/1 returns the tracker with given id" do
+      tracker = tracker_fixture()
+      assert Habits.get_tracker!(tracker.id) == tracker
+    end
+
+    test "create_tracker/1 with valid data creates a tracker" do
+      assert {:ok, %Tracker{} = tracker} = Habits.create_tracker(@valid_attrs)
+      assert tracker.name == "some name"
+    end
+
+    test "create_tracker/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_tracker(@invalid_attrs)
+    end
+
+    test "update_tracker/2 with valid data updates the tracker" do
+      tracker = tracker_fixture()
+      assert {:ok, %Tracker{} = tracker} = Habits.update_tracker(tracker, @update_attrs)
+      assert tracker.name == "some updated name"
+    end
+
+    test "update_tracker/2 with invalid data returns error changeset" do
+      tracker = tracker_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_tracker(tracker, @invalid_attrs)
+      assert tracker == Habits.get_tracker!(tracker.id)
+    end
+
+    test "delete_tracker/1 deletes the tracker" do
+      tracker = tracker_fixture()
+      assert {:ok, %Tracker{}} = Habits.delete_tracker(tracker)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_tracker!(tracker.id) end
+    end
+
+    test "change_tracker/1 returns a tracker changeset" do
+      tracker = tracker_fixture()
+      assert %Ecto.Changeset{} = Habits.change_tracker(tracker)
+    end
+  end
+
+  describe "activities" do
+    alias Pelable.Habits.Activity
+
+    @valid_attrs %{name: "some name"}
+    @update_attrs %{name: "some updated name"}
+    @invalid_attrs %{name: nil}
+
+    def activity_fixture(attrs \\ %{}) do
+      {:ok, activity} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Habits.create_activity()
+
+      activity
+    end
+
+    test "list_activities/0 returns all activities" do
+      activity = activity_fixture()
+      assert Habits.list_activities() == [activity]
+    end
+
+    test "get_activity!/1 returns the activity with given id" do
+      activity = activity_fixture()
+      assert Habits.get_activity!(activity.id) == activity
+    end
+
+    test "create_activity/1 with valid data creates a activity" do
+      assert {:ok, %Activity{} = activity} = Habits.create_activity(@valid_attrs)
+      assert activity.name == "some name"
+    end
+
+    test "create_activity/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Habits.create_activity(@invalid_attrs)
+    end
+
+    test "update_activity/2 with valid data updates the activity" do
+      activity = activity_fixture()
+      assert {:ok, %Activity{} = activity} = Habits.update_activity(activity, @update_attrs)
+      assert activity.name == "some updated name"
+    end
+
+    test "update_activity/2 with invalid data returns error changeset" do
+      activity = activity_fixture()
+      assert {:error, %Ecto.Changeset{}} = Habits.update_activity(activity, @invalid_attrs)
+      assert activity == Habits.get_activity!(activity.id)
+    end
+
+    test "delete_activity/1 deletes the activity" do
+      activity = activity_fixture()
+      assert {:ok, %Activity{}} = Habits.delete_activity(activity)
+      assert_raise Ecto.NoResultsError, fn -> Habits.get_activity!(activity.id) end
+    end
+
+    test "change_activity/1 returns a activity changeset" do
+      activity = activity_fixture()
+      assert %Ecto.Changeset{} = Habits.change_activity(activity)
+    end
+  end
 end

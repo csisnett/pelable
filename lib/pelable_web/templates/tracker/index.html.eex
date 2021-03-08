@@ -1,0 +1,26 @@
+<h1>Listing Trackers</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for tracker <- @trackers do %>
+    <tr>
+      <td><%= tracker.name %></td>
+
+      <td>
+        <span><%= link "Show", to: Routes.tracker_path(@conn, :show, tracker) %></span>
+        <span><%= link "Edit", to: Routes.tracker_path(@conn, :edit, tracker) %></span>
+        <span><%= link "Delete", to: Routes.tracker_path(@conn, :delete, tracker), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Tracker", to: Routes.tracker_path(@conn, :new) %></span>

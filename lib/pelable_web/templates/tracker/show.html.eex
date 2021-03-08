@@ -1,0 +1,13 @@
+<h1>Show Tracker</h1>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @tracker.name %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.tracker_path(@conn, :edit, @tracker) %></span>
+<span><%= link "Back", to: Routes.tracker_path(@conn, :index) %></span>
