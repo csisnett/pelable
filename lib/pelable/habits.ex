@@ -1574,11 +1574,11 @@ defmodule Pelable.Habits do
   #%{"activity" => "name of activity"}
   def create_tracker_and_first_activity(%{"tracker_name" => _, "activity_name" => _} = attrs, %User{} = user) do
     {:ok, tracker} = attrs |> prepare_tracker(user) |> create_tracker
-    {:ok, activity} = attrs |> Map.put("tracker_id", tracker.id) |> create_activity(user)
+    {:ok, activity} = attrs |> Map.put("tracker_id", tracker.id) |> create_activity!(user)
     {:ok, tracker, activity}
   end
 
-  def create_activity(%{"tracker_id" => _id} = attrs, %User{} = user) do
+  def create_activity!(%{"tracker_id" => _id} = attrs, %User{} = user) do
     timezone = get_user_timezone(user)
     started_at = create_local_present_datetime(timezone)
 
@@ -1586,27 +1586,27 @@ defmodule Pelable.Habits do
     |> Map.put("local_timezone", timezone) 
     |> Map.put("started_at_local", started_at)
     |> Map.put("name", attrs["activity_name"])
-    |> create_activity
+    |> create_activity!
   end
 
-  def create_activity(%{"tracker_uuid" => uuid} = attrs, %User{} = user) do
+  def create_activity!(%{"tracker_uuid" => uuid} = attrs, %User{} = user) do
     tracker = get_tracker_by_uuid(uuid)
 
-    attrs |> Map.put("tracker_id", tracker.id) |> create_activity(user)
+    attrs |> Map.put("tracker_id", tracker.id) |> create_activity!(user)
   end
 
-  def end_activity(%Activity{} = activity) do
+  def end_activity!(%Activity{} = activity) do
     current_datetime = create_local_present_datetime(activity.local_timezone)
-    update_activity(activity, %{"terminated_at_local" => current_datetime})
+    change_activity(activity, %{"terminated_at_local" => current_datetime}) |> Repo.update!
   end
 
-  def add_new_activity(%{"tracker_uuid" => uuid} = attrs, %User{} = user) do
+  def add_new_activity!(%{"tracker_uuid" => uuid} = attrs, %User{} = user) do
     tracker = get_tracker_by_uuid(uuid)
     last_activity = get_last_activity(tracker)
 
     Repo.transaction(fn ->
-    end_activity(last_activity)
-    create_activity(attrs, user)
+    end_activity!(last_activity)
+    create_activity!(attrs, user)
     end)
   end
 
@@ -1711,6 +1711,12 @@ defmodule Pelable.Habits do
     %Activity{}
     |> Activity.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def create_activity!(attrs \\ %{}) do
+    %Activity{}
+    |> Activity.changeset(attrs)
+    |> Repo.insert!()
   end
 
   @doc """
