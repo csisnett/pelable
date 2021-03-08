@@ -4,6 +4,7 @@ defmodule Pelable.Habits.Activity do
 
   alias Pelable.Habits.Tracker
 
+  @derive {Jason.Encoder, only: [:name, :uuid, :started_at_local, :terminated_at_local, :local_timezone]}
   schema "activities" do
     field :name, :string
     field :uuid, Ecto.ShortUUID, autogenerate: true

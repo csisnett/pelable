@@ -15,11 +15,11 @@ defmodule PelableWeb.TrackerController do
   end
 
   def create(conn, %{"tracker" => tracker_params}) do
-    case Habits.create_tracker(tracker_params) do
-      {:ok, tracker} ->
+    user = conn.assigns.current_user
+    case Habits.create_tracker_and_first_activity(tracker_params, user) do
+      {:ok, tracker, activity} ->
         conn
-        |> put_flash(:info, "Tracker created successfully.")
-        |> redirect(to: Routes.tracker_path(conn, :show, tracker))
+        json(conn, %{"created_tracker" => task, "created_activity" => activity})
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)

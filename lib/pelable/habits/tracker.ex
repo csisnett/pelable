@@ -3,6 +3,7 @@ defmodule Pelable.Habits.Tracker do
   import Ecto.Changeset
   alias Pelable.Users.User
 
+  @derive {Jason.Encoder, only: [:name, :uuid]}
   schema "trackers" do
     field :name, :string
     field :uuid, Ecto.ShortUUID, autogenerate: true
