@@ -26,6 +26,19 @@ defmodule PelableWeb.TrackerController do
     end
   end
 
+  def create_new_activity(conn, %{"uuid" => uuid} = activity_params) do
+    user = conn.assigns.current_user
+    activity_params = activity_params |> Map.put("tracker_uuid", uuid)
+    case Habits.add_new_activity!(activity_params, user) do
+      {:ok, activity} ->
+
+        json(conn, %{"created_activity" => activity})
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        render(conn, "new.html", changeset: changeset)
+    end
+  end
+
   def show(conn, %{"id" => id}) do
     tracker = Habits.get_tracker!(id)
     render(conn, "show.html", tracker: tracker)

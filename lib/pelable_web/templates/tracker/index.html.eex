@@ -49,7 +49,9 @@ var app = new Vue(
         timer: 0,
         activity_name: "",
         activity_started: "",
-        current_activity_name: "activity"
+        current_activity_name: "activity",
+        tracker_uuid: "",
+        reset_timer: false
       }
     },
     created: function(){
@@ -57,9 +59,20 @@ var app = new Vue(
     },
     methods: {
       create_new_activity: function(){
+        if(this.started === false){
         start_tracker(this.activity_name)
+        } else {
+          add_new_activity(this.activity_name, this.tracker_uuid)
+        }
       },
       run_timer: function(){
+        if(this.reset_timer === true){
+          this.seconds = 0;
+          this.minutes = 0;
+          this.hours = 0;
+          this.timer = 0;
+          this.reset_timer = false;
+        }
         
         if(this.seconds == 59){
         
@@ -104,6 +117,31 @@ var app = new Vue(
   }
 )
 
+function add_new_activity(activity_name, tracker_uuid){
+      let csrf_token = document.querySelector('meta[name="csrf-token"]').content;
+      data = {activity_name: activity_name}
+      data._csrf_token = csrf_token;
+      let url = "/tracker/create_activity/" + tracker_uuid
+      let json = JSON.stringify(data);
+      let xhr = new XMLHttpRequest();
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+      xhr.onload = function () {
+	    let response = JSON.parse(xhr.responseText);
+        console.log(response)
+      if (xhr.status == "200") {
+        console.log("New activity started!")
+        app.reset_timer = true
+        app.current_activity_name = app.activity_name
+        app.activity_name = ""
+
+      } else {
+        console.log("New activity wasn't recorded :(")
+        }
+      }
+      xhr.send(json);
+}
+
 function start_tracker(activity_name){
       let csrf_token = document.querySelector('meta[name="csrf-token"]').content;
       
@@ -126,6 +164,7 @@ function start_tracker(activity_name){
         app.run_timer()
         app.current_activity_name = app.activity_name
         app.activity_name = ""
+        app.tracker_uuid = response.created_tracker.uuid
 
       } else {
         console.log("Tracker didn't start :(")

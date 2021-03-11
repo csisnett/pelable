@@ -120,6 +120,7 @@ defmodule PelableWeb.Router do
     get "/tracker/:uuid", TrackerController, :show
     get "/tracker/:uuid/edit", TrackerController, :edit
     post "/tracker", TrackerController, :create
+    post "/tracker/create_activity/:uuid", TrackerController, :create_new_activity
     put "/tracker/:uuid", TrackerController, :update
     delete "/tracker/:uuid", TrackerController, :delete
   end
