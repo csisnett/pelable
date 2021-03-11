@@ -39,6 +39,19 @@ defmodule PelableWeb.TrackerController do
     end
   end
 
+  def terminate_tracker(conn, %{"uuid" => uuid}) do
+    user = conn.assigns.current_user
+    tracker = Habits.get_tracker_by_uuid(uuid)
+    case Habits.stop_tracker(tracker, user) do
+      {:ok, %{"stopped_tracker" => tracker, "activities" => activities}} ->
+
+        json(conn, %{"tracker" => tracker, "activities" => activities})
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        render(conn, "new.html", changeset: changeset)
+    end
+  end
+
   def show(conn, %{"id" => id}) do
     tracker = Habits.get_tracker!(id)
     render(conn, "show.html", tracker: tracker)

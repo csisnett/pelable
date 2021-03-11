@@ -2,7 +2,7 @@
 <div id="app_basic" class="container">
 
 <div>
-<h1 style="display: inline-block">Day Tracker 🧩</h1> <b-button v-if="started" style="display: inline-block" variant="outline-danger">stop the day</b-button>
+<h1 style="display: inline-block">Day Tracker 🧩</h1> <b-button v-if="started" v-on:click="stop_tracker" style="display: inline-block" variant="outline-danger">stop the day</b-button>
 </div>
 <br>
 <h4 v-if="!started">To start tracking enter your first activity </h4>
@@ -18,7 +18,9 @@
 
 </div>
 <br>
-<h4 v-if="started"> Start a new activity </h4>
+<div v-if="started">
+<h4> Start a new activity </h4>
+</div>
   <b-form inline>
     <label class="sr-only" for="inline-form-input-name">Name of activity</label>
     <b-form-input
@@ -30,7 +32,16 @@
 
     <b-button v-on:click="create_new_activity" variant="primary">Start</b-button>
   </b-form>
-
+<br>
+<h4 v-if="terminated"> Today's activities </h4>
+<br>
+<activity
+v-for="activity in activities"
+v-bind:name="activity.name"
+v-bind:start_date="activity.started_at_local"
+v-bind:end_date="activity.terminated_at_local"
+>
+</activity>
 </div> <!-- app -->
 
 <script>
@@ -51,7 +62,8 @@ var app = new Vue(
         activity_started: "",
         current_activity_name: "activity",
         tracker_uuid: "",
-        reset_timer: false
+        reset_timer: false,
+        terminated: false
       }
     },
     created: function(){
@@ -65,6 +77,9 @@ var app = new Vue(
           add_new_activity(this.activity_name, this.tracker_uuid)
         }
       },
+      stop_tracker: function(){
+        terminate_tracker(this.tracker_uuid);
+      },
       run_timer: function(){
         if(this.reset_timer === true){
           this.seconds = 0;
@@ -72,6 +87,9 @@ var app = new Vue(
           this.hours = 0;
           this.timer = 0;
           this.reset_timer = false;
+        }
+        if(this.started === false){
+          return 0;
         }
         
         if(this.seconds == 59){
@@ -116,6 +134,59 @@ var app = new Vue(
     }
   }
 )
+
+Vue.component('activity', {
+  props: ['name', 'start_date', 'end_date'],
+  template: '<div class="mt-3"> <b-card border-variant="primary" header-bg-variant="primary" header-text-variant="white" :header="name" class="text-center" style="width: 13rem;"> <b-card-text> {{duration()}} minutes </b-card-text> </b-card></div>',
+  methods: {
+    duration: function(){
+      let second_date = new Date(this.end_date)
+      let first_date = new Date(this.start_date)
+      let ms = second_date.getTime() - first_date.getTime()
+      let minutes = ms/(1000 * 60);
+      return minutes
+    }
+  }
+})
+
+Vue.component('blog-post', {
+  props: ['title'],
+  template: '<h3>{{ title }}</h3>'
+})
+
+Vue.component('button-counter', {
+  data: function () {
+    return {
+      count: 0
+    }
+  },
+  template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+})
+
+function terminate_tracker(tracker_uuid){
+      let csrf_token = document.querySelector('meta[name="csrf-token"]').content;
+      let data = {}
+      data._csrf_token = csrf_token;
+      let url = "/terminate-tracker/" + tracker_uuid
+      let json = JSON.stringify(data);
+      let xhr = new XMLHttpRequest();
+      xhr.open("PUT", url, true);
+      xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+      xhr.onload = function () {
+	    let response = JSON.parse(xhr.responseText);
+        console.log(response)
+      if (xhr.status == "200") {
+        console.log("The tracker has been stopped!")
+        app.started = false
+        app.activities = response.activities
+        app.terminated = true
+
+      } else {
+        console.log("New activity wasn't recorded :(")
+        }
+      }
+      xhr.send(json);
+}
 
 function add_new_activity(activity_name, tracker_uuid){
       let csrf_token = document.querySelector('meta[name="csrf-token"]').content;

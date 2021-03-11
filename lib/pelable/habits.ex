@@ -1603,6 +1603,8 @@ defmodule Pelable.Habits do
     attrs |> Map.put("tracker_id", tracker.id) |> create_activity!(user)
   end
 
+  # Activity -> Activity
+  # Terminates the activity at the present time
   def end_activity!(%Activity{} = activity) do
     current_datetime = create_local_present_datetime(activity.local_timezone)
     change_activity(activity, %{"terminated_at_local" => current_datetime}) |> Repo.update!
@@ -1616,6 +1618,22 @@ defmodule Pelable.Habits do
     end_activity!(last_activity)
     create_activity!(attrs, user)
     end)
+  end
+
+  # Tracker, User -> Tuple
+  # Stops the last activity of the tracker and returns the tracker with all its activities
+  def stop_tracker(%Tracker{} = tracker, %User{} = user) do
+    last_activity = get_last_activity(tracker)
+    end_activity!(last_activity)
+    activities = get_all_activities(tracker)
+    {:ok, %{"stopped_tracker" => tracker, "activities" => activities}}
+  end
+
+  def get_all_activities(%Tracker{} = tracker) do
+    query = 
+    from a in Activity,
+    where: a.tracker_id == ^tracker.id
+    Repo.all(query)
   end
 
   def get_last_activity(%Tracker{} = tracker) do
