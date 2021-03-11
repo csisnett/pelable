@@ -1,26 +1,136 @@
-<h1>Listing Trackers</h1>
+<%= csrf_meta_tag() %>
+<div id="app_basic" class="container">
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
+<div>
+<h1 style="display: inline-block">Day Tracker 🧩</h1> <b-button v-if="started" style="display: inline-block" variant="outline-danger">stop the day</b-button>
+</div>
+<br>
+<h4 v-if="!started">To start tracking enter your first activity </h4>
 
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-<%= for tracker <- @trackers do %>
-    <tr>
-      <td><%= tracker.name %></td>
+<div v-if="started">
 
-      <td>
-        <span><%= link "Show", to: Routes.tracker_path(@conn, :show, tracker) %></span>
-        <span><%= link "Edit", to: Routes.tracker_path(@conn, :edit, tracker) %></span>
-        <span><%= link "Delete", to: Routes.tracker_path(@conn, :delete, tracker), method: :delete, data: [confirm: "Are you sure?"] %></span>
-      </td>
-    </tr>
-<% end %>
-  </tbody>
-</table>
+<div class="mt-3">
+    <b-card border-variant="primary" header-bg-variant="primary" header-text-variant="white" :header="current_activity_name" class="text-center" style="width: 13rem;">
+    <b-card-text> {{show_hour}} {{show_minutes}} {{show_seconds}}</b-card-text>
+    </b-card>
+</div>
+<br>
 
-<span><%= link "New Tracker", to: Routes.tracker_path(@conn, :new) %></span>
+</div>
+<br>
+<h4 v-if="started"> Start a new activity </h4>
+  <b-form inline>
+    <label class="sr-only" for="inline-form-input-name">Name of activity</label>
+    <b-form-input
+      id="inline-form-input-name"
+      class="mb-2 mr-sm-2 mb-sm-0"
+      placeholder="Time to.."
+      v-model="activity_name"
+    ></b-form-input>
+
+    <b-button v-on:click="create_new_activity" variant="primary">Start</b-button>
+  </b-form>
+
+</div> <!-- app -->
+
+<script>
+
+var app = new Vue(
+  {
+    el: '#app_basic',
+    data: function(){
+      return {
+        started: false,
+        activities: [],
+        current_activity: false,
+        minutes: 0,
+        seconds: 0,
+        hours: 0,
+        timer: 0,
+        activity_name: "",
+        activity_started: "",
+        current_activity_name: "activity"
+      }
+    },
+    created: function(){
+      
+    },
+    methods: {
+      create_new_activity: function(){
+        start_tracker(this.activity_name)
+      },
+      run_timer: function(){
+        
+        if(this.seconds == 59){
+        
+        if(this.minutes == 59){
+          this.hours = this.hours + 1
+          this.minutes = 0
+      
+        } else{
+          this.minutes = this.minutes + 1
+        }
+
+        this.seconds = 0
+        }
+        else{
+          this.seconds = this.seconds + 1
+          this.timer = this.timer + 1
+        }
+        window.setTimeout(this.run_timer, 1000)
+      }
+    },
+    computed: {
+      show_hour: function(){
+        if(this.hours > 0){
+          return this.hours.toString() + "h"
+        } else{
+          return ""
+        }
+      },
+      show_minutes: function(){
+        if(this.minutes > 0){
+          return this.minutes.toString() + "min"
+        } else{
+          return ""
+        }
+      },
+      show_seconds: function(){
+        if(this.seconds > 0){
+          return this.seconds.toString() + "s"
+        }
+      }
+    }
+  }
+)
+
+function start_tracker(activity_name){
+      let csrf_token = document.querySelector('meta[name="csrf-token"]').content;
+      
+      let d = new Date();
+      let day = d.toLocaleString(window.navigator.language, {weekday: 'long'});
+
+      let data = {tracker: {activity_name: activity_name, tracker_name: day}}
+      data._csrf_token = csrf_token;
+      let json = JSON.stringify(data);
+      let xhr = new XMLHttpRequest();
+      xhr.open("POST", "/tracker", true);
+      xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+      xhr.onload = function () {
+	    let response = JSON.parse(xhr.responseText);
+        console.log(response)
+
+      if (xhr.status == "200") {
+        console.log("Tracking started!")
+        app.started = true
+        app.run_timer()
+        app.current_activity_name = app.activity_name
+        app.activity_name = ""
+
+      } else {
+        console.log("Tracker didn't start :(")
+        }
+      }
+      xhr.send(json);
+}
+</script>

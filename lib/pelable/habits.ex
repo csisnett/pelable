@@ -1573,7 +1573,7 @@ defmodule Pelable.Habits do
 
   def prepare_tracker(%{} = attrs, %User{} = user) do
     attrs
-    |> Map.put("name", "tracker_name")
+    |> Map.put("name", attrs["tracker_name"])
     |> Map.put("tracking_user_id", user.id)
   end
 

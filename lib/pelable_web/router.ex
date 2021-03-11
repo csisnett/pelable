@@ -106,6 +106,8 @@ defmodule PelableWeb.Router do
     delete "/bookmarks/:uuid", BookmarkController, :delete
     
     resources "/reminders", ReminderController
+
+    get "/tracker", TrackerController, :index    
   end
 
   scope "/", PelableWeb do
@@ -114,6 +116,12 @@ defmodule PelableWeb.Router do
     post "/log-habit/:uuid", HabitController, :log_habit
     put "/tasks/:slug/:uuid", TaskController, :update
     put "/habits/:uuid", HabitController, :update_habit
+
+    get "/tracker/:uuid", TrackerController, :show
+    get "/tracker/:uuid/edit", TrackerController, :edit
+    post "/tracker", TrackerController, :create
+    put "/tracker/:uuid", TrackerController, :update
+    delete "/tracker/:uuid", TrackerController, :delete
   end
 
 

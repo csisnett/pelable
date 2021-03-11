@@ -17,9 +17,9 @@ defmodule PelableWeb.TrackerController do
   def create(conn, %{"tracker" => tracker_params}) do
     user = conn.assigns.current_user
     case Habits.create_tracker_and_first_activity(tracker_params, user) do
-      {:ok, tracker, activity} ->
-        conn
-        json(conn, %{"created_tracker" => task, "created_activity" => activity})
+      {:ok, %{"tracker" => tracker, "activity" => activity}} ->
+
+        json(conn, %{"created_tracker" => tracker, "created_activity" => activity})
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
