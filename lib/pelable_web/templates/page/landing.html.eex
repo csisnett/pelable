@@ -71,7 +71,7 @@ s0.parentNode.insertBefore(s1,s0);
 	                        <h1 class="hero-title mt-0 is-revealing">Stuck in tutorial purgatory?</h1>
 	                        <p class="hero-paragraph is-revealing"> Level up your coding skills.</p>
 	                        <p class="hero-cta mb-0 is-revealing">
-								<a class="button button-primary button-shadow" href="/apply"> Apply</a>
+								<a class="button button-primary button-shadow" href="/registration/new"> Join</a>
 							</p>
 						</div>
 						<div class="hero-illustration">
@@ -163,8 +163,7 @@ s0.parentNode.insertBefore(s1,s0);
 										<div class="accordion-icon"></div>
 									</div>
 									<div class="accordion-body">
-										<p>The program starts on Friday, February 7 and ends on March 20.</p>
-                                        <p> More precisely in: <div id="deadline"> </div></p> 
+										<p> We don't have a date set for the next batch yet, fill out this <a href="https://forms.gle/BvX5QwcNXE2obyqr6">form </a> to get updates to your email </p>
 									</div>
 
 	                                
@@ -216,7 +215,7 @@ s0.parentNode.insertBefore(s1,s0);
 									</div>
 								</li>
 
-                                <li>
+                                <li hidden>
 									<div class="accordion-title">
 										<span>When does the next batch starts?</span>
 										<div class="accordion-icon"></div>
@@ -226,7 +225,7 @@ s0.parentNode.insertBefore(s1,s0);
 									</div>
 								</li>
 
-                                <li>
+                                <li hidden>
 									<div class="accordion-title">
 										<span> Where can I see future batch starting dates?</span>
 										<div class="accordion-icon"></div>
@@ -245,7 +244,7 @@ s0.parentNode.insertBefore(s1,s0);
                     
 						<h3 class="section-title mt-0">Join the Community</h3>
 						<div class="cta-cta">
-							<a class="button button-primary button-shadow" href="/apply">Apply now</a>
+							<a class="button button-primary button-shadow" href="/registration/new">Join now</a>
 						</div>
 						
 					</div>
@@ -264,7 +263,7 @@ s0.parentNode.insertBefore(s1,s0);
                     <ul class="footer-links list-reset">
                         <li>
 						Have any questions? Contact us at
-                            <a href="mailto:carlos@pelable.com">carlos@pelable.com</a>
+                            <a href="mailto:daniel@pelable.com">daniel@pelable.com</a>
                         </li>
                       
                     </ul>
@@ -280,7 +279,7 @@ s0.parentNode.insertBefore(s1,s0);
                         </li>
                        
                     </ul>
-                    <div class="footer-copyright">&copy; 2020 Pelable, all rights reserved</div>
+                    <div class="footer-copyright">&copy; 2021 Pelable, all rights reserved</div>
                 </div>
             </div>
         </footer>

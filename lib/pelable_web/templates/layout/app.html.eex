@@ -149,7 +149,7 @@ function myFunction() {
         <nav role="navigation">
           <div class="topnav" id="myTopnav">
   
-   <a href="/apply">Apply</a>
+ 
    <a href="/program"> Program </a>
   <a href="/chat">Chat</a>
   <a href="/guide">Guide</a>
