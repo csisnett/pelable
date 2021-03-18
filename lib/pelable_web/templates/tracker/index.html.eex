@@ -21,7 +21,7 @@
 <div v-if="started">
 <h4> Start a new activity </h4>
 </div>
-  <b-form inline>
+  <b-form @submit="onSubmit" inline>
     <label class="sr-only" for="inline-form-input-name">Name of activity</label>
     <b-form-input
       id="inline-form-input-name"
@@ -79,6 +79,10 @@ var app = new Vue(
       },
       stop_tracker: function(){
         terminate_tracker(this.tracker_uuid);
+      },
+      onSubmit: function(event){
+        event.preventDefault();
+        this.create_new_activity();
       },
       run_timer: function(){
         if(this.reset_timer === true){
