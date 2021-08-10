@@ -378,7 +378,7 @@ defmodule Pelable.Habits do
   # For internal admin use only. Do not call from other functions. Do not overuse.
   def create_past_habit_completion(%Habit{} = habit, %User{} = user, %Date{} = date) do
     user_timezone = get_user_timezone(user)
-    {:ok, datetime} = DateTime.new(date, ~T[13:26:08.001], user_timezone)
+    {:ok, datetime} = DateTime.new(date, ~T[13:26:08.001], user_timezone, Tzdata.TimeZoneDatabase)
     last_streak = get_last_streak(habit) # Only use function if you haven't created a new streak by completing the habit after this date
 
     %{}
