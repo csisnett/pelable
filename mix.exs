@@ -51,7 +51,7 @@ defmodule Pelable.MixProject do
       {:swoosh, "~> 0.23.5"},
       {:plug_attack, "~> 0.4.2"},
       {:remote_ip, "~> 0.1.5"},
-      {:redix, "~> 0.10.2"},
+      {:redix, "~> 1.1.3"},
       {:castore, "~> 0.1.7"},
       {:cors_plug, "~> 2.0.2"},
       {:httpoison, "~> 1.7.0"},
