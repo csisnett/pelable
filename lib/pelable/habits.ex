@@ -69,10 +69,10 @@ defmodule Pelable.Habits do
     from habit in query,
     left_join: habit_reminder in assoc(habit, :habit_reminder),
     left_join: reminder in assoc(habit_reminder, :reminder),
-    preload: [reminders: reminder] 
+    preload: [reminders: reminder]
   end
 
-  
+
   # %Streak{}-> %Streak{}
   #Receives a streak, counts how many HabitCompletion has and records it in the count field
   def count_streak(%Streak{} = streak) do
@@ -98,10 +98,10 @@ defmodule Pelable.Habits do
   # For streaks it adds how many  habit completions (count), for habits whether they should be completed today (complete_now?)
   def get_habits_last_streaks(habits, user_timezone, habits_streaks \\ []) when is_list(habits) do
     [this_habit | rest] = habits
-    
+
     last_streak = get_last_streak(this_habit)
     this_habit = complete_habit_now(this_habit, last_streak, user_timezone)
-    
+
     result = {this_habit, prepare_streak(last_streak)}
 
     habits_streaks = [result | habits_streaks]
@@ -140,7 +140,7 @@ defmodule Pelable.Habits do
         present_date = local_present_datetime |> DateTime.to_date
         Date.end_of_week(last_completion_date) != Date.end_of_week(present_date) # True if we're not in the same week of the last habit completion
     end
-    
+
   end
 
   # %Habit{}, String -> Boolean
@@ -149,7 +149,7 @@ defmodule Pelable.Habits do
     last_streak = get_last_streak(habit)
     last_habit_completion = get_last_habit_completion(last_streak)
     local_present_datetime = create_local_present_datetime(timezone)
-    
+
     case last_habit_completion do
       nil -> true # true if the habit has never been completed
       last_habit_completion ->
@@ -215,7 +215,7 @@ defmodule Pelable.Habits do
     local_datetime
   end
 
-  
+
   # %NaiveDateTime{}, String -> %DateTime{}
   # Converts a NaiveDateTime to a DateTime with a timezone
   def add_timezone(%NaiveDateTime{} = naive, timezone) do
@@ -257,10 +257,10 @@ defmodule Pelable.Habits do
       last_habit_completion == nil ->
         streak_creation_date = convert_utc_to_local_datetime(streak.inserted_at, timezone) |> DateTime.to_date
         Date.end_of_week(streak_creation_date) == Date.end_of_week(present_date) # true if we're in the same week the streak was created
-      
+
       true ->
         last_completion_date = last_habit_completion.created_at_local_datetime |> add_timezone(timezone) |> DateTime.to_date
-    
+
         last_day_of_the_week = Date.end_of_week(last_completion_date, :default) #default: the week starts on monday
 
         Date.diff(present_date, last_day_of_the_week) <= 7 # true if we're on the next week from the last habit completion date
@@ -276,7 +276,7 @@ defmodule Pelable.Habits do
       true ->
         streak = count_streak(streak)
         {:active_streak, streak}
-      false -> 
+      false ->
         {:ok, new_streak} = create_streak(%{"habit_id" => habit.id})
         new_streak = new_streak |> Map.put(:count, 0)
         {:new_streak, new_streak}
@@ -284,7 +284,7 @@ defmodule Pelable.Habits do
   end
 
   def query_last_streak(%Habit{} = habit) do
-    query = 
+    query =
     from s in Streak,
     where: s.habit_id == ^habit.id,
     order_by: [desc: s.id],
@@ -302,7 +302,7 @@ defmodule Pelable.Habits do
   # %Streak{} -> %HabitCompletion{}
   # Returns the streak's last habit completion
   def get_last_habit_completion(%Streak{} = streak) do
-    query = 
+    query =
     from hc in HabitCompletion,
     where: hc.streak_id == ^streak.id,
     order_by: [desc: hc.id],
@@ -315,7 +315,7 @@ defmodule Pelable.Habits do
   # Used for external calls
   def log_habit(%Habit{} = habit, %User{} = user) do
     {:ok, habit_completion} = create_habit_completion(habit, user)
-    
+
     case habit.current_reward_id do
       nil -> {:ok, habit_completion}
       _any_id -> maybe_win_reward(habit, habit_completion)
@@ -323,7 +323,7 @@ defmodule Pelable.Habits do
   end
 
   def explain_completion_recommendation(%Habit{streak_saver_status: true} = habit) do
-    "This habit is paused. No need to complete it today" 
+    "This habit is paused. No need to complete it today"
   end
 
   def explain_completion_recommendation(%Habit{complete_now?: true, time_frequency: "daily", streak_saver_status: false} = habit) do
@@ -349,28 +349,43 @@ defmodule Pelable.Habits do
     with :ok <- Bodyguard.permit(Habits.Policy, :log_habit, user, habit) do
 
       timezone = get_user_timezone(user)
-    
+
       {_, alive_streak} = habit |> get_or_create_alive_streak(timezone)
-    
+
       local_present_datetime = create_local_present_datetime(timezone)
 
-      {:ok, habit_completion} = 
+      {:ok, habit_completion} =
       %{}
       |> Map.put("streak_id", alive_streak.id)
-      |> Map.put("local_timezone", timezone) 
+      |> Map.put("local_timezone", timezone)
       |> Map.put("created_at_local_datetime", local_present_datetime)
       |> create_habit_completion
 
       habit = complete_habit_now(habit, alive_streak, timezone)
       completion_recommendation = explain_completion_recommendation(habit)
       streak = count_streak(alive_streak)
-      habit_completion = 
-      habit_completion 
-      |> Map.put(:completion_recommendation, completion_recommendation) 
+      habit_completion =
+      habit_completion
+      |> Map.put(:completion_recommendation, completion_recommendation)
       |> Map.put(:streak_count, streak.count)
 
       {:ok, habit_completion}
     end
+  end
+
+  # %Habit{}, %User{}, %Date{} -> %HabitCompletion{}
+  # Creates a habit completion for the past date, habit, user given
+  # For internal admin use only. Do not call from other functions. Do not overuse.
+  def create_past_habit_completion(%Habit{} = habit, %User{} = user, %Date{} = date) do
+    timezone = get_user_timezone(user)
+    {:ok, datetime} = DateTime.new(date, ~T[13:26:08.001], user_timezone)
+    last_streak = get_last_streak(habit) # Only use function if you haven't created a new streak by completing the habit after this date
+
+    %{}
+      |> Map.put("streak_id", last_streak.id)
+      |> Map.put("local_timezone", timezone)
+      |> Map.put("created_at_local_datetime", datetime)
+      |> create_habit_completion
   end
 
   @doc """
@@ -496,7 +511,7 @@ defmodule Pelable.Habits do
   def last_streak_saver(%Streak{} = streak) do
     case get_last_streak_saver(streak) do
       nil -> Map.put(streak, :last_streak_saver, nil)
-      streak_saver -> 
+      streak_saver ->
         Map.put(streak, :last_streak_saver, streak_saver)
     end
   end
@@ -736,7 +751,7 @@ defmodule Pelable.Habits do
       {:ok, habit_completion}
     end
   end
-  
+
 
   @doc """
   Updates a reward.
@@ -852,7 +867,7 @@ defmodule Pelable.Habits do
   # %User{} -> [%Reward{earned_rewards: [%HabitCompletionReward{}, ...]} ...]
   # Get the user's rewards and their earned rewards
   def get_user_earned_rewards(%User{} = user) do
-    query = 
+    query =
     from e in HabitCompletionReward,
     where: e.creator_id == ^user.id,
     select: e
@@ -1010,7 +1025,7 @@ defmodule Pelable.Habits do
   end
 
   # %{} -> %{}
-  # Creates %Time{} using the attrs time_hour and time_minute and assigns it as "time_start" 
+  # Creates %Time{} using the attrs time_hour and time_minute and assigns it as "time_start"
   # Basically turns incoming data into Time for a new Reminder
   def create_time_start(attrs) do
     with true <- Map.has_key?(attrs, "time_hour"),
@@ -1073,7 +1088,7 @@ defmodule Pelable.Habits do
     {:ok, reminder}
   end
 
-  
+
   # %{}, %User{} -> {:ok, %Reminder{}} || {:ok, %Reminder{}, %HabitReminder{}} || {:error, Ecto.Changeset{}}
   # Used to create recurrent reminders
   def create_recurrent_reminder(%{} = attrs, user) do
@@ -1206,7 +1221,7 @@ defmodule Pelable.Habits do
     "contents" => %{"en" => content},
     "delayed_option" => timezone,
     "delivery_time_of_day" => time,
-    "priority" => 10} #highest priority 
+    "priority" => 10} #highest priority
 
     encoded_json = Jason.encode!(default)
     HTTPoison.post("https://onesignal.com/api/v1/notifications", encoded_json, [{"Content-Type", "application/json"}, {"charset", "utf-8"}, {"Authorization", "Basic " <> api_key}])
@@ -1221,7 +1236,7 @@ defmodule Pelable.Habits do
     "data" => %{"foo" => "bar"},
     "include_external_user_ids" => [user_id],
     "contents" => %{"en" => content},
-    "priority" => 10} #highest priority 
+    "priority" => 10} #highest priority
 
     encoded_json = Jason.encode!(payload)
     HTTPoison.post("https://onesignal.com/api/v1/notifications", encoded_json, [{"Content-Type", "application/json"}, {"charset", "utf-8"}, {"Authorization", "Basic " <> api_key}])
@@ -1352,7 +1367,7 @@ defmodule Pelable.Habits do
     HabitReminder.changeset(habit_reminder, attrs)
   end
 
-  
+
 
   @doc """
   Returns the list of streak_saver.
@@ -1403,8 +1418,8 @@ defmodule Pelable.Habits do
 
   def convert_pause_select(%{"pause_select" => "today"} = attrs) do
     todays_date = create_local_present_datetime(attrs["user_timezone"]) |> DateTime.to_date
-    attrs 
-    |> Map.put("start_date", todays_date) 
+    attrs
+    |> Map.put("start_date", todays_date)
     |> Map.put("end_date", todays_date)
   end
 
@@ -1412,7 +1427,7 @@ defmodule Pelable.Habits do
     {:ok, start_date} = Date.from_iso8601(attrs["pause_start_date"])
     {:ok, end_date} = Date.from_iso8601(attrs["pause_end_date"])
     attrs
-    |> Map.put("start_date", start_date) 
+    |> Map.put("start_date", start_date)
     |> Map.put("end_date", end_date)
   end
 
@@ -1442,7 +1457,7 @@ defmodule Pelable.Habits do
   # %Streak{} -> %StreakSaver{}
   # Gets a streak's last streak saver
   def get_last_streak_saver(%Streak{} = streak) do
-    query = 
+    query =
     from s in StreakSaver,
     where: s.streak_id == ^streak.id,
     order_by: [desc: s.id],
@@ -1579,7 +1594,7 @@ defmodule Pelable.Habits do
 
   #%{"activity" => "name of activity"}
   def create_tracker_and_first_activity(%{"tracker_name" => _, "activity_name" => _} = attrs, %User{} = user) do
-    Repo.transaction(fn -> 
+    Repo.transaction(fn ->
     tracker = attrs |> prepare_tracker(user) |> create_tracker!()
     activity = attrs |> Map.put("tracker_id", tracker.id) |> create_activity!(user)
     %{"tracker" => tracker, "activity" => activity}
@@ -1590,8 +1605,8 @@ defmodule Pelable.Habits do
     timezone = get_user_timezone(user)
     started_at = create_local_present_datetime(timezone)
 
-    attrs 
-    |> Map.put("local_timezone", timezone) 
+    attrs
+    |> Map.put("local_timezone", timezone)
     |> Map.put("started_at_local", started_at)
     |> Map.put("name", attrs["activity_name"])
     |> create_activity!
@@ -1630,14 +1645,14 @@ defmodule Pelable.Habits do
   end
 
   def get_all_activities(%Tracker{} = tracker) do
-    query = 
+    query =
     from a in Activity,
     where: a.tracker_id == ^tracker.id
     Repo.all(query)
   end
 
   def get_last_activity(%Tracker{} = tracker) do
-    query = 
+    query =
     from a in Activity,
     where: a.tracker_id == ^tracker.id,
     order_by: [desc: a.id],
