@@ -377,13 +377,13 @@ defmodule Pelable.Habits do
   # Creates a habit completion for the past date, habit, user given
   # For internal admin use only. Do not call from other functions. Do not overuse.
   def create_past_habit_completion(%Habit{} = habit, %User{} = user, %Date{} = date) do
-    timezone = get_user_timezone(user)
+    user_timezone = get_user_timezone(user)
     {:ok, datetime} = DateTime.new(date, ~T[13:26:08.001], user_timezone)
     last_streak = get_last_streak(habit) # Only use function if you haven't created a new streak by completing the habit after this date
 
     %{}
       |> Map.put("streak_id", last_streak.id)
-      |> Map.put("local_timezone", timezone)
+      |> Map.put("local_timezone", user_timezone)
       |> Map.put("created_at_local_datetime", datetime)
       |> create_habit_completion
   end
