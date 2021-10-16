@@ -31,10 +31,21 @@ defmodule PelableWeb.HabitController do
     end
   end
 
+  def archive_habit(conn, %{"uuid" => uuid} = params) do
+    user = conn.assigns.current_user
+    habit = Habits.get_habit_by_uuid(uuid)
+    case Habits.archive_habit(habit, user) do
+      {:ok, habit} ->
+        json(conn, %{"archived_habit" => "habit was archived!"})
+      whatever ->
+        json(conn, %{"error" => "habit wasn't archived"})
+    end
+  end
+
   def create_reward(conn, %{"habit_uuid" => habit_uuid, "reward_name" => _name} = attrs) do
     user = conn.assigns.current_user
     habit = Habits.get_habit_by_uuid(habit_uuid)
-    
+
     case Habits.create_reward_assign_to_habit(attrs, habit, user) do
       {:ok, reward} ->
         json(conn, %{"created_reward" => reward})

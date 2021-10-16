@@ -388,6 +388,18 @@ defmodule Pelable.Habits do
       |> create_habit_completion
   end
 
+  # Haven't tested this fn don't test on production
+  def past_habit_completions_bridget(habit_uuid) do
+    habit = get_habit_by_uuid(habit_uuid)
+    user = Repo.get_by(User, email: "carlos@pelable.com")
+    last_streak = get_last_streak(habit)
+    last_habit_completion = get_last_habit_completion(last_streak)
+    last_completion_local_date = last_habit_completion.created_at_local_datetime |> DateTime.to_date()
+    local_date = create_local_present_datetime(get_user_timezone(user)) |> DateTime.to_date()
+    dates_to_add_completions = Date.range(Date.add(last_completion_local_date, 1), Date.add(local_date, -1)) |> Enum.to_list()
+    Enum.map(dates_to_add_completions, fn date -> create_past_habit_completion(habit, user, date) end)
+  end
+
   @doc """
   Updates a habit.
 
@@ -404,6 +416,10 @@ defmodule Pelable.Habits do
     habit
     |> Habit.changeset(attrs)
     |> Repo.update()
+  end
+
+  def archive_habit(%Habit{user_id: _id} = habit, %User{id: _id} = user) do
+    update_habit(habit, %{"archived?" => true})
   end
 
   # %{}, %User{} -> {:ok, %Habit{}}

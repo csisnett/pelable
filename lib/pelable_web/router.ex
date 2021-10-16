@@ -2,7 +2,7 @@ defmodule PelableWeb.Router do
   use PelableWeb, :router
   use Pow.Phoenix.Router
   use Pow.Extension.Phoenix.Router, otp_app: :pelable
-  
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug Pelable.PlugAttack
@@ -56,7 +56,7 @@ defmodule PelableWeb.Router do
     get "/post/:title/:uuid/edit", PostController, :edit
     put "/post/:title/:uuid", PostController, :update
     delete "/post/:title/:uuid", PostController, :delete
-    
+
   end
 
 
@@ -74,11 +74,12 @@ defmodule PelableWeb.Router do
     put "/settings", SettingController, :update
 
     resources "/habits", HabitController, except: [:show, :edit, :update, :delete]
-    
+
     get "habits/:uuid", HabitController, :show
     get "habits/:uuid/edit", HabitController, :edit
     put "habits/update-reward/:uuid", HabitController, :update_current_reward
     delete "habits/:uuid", HabitController, :delete
+    put "archive-habit/:uuid", HabitController, :archive_habit
 
     resources "/tasks", TaskController, except: [:show, :edit, :update, :delete]
 
@@ -99,15 +100,15 @@ defmodule PelableWeb.Router do
     put "/earned-rewards/:uuid", HabitCompletionRewardController, :take_reward
 
     resources "/bookmarks", BookmarkController, except: [:show, :edit, :update, :delete]
-    
+
     get "/bookmarks/:uuid", BookmarkController, :show
     get "/bookmarks/:uuid/edit", BookmarkController, :edit
     put "/bookmarks/:uuid", BookmarkController, :update
     delete "/bookmarks/:uuid", BookmarkController, :delete
-    
+
     resources "/reminders", ReminderController
 
-    get "/tracker", TrackerController, :index    
+    get "/tracker", TrackerController, :index
   end
 
   scope "/", PelableWeb do

@@ -71,9 +71,36 @@
       }
       }
       xhr.send(json);
-      
+
   }
-  
+
+    function archive_habit(habit_uuid) {
+    let csrf_token = document.querySelector('meta[name="csrf-token"]').content;
+
+    let base_url = "<%= Routes.habit_url(@conn, :archive_habit, "") %>" ;
+    let url = base_url + habit_uuid;
+
+    let data = {};
+    data._csrf_token = csrf_token;
+
+    let json = JSON.stringify(data);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("PUT", url, true);
+    xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+    xhr.onload = function () {
+	  let response = JSON.parse(xhr.responseText);
+    console.log(response)
+      if (xhr.status == "200") {
+        console.log("habit was archived!")
+      } else {
+        console.log("Habit wasn't archived!");
+      }
+      }
+      xhr.send(json);
+
+  }
+
 </script>
 <h2>My Habits</h2>
 
@@ -179,7 +206,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        
+
       </div>
     </div>
   </div>
@@ -201,12 +228,12 @@
           habit_uuid="<%= habit.uuid %>"
           >
         </pause-form>
-         
+
 
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        
+
       </div>
     </div>
   </div>
@@ -220,7 +247,7 @@
 onmouseout="hide_habit_status_message('<%= habit.uuid %>')" onclick="show_habit_status_message('<%= habit.uuid %>')"
 onmouseover="show_habit_status_message('<%= habit.uuid %>')" data-container="body" data-toggle="popover"
 data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></span
-></h5> 
+></h5>
 <br>
 <br>
     <div class="check">
@@ -250,12 +277,13 @@ data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></spa
     <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target='#<%= "habit_reminder_modal" <> habit.uuid %>' >Add reminder </a>
     <a class="dropdown-item" style="cursor: pointer;" data-toggle="modal" data-target='#<%= "habit_pause_modal" <> habit.uuid %>' >Pause </a>
     <a class="dropdown-item" href="/rewards">Edit</a>
+    <%= link "Archive", to: Routes.habit_path(@conn, :archive_habit, habit.uuid), class: :"dropdown-item", method: :put, data: [confirm: "Are you sure you want to archive?"] %>
     <%= link "Delete", to: Routes.habit_path(@conn, :delete, habit.uuid), class: :"dropdown-item", method: :delete, data: [confirm: "Are you sure?"] %>
     </div>
-  
+
   </div>
 
-  
+
 
   </div>
   </div> <!-- card-body -->
@@ -311,7 +339,7 @@ data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></spa
             },
     methods: {
 
-      
+
       update_habit: function(data, habit_uuid){
       let csrf_token = document.querySelector('meta[name="csrf-token"]').content;
       data._csrf_token = csrf_token;
@@ -333,7 +361,7 @@ data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></spa
         }
       }
       xhr.send(json);
-      
+
       console.log(data);
       },
 
@@ -352,7 +380,7 @@ data-placement="top" data-content="<%= completed_message_or_not(habit) %>"></spa
             el: '#app_basic'
         });
 
-  
+
 </script>
 
 <script>
@@ -387,7 +415,7 @@ function create_reward_for_habit(habit_uuid, form_id){
       }
       }
       xhr.send(json);
-      
+
   console.log(data);
   }
 
@@ -395,4 +423,3 @@ function create_reward_for_habit(habit_uuid, form_id){
 let habit_name_input = document.getElementById('habit_name_input');
 habit_name_input.focus();
 </script>
-
